@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="renderer" content="webkit|ie-comp|ie-stand">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+  <title>山大六院工资管理系统</title>
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <link rel="stylesheet" type="text/css" href="static/css/Hui-iconfont/1.0.8/iconfont.min.css"/>
+  <link rel="stylesheet" type="text/css" href="static/css/H-ui.min.css"/>
+  <link rel="stylesheet" type="text/css" href="static/css/H-ui.admin.css" />
+  <link rel="stylesheet" type="text/css" href="static/css/H-ui.style1.css" />
+  <link rel="stylesheet" type="text/css" href="static/css/H-ui.doc.css" />
+  <link rel="stylesheet" type="text/css" href="static/css/skin.css" />
+</head>
+<body onload="showLeftTime()">
+<div id="all">
+  <header class="navbar-wrapper">
+    <div class="navbar navbar-black">
+      <div class="container-fluid cl">
+        <span class="logo navbar-slogan f-l mr-10 hidden-xs" style="font-size:20px;">山大六院工资管理系统</span>
+        <nav class="navbar-userbar f-r hidden-xs hidden-sm" id="Hui-navbar1">
+          <span>用户：XXX</span>
+          <span>登录时间：<label id="show"></label></span>
+          <a href=""><span>&nbsp;&nbsp;&nbsp;注销</span></a>
+        </nav>
+      </div>
+    </div>
+  </header>
+  <div id="contentLeft">
+    <aside class="Hui-aside">
+      <input runat="server" id="divScrollValue" type="hidden" value="" />
+      <div class="menu_dropdown bk_2">
+        <dl id="menu_1">
+          <dt><i class="Hui-iconfont">&#xe61d;</i>&nbsp;员工管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
+          <dd>
+            <ul>
+              <li class="current"><a href="javascript:;" target="iframedef"><i class="Hui-iconfont">&#xe618;</i>&nbsp;招聘管理</a></li>
+              <li><a href="javascript:;"><i class="Hui-iconfont">&#xe6b5;</i>&nbsp;考勤打卡</a></li>
+              <li><a href="javascript:;"><i class="Hui-iconfont">&#xe6b5;</i>&nbsp;社保福利</a></li>
+            </ul>
+          </dd>
+        </dl>
+        <dl id="menu_3">
+          <dt><i class="Hui-iconfont">&#xe61d;</i>&nbsp;绩效管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
+          <dd>
+            <ul>
+              <li class="current"><a href="javascript:;"><i class="Hui-iconfont">&#xe618;</i>&nbsp;审批公告</a></li>
+              <li><a href="javascript:;"><i class="Hui-iconfont">&#xe6b5;</i>&nbsp;组织权限</a></li>
+            </ul>
+          </dd>
+        </dl>
+        <!-- <dl id="menu_2">
+          <dt><i class="Hui-iconfont">&#xe692;</i>&nbsp;日志管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
+          <dd>
+            <ul>
+              <li><a href="javascript:;" target="iframedef"><i class="Hui-iconfont">&#xe60c;</i>&nbsp;运行日志</a></li>
+              <li><a href="javascript:;" target="iframedef"><i class="Hui-iconfont">&#xe692;</i>&nbsp;操作日志</a></li>
+            </ul>
+          </dd>
+        </dl> -->
+      </div>
+    </aside>
+  </div>
+  <div class="dislpayArrow hidden-xs"><a class="pngfix" href="javascript:void(0);" onClick="displaynavbar(this)"></a></div>
+  <div id="contentRight">
+    <section class="Hui-article-box">
+    <iframe frameborder="0" width="100%" height="100%" style="overflow:auto" id="iframedef" name="iframedef" src="page/index.html"></iframe>
+    </section>
+  </div>
+</div>
+<script type="text/javascript" src="static/js/jquery.min.js"></script>
+<script type="text/javascript" src="static/js/H-ui.min.js"></script>
+<script type="text/javascript" src="static/js/H-ui.admin.js"></script>
+<script type="text/javascript">
+  $("#menu_1 dt").addClass("selected");$("#menu_1 dd").show();
+  $(function(){
+    $("#menu_1 dd li a").click(function(){
+      $("#menu_1 dt").addClass("selected");
+      $("#menu_1 dd").show();
+    });
+    $("#menu_2 dd li a").click(function(e){
+      $("#menu_2 dt").addClass("selected");
+      $("#menu_2 dd").show();
+    });
+    $(document).click(function(e) {
+      var itarget = $(e.target);
+      if (itarget[0].tagName=='A'){
+        $("li a").removeClass("cur");
+        $("li").removeClass("current");
+        $(e.target).addClass("cur");
+      }
+    });
+  });
+</script>
+</body>
+</html>

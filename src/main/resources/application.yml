@@ -1,0 +1,31 @@
+server:
+  port: 8080
+
+spring:
+    datasource:
+        name: test
+        url: jdbc:mysql://127.0.0.1:3306/salary
+        username: root
+        password: mysql
+        driver-class-name: com.mysql.jdbc.Driver
+        filters: stat
+        maxActive: 20
+        initialSize: 1
+        maxWait: 60000
+        minIdle: 1
+        timeBetweenEvictionRunsMillis: 60000
+        minEvictableIdleTimeMillis: 300000
+        validationQuery: select 'x'
+        testWhileIdle: true
+        testOnBorrow: false
+        testOnReturn: false
+        poolPreparedStatements: true
+        maxOpenPreparedStatements: 20
+    thymeleaf:
+        prefix: classpath:/templates/
+    devtools:
+      restart:
+         enabled: true #热部署生效
+      #设置重启的目录
+         additional-paths: src/main/java
+         exclude: WEB-INF/** #classpath目录下的WEB-INF文件夹内容修改不重启
