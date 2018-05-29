@@ -6,15 +6,14 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 /**
- * 配置静态资源映射
- * @author sam
- * @since 2017/7/16
+ * @Author yisicheng 2018-05-29
  */
 @Configuration
 public class WebMvcConfig extends WebMvcConfigurerAdapter {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        //配置静态资源映射
         //将所有/static/** 访问都映射到classpath:/static/ 目录下
         registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
     }
@@ -22,6 +21,6 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
     // 增加拦截器
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new RequestLog());
+        registry.addInterceptor(new RequestInterceptor());
     }
 }

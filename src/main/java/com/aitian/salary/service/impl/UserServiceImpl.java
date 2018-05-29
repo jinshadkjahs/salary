@@ -7,7 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+/**
+ * @Author yisicheng 2018-05-29
+ * 一组操作需要加事务
+ */
 @Service(value = "userService")
 public class UserServiceImpl implements UserService {
 
