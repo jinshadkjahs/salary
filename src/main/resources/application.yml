@@ -29,3 +29,5 @@ spring:
       #设置重启的目录
          additional-paths: src/main/java
          exclude: WEB-INF/** #classpath目录下的WEB-INF文件夹内容修改不重启
+      livereload:
+          enabled: true
