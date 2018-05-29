@@ -5,7 +5,7 @@
 <title></title>
 
 <link href="../static/css/main.css" rel="stylesheet" type="text/css" />
-
+	<link href="../static/css/loading.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 
@@ -39,14 +39,16 @@
     var chickUser = function() {
         var userName = $('#value_1').val();
         var pwd = $('#value_2').val();
-
+        $('#loading').show();
         $.post("../../user/login", {'id':userName,'pwd':pwd},function(data){
-            console.log(data);
-
+            $('#loading').hide();
                 if(data.loginInfo){
                     alert("登录成功！");
                 }
-            },'json');
+            },function () {
+            $('#loading').hide();
+            alert("shib！");
+        },'json');
 
     }
 </script>
@@ -59,6 +61,9 @@
 <!-- <div style="text-align:center;margin:50px 0; font:normal 14px/24px 'MicroSoft YaHei';">
 <p>适用浏览器：360、FireFox、Chrome、Safari、Opera、傲游、搜狗、世界之窗. 不支持IE8及以下浏览器。</p>
 <p>More Templates <a href="http://www.cssmoban.com/" target="_blank" title="模板之家">模板之家</a> - Collect from <a href="http://www.cssmoban.com/" title="网页模板" target="_blank">网页模板</a></p> -->
+</div>
+<div id="loading">
+	<img src="../static/image/loading.gif">
 </div>
 </body>
 </html>
