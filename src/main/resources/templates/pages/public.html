@@ -5,10 +5,9 @@
     <title>工资管理系统</title>
     <link rel="stylesheet" href="../../static/manage/css/public.css"/>
     <link rel="stylesheet" href="../../static/manage/css/style.css"/>
-
+    <link href="../../static/css/loading.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
-<script type="text/javascript" src="../../static/js/dl/jQuery.js"></script>
 <!--头部-->
 <header class="publicHeader">
     <h1>工资管理系统</h1>
@@ -29,14 +28,14 @@
         <h2 class="leftH2"><span class="span1"></span>功能列表 <span></span></h2>
         <nav>
             <ul class="list">
-                <li><a onclick="menuClick('billList')">员工管理</a></li>
-                <li><a onclick="menuClick('providerList')">工资管理</a></li>
-                <li><a onclick="menuClick('login')">退出系统</a></li>
+                <li><a onclick="menuClick('billList',this)">员工管理</a></li>
+                <li><a onclick="menuClick('providerList',this)">工资管理</a></li>
+                <li><a onclick="menuClick('login',this)">退出系统</a></li>
             </ul>
         </nav>
     </div>
     <div class="right">
-        <iframe id="iframe" align="center" width="100%" height="170" src="index.html"  frameborder="no" border="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
+        <iframe id="iframe" align="center" width="100%" height="170" src="index"  frameborder="no" border="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
     </div>
 </section>
 <footer class="footer">
@@ -46,12 +45,17 @@
     联系方式：zyf_aln@sina.com<br/>
     author:<a href="#">Yvan/Boom/</a>
 </footer>
+<script type="text/javascript" src="../../static/js/dl/jQuery.js"></script>
 <script src="../../static/manage/js/time.js"></script>
 <script>
-
-    function menuClick(id) {
-        $("#iframe").setAttribute("src",id);
+    function menuClick(id,obj) {
+        $("#iframe").attr("src",id);
+        $(obj).parent().siblings().removeClass("selected");
+        $(obj).parent().addClass("selected");
     }
 </script>
+<div id="loading">
+    <img src="../static/image/loading.gif">
+</div>
 </body>
 </html>
