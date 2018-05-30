@@ -5,34 +5,24 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.List;
 
-@Table(name = "s_employee")
-public class Employee {
+public class EmployeeSalary {
 
-
-    @Id
-    @Column(name = "empid")
     private String empId;
-    @Column(name = "emp_name")
     private String empName;
-    @Column(name = "emp_phone")
     private String empPhone;
-    @Column(name = "emp_card_num")
     private String empCardNum;
-    @Column(name = "emp_type")
     private String empType;
-    @Column(name = "waltz_date")
     private Date waltzDate;
-    @Column(name = "depart_id")
     private Integer departId;
-    @Column(name = "create_time")
     private Timestamp createTime;
-    @Column(name = "update_time")
     private Timestamp updateTime;
-    @Column(name = "base_salary")
     private int baseSalary;
 
-    public Employee() {
+    private List<Salary> salaryList;
+
+    public EmployeeSalary() {
     }
 
     public String getEmpId() {
@@ -87,7 +77,7 @@ public class Employee {
         return departId;
     }
 
-    public void setDepartInt(Integer departId) {
+    public void setDepartInt(int departId) {
         this.departId = departId;
     }
 
@@ -115,8 +105,16 @@ public class Employee {
         this.baseSalary = baseSalary;
     }
 
-    public void setDepartId(int departId) {
+    public void setDepartId(Integer departId) {
         this.departId = departId;
+    }
+
+    public List<Salary> getSalaryList() {
+        return salaryList;
+    }
+
+    public void setSalaryList(List<Salary> salaryList) {
+        this.salaryList = salaryList;
     }
 
     @Override

@@ -11,7 +11,7 @@ public class Salary {
     private Long salaryId;
 
     @Column(name = "empId")
-    private Long empId;
+    private String empId;
 
     @Column(name = "money")
     private Long money;
@@ -20,7 +20,7 @@ public class Salary {
     private Integer salaryType;
 
     @Column(name = "salaryDate")
-    private Date salaryDate;
+    private String salaryDate;
 
     @Column(name = "createTime")
     private Date createTime;
@@ -31,6 +31,7 @@ public class Salary {
     @Column(name = "updateUserId")
     private Long updateUserId;
 
+    private SalaryType salaryTypeobj;
     /**
      * @return salary_id
      */
@@ -48,14 +49,14 @@ public class Salary {
     /**
      * @return emp_id
      */
-    public Long getEmpId() {
+    public String getEmpId() {
         return empId;
     }
 
     /**
      * @param empId
      */
-    public void setEmpId(Long empId) {
+    public void setEmpId(String empId) {
         this.empId = empId;
     }
 
@@ -90,14 +91,14 @@ public class Salary {
     /**
      * @return salary_date
      */
-    public Date getSalaryDate() {
+    public String getSalaryDate() {
         return salaryDate;
     }
 
     /**
      * @param salaryDate
      */
-    public void setSalaryDate(Date salaryDate) {
+    public void setSalaryDate(String salaryDate) {
         this.salaryDate = salaryDate;
     }
 
@@ -141,5 +142,13 @@ public class Salary {
      */
     public void setUpdateUserId(Long updateUserId) {
         this.updateUserId = updateUserId;
+    }
+
+    public SalaryType getSalaryTypeobj() {
+        return salaryTypeobj;
+    }
+
+    public void setSalaryTypeobj(SalaryType salaryTypeobj) {
+        this.salaryTypeobj = salaryTypeobj;
     }
 }
