@@ -42,7 +42,7 @@
         $('#loading').show();
         $.post("../../user/login", {'id':userName,'pwd':pwd},function(data){
             $('#loading').hide();
-                if(data.loginInfo){
+                if(data.code == "0000"){
                     location.href = "../pages/public";
                 }else {
                     alert("密码或用户错误!");

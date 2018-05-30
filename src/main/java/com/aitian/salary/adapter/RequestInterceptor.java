@@ -1,6 +1,9 @@
 package com.aitian.salary.adapter;
 
 import com.aitian.salary.Utils.ConverterSystem;
+import com.aitian.salary.Utils.ReponseCode;
+import com.aitian.salary.controller.response.BaseResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -19,6 +22,13 @@ public class RequestInterceptor extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
+
+        if(request.getRequestURI().equals("/error")){
+            BaseResponse br = new BaseResponse();
+            br.setCode(ReponseCode.ILLEGAL_REQUEST);
+            response.getWriter().write(new ObjectMapper().writeValueAsString(br));
+            return false;
+        }
         if (request.getRequestURI().equals("/index")||request.getRequestURI().indexOf("/login")>-1||request.getRequestURI().indexOf("/static/")>-1){
             //过滤地址
             return true;
