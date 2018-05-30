@@ -10,17 +10,9 @@ import javax.servlet.http.HttpServletRequest;
  * 静态页面跳转
  */
 @Controller
-public class IndexController {
+public class ViewController {
 
-    /**
-     *
-     */
-    @RequestMapping("/index")
-    public String index() {
-        return "/index";
-    }
-
-    @RequestMapping("/pages/*")
+    @RequestMapping("*.html")
     public String main(HttpServletRequest request) {
         return request.getRequestURI();
     }

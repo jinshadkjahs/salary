@@ -29,7 +29,7 @@ public class RequestInterceptor extends HandlerInterceptorAdapter {
             response.getWriter().write(new ObjectMapper().writeValueAsString(br));
             return false;
         }
-        if (request.getRequestURI().equals("/index")||request.getRequestURI().indexOf("/login")>-1||request.getRequestURI().indexOf("/static/")>-1){
+        if (request.getRequestURI().indexOf("/login")>-1||request.getRequestURI().indexOf("/static/")>-1){
             //过滤地址
             return true;
         }
@@ -38,7 +38,7 @@ public class RequestInterceptor extends HandlerInterceptorAdapter {
             return true;
 
         // 跳转登录
-        String url = "/index";
+        String url = "/login.html";
         response.sendRedirect(url);
         return false;
     }
