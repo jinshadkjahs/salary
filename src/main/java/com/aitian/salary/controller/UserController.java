@@ -36,7 +36,7 @@ public class UserController {
                 request.getSession().setAttribute(ConverterSystem.SESSION_USER_KEY,user);
                 br.setCode(ReponseCode.REQUEST_SUCCESS);
             }else {
-                br.setCode(ReponseCode.REQUEST_SUCCESS);
+                br.setCode(ReponseCode.PWD_OR_NAME_ERROR);
                 br.setMessage("Login failed; Password or user error!");
             }
         }else {
