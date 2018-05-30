@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+    <context id="context1" targetRuntime="MyBatis3">
+
+        <property name="javaFileEncoding" value="UTF-8"/>
+        <commentGenerator type="org.mybatis.generator.MyCommentGenerator">
+        </commentGenerator>
+
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver"
+                        connectionURL="jdbc:mysql://localhost:3306/salary?characterEncoding=UTF-8"
+                        userId="root"
+                        password="123456">
+
+            <property name="useActualColumnNames" value="true"/>
+
+        </jdbcConnection>
+
+        <javaTypeResolver>
+            <property name="forceBigDecimals" value="false"/>
+        </javaTypeResolver>
+
+        <!-- 模型对象 Model类 -->
+        <javaModelGenerator targetPackage="com.aitian.salary.model"
+                            targetProject="../../java">
+            <property name="enableSubPackages" value="true"/>
+            <property name="trimStrings" value="true"/>
+        </javaModelGenerator>
+
+        <!-- mybatis xml file -->
+        <!-- XML映射文件 -->
+        <!--<sqlMapGenerator targetPackage="com.beebank.gateway.mapper.buyback"-->
+                         <!--targetProject="../../java">-->
+            <!--<property name="enableSubPackages" value="true"/>-->
+        <!--</sqlMapGenerator>-->
+
+        <!--&lt;!&ndash; mapper class &ndash;&gt;-->
+        <!--&lt;!&ndash; 接口 &ndash;&gt;-->
+        <!--<javaClientGenerator type="XMLMAPPER"-->
+                             <!--targetPackage="com.beebank.gateway.mapper.buyback"-->
+                             <!--targetProject="../../java">-->
+            <!--<property name="enableSubPackages" value="true"/>-->
+        <!--</javaClientGenerator>-->
+
+        <table tableName="s_salary_type" domainObjectName="SalaryType"
+               enableCountByExample="false" enableUpdateByExample="false"
+               enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+            <!--<property name="useActualColumnNames" value="true"/>-->
+        </table>
+    </context>
+</generatorConfiguration>
+

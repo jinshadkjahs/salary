@@ -1,4 +1,145 @@
 package com.aitian.salary.model;
 
+import javax.persistence.Column;
+import javax.persistence.Table;
+import java.util.Date;
+
+@Table(name = "s_salary")
 public class Salary {
+
+    @Column(name = "salaryId")
+    private Long salaryId;
+
+    @Column(name = "empId")
+    private Long empId;
+
+    @Column(name = "money")
+    private Long money;
+
+    @Column(name = "salaryType")
+    private Integer salaryType;
+
+    @Column(name = "salaryDate")
+    private Date salaryDate;
+
+    @Column(name = "createTime")
+    private Date createTime;
+
+    @Column(name = "updateTime")
+    private Date updateTime;
+
+    @Column(name = "updateUserId")
+    private Long updateUserId;
+
+    /**
+     * @return salary_id
+     */
+    public Long getSalaryId() {
+        return salaryId;
+    }
+
+    /**
+     * @param salaryId
+     */
+    public void setSalaryId(Long salaryId) {
+        this.salaryId = salaryId;
+    }
+
+    /**
+     * @return emp_id
+     */
+    public Long getEmpId() {
+        return empId;
+    }
+
+    /**
+     * @param empId
+     */
+    public void setEmpId(Long empId) {
+        this.empId = empId;
+    }
+
+    /**
+     * @return money
+     */
+    public Long getMoney() {
+        return money;
+    }
+
+    /**
+     * @param money
+     */
+    public void setMoney(Long money) {
+        this.money = money;
+    }
+
+    /**
+     * @return salary_type
+     */
+    public Integer getSalaryType() {
+        return salaryType;
+    }
+
+    /**
+     * @param salaryType
+     */
+    public void setSalaryType(Integer salaryType) {
+        this.salaryType = salaryType;
+    }
+
+    /**
+     * @return salary_date
+     */
+    public Date getSalaryDate() {
+        return salaryDate;
+    }
+
+    /**
+     * @param salaryDate
+     */
+    public void setSalaryDate(Date salaryDate) {
+        this.salaryDate = salaryDate;
+    }
+
+    /**
+     * @return create_time
+     */
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    /**
+     * @param createTime
+     */
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    /**
+     * @return update_time
+     */
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    /**
+     * @param updateTime
+     */
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    /**
+     * @return update_user_id
+     */
+    public Long getUpdateUserId() {
+        return updateUserId;
+    }
+
+    /**
+     * @param updateUserId
+     */
+    public void setUpdateUserId(Long updateUserId) {
+        this.updateUserId = updateUserId;
+    }
 }
