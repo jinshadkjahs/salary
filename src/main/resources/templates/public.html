@@ -13,7 +13,7 @@
     <h1>工资管理系统</h1>
 
     <div class="publicHeaderR">
-        <p><span>下午好！</span><span style="color: #fff21b"> Admin</span> , 欢迎你！</p>
+        <p><span>下午好！</span><span id="loginUserName" style="color: #fff21b"> </span> , 欢迎你！</p>
         <a href="login.html">退出</a>
     </div>
 </header>
@@ -27,10 +27,10 @@
     <div class="left">
         <h2 class="leftH2"><span class="span1"></span>功能列表 <span></span></h2>
         <nav>
-            <ul class="list">
-                <li><a onclick="menuClick('billList',this)">员工管理</a></li>
+            <ul id="menuUl" style="display: none" class="list">
                 <li><a onclick="menuClick('providerList',this)">工资管理</a></li>
-                <li><a onclick="menuClick('login',this)">退出系统</a></li>
+                <li id="empSalaryQuery"><a onclick="menuClick('providerList',this)">工资查询</a></li>
+                <li><a onclick="menuClick('billList',this)">员工管理</a></li>
             </ul>
         </nav>
     </div>
@@ -53,6 +53,24 @@
         $(obj).parent().siblings().removeClass("selected");
         $(obj).parent().addClass("selected");
     }
+
+    $(function(){
+        $('#loading').show();
+        $.get("../../user/getLoginUser", {},function(data){
+            $('#loading').hide();
+            if(data.code == "0000"){
+                $("#loginUserName").text(data.data.empId);
+                if(data.data.userType == 0){
+                    $("#empSalaryQuery").hide();
+                }else {
+                    $("#empSalaryQuery").siblings().hide();
+                }
+                $("#menuUl").show();
+            }else  if(data.code == "1003"){
+                location.href = "login.html";
+            }
+        },'json');
+    });
 </script>
 <div id="loading">
     <img src="../static/img/loading.gif">

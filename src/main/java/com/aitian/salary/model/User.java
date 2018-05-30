@@ -12,6 +12,11 @@ public class User {
     @Column(name = "password")
     private String password;
 
+    @Column(name = "user_type")
+    private String userType;
+
+    private Employee employee;
+
     public String getEmpId() {
         return empId;
     }
@@ -26,5 +31,21 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Employee getEmployee() {
+        return employee;
+    }
+
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
+    }
+
+    public String getUserType() {
+        return userType;
+    }
+
+    public void setUserType(String userType) {
+        this.userType = userType;
     }
 }

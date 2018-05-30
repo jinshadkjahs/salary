@@ -11,6 +11,9 @@ public interface UserMapper {
     //Dao类
 
     @SelectProvider(type=UserDynaSqlProvider.class,method="findByLogin")
+    @Results({
+            @Result(property="userType",column="user_type")
+    })
     User findUserByPhoneByLogin(@Param("empId") String empId, @Param("pwd") String pwd);
 
 

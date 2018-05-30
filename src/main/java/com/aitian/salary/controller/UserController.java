@@ -11,12 +11,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.Map;
 
 @Controller
 @RequestMapping("/user")
@@ -46,4 +45,19 @@ public class UserController {
         return new ObjectMapper().writeValueAsString(br);
     }
 
+
+    @RequestMapping(value = "/getLoginUser",method = RequestMethod.GET)
+    @ResponseBody
+    public String getLoginUser(HttpServletRequest request) throws JsonProcessingException {
+        BaseResponse br = new BaseResponse();
+        User user = (User) request.getSession().getAttribute(ConverterSystem.SESSION_USER_KEY);
+        if(user != null){
+            br.setData(user);
+            br.setCode(ReponseCode.REQUEST_SUCCESS);
+        }else {
+            br.setCode(ReponseCode.NOT_LOGINED);
+            br.setMessage("not Login!");
+        }
+        return new ObjectMapper().writeValueAsString(br);
+    }
 }

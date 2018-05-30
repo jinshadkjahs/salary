@@ -10,5 +10,7 @@ public class ReponseCode {
     public static final String PARAMETER_NULL_ERROR = "1001";
     //用户或者密码错误
     public static final String PWD_OR_NAME_ERROR = "1002";
+    //参数为空
+    public static final String NOT_LOGINED = "1003";
 
 }

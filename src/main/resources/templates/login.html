@@ -13,17 +13,17 @@
             <h1>工资管理系统</h1>
         </header>
         <section class="loginCont">
-            <form class="loginForm" action="">
+            <form id="loginFrom" class="loginForm" method="post">
                 <div class="inputbox">
-                    <label for="user">用户名：</label>
-                    <input id="user" type="text" name="username" placeholder="请输入用户名" required/>
+                    <label for="id">用户名：</label>
+                    <input id="id" type="text" name="id" placeholder="请输入用户名" required/>
                 </div>
                 <div class="inputbox">
-                    <label for="mima">密码：</label>
-                    <input id="mima" type="password" name="password" placeholder="请输入密码" required/>
+                    <label for="pwd">密码：</label>
+                    <input id="pwd" type="password" name="pwd" placeholder="请输入密码" required/>
                 </div>
                 <div class="subBtn">
-                    <input type="button" onclick="chickUser()" value="登录" />
+                    <input type="submit"  value="登录" />
                     <input type="reset" value="重置"/>
                 </div>
 
@@ -31,19 +31,20 @@
         </section>
     </section>
     <script>
-        var chickUser = function() {
-            var userName = $('#user').val();
-            var pwd = $('#mima').val();
+        $("#loginFrom").submit(function(){
+            var userName = $('#id').val();
+            var pwd = $('#pwd').val();
             $('#loading').show();
             $.post("../../user/login", {'id':userName,'pwd':pwd},function(data){
                 $('#loading').hide();
                 if(data.code == "0000"){
                     location.href = "public.html";
                 }else {
+                    $('#pwd').val("");
                     alert("密码或用户错误!");
                 }
             },'json');
-        }
+        })
     </script>
 
     <div id="loading">
