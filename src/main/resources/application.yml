@@ -37,7 +37,7 @@ mapper:
     identity: MYSQL
 
 pagehelper:
-    helperDialect: oracle
+    helperDialect: MYSQL
     reasonable: true
     supportMethodsArguments: true
     params: count=countSql
