@@ -2,6 +2,7 @@ package com.aitian.salary.model;
 
 import javax.persistence.Column;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Table(name = "s_user")
 public class User {
@@ -15,6 +16,7 @@ public class User {
     @Column(name = "user_type")
     private String userType;
 
+    @Transient
     private Employee employee;
 
     public String getEmpId() {

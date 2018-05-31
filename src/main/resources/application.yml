@@ -32,9 +32,9 @@ spring:
       livereload:
           enabled: true
 mapper:
-    mappers: com.aitian.salary.Utils
+    mappers: com.aitian.salary.Utils.BaseMapper
     not-empty: false
-    identity: MySql
+    identity: MYSQL
 
 pagehelper:
     helperDialect: oracle
