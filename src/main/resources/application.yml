@@ -31,3 +31,13 @@ spring:
          exclude: WEB-INF/** #classpath目录下的WEB-INF文件夹内容修改不重启
       livereload:
           enabled: true
+mapper:
+    mappers: com.aitian.salary.Utils
+    not-empty: false
+    identity: MySql
+
+pagehelper:
+    helperDialect: oracle
+    reasonable: true
+    supportMethodsArguments: true
+    params: count=countSql

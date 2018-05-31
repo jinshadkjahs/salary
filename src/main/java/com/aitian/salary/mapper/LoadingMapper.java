@@ -29,6 +29,12 @@ public interface LoadingMapper {
     public List<EmployeeType> selectAllEmployeeType();
 
     @Select("select * from s_salary_type")
+    @Results({
+            @Result(id=true,property="salaryName",column="salary_name"),
+            @Result(property="salaryType",column="salary_type"),
+            @Result(property="type",column="type"),
+            @Result(property="empType",column="emp_type"),
+    })
     public List<SalaryType> selectAllSalaryType();
 
     @Select("select * from s_department")
