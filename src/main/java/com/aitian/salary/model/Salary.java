@@ -1,36 +1,38 @@
 package com.aitian.salary.model;
 
-import javax.persistence.Column;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Date;
 
 @Table(name = "s_salary")
 public class Salary {
 
-    @Column(name = "salaryId")
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "Mysql")
+    @Column(name = "salary_id")
     private Long salaryId;
 
-    @Column(name = "empId")
+    @Column(name = "emp_id")
     private String empId;
 
     @Column(name = "money")
     private Long money;
 
-    @Column(name = "salaryType")
+    @Column(name = "salary_type")
     private Integer salaryType;
 
-    @Column(name = "salaryDate")
+    @Column(name = "salary_date")
     private String salaryDate;
 
-    @Column(name = "createTime")
+    @Column(name = "create_time")
     private Date createTime;
 
-    @Column(name = "updateTime")
+    @Column(name = "update_time")
     private Date updateTime;
 
-    @Column(name = "updateUserId")
+    @Column(name = "update_user_id")
     private Long updateUserId;
 
+    @Transient
     private SalaryType salaryTypeobj;
     /**
      * @return salary_id

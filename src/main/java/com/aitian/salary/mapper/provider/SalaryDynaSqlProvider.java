@@ -19,7 +19,7 @@ public class SalaryDynaSqlProvider {
                 FROM("s_salary s");
                 LEFT_OUTER_JOIN("s_salary_type t on s.salary_type = t.salary_type");
                 if(StringUtils.isNotBlank(salary.getEmpId())){
-                    WHERE("s.empid = #{empId}");
+                    WHERE("s.emp_id = #{empId}");
                 }
                 if(StringUtils.isNotBlank(salary.getSalaryDate())){
                     WHERE("s.salary_date = #{salaryDate}");
@@ -36,14 +36,14 @@ public class SalaryDynaSqlProvider {
                 if(StringUtils.isNotBlank(emp.getEmpId())){
                     WHERE("s.empid = #{empId}");
                 }
-                if(StringUtils.isNotBlank(emp.getEmpType())){
+                if(emp.getEmpType() != null){
                     WHERE("s.emp_type = #{empType}");
                 }
                 if(emp.getDepartId() != null){
                     WHERE("s.depart_id = #{departId}");
                 }
                 if(StringUtils.isNotBlank(emp.getEmpName())){
-                    WHERE("s.emp_name like #{empname}");
+                    WHERE("s.emp_name like #{empName}");
                 }
             }
         }.toString();

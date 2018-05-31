@@ -21,6 +21,6 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
     // 增加拦截器
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new RequestInterceptor());
+//        registry.addInterceptor(new RequestInterceptor());
     }
 }

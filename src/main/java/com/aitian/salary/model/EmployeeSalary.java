@@ -13,12 +13,12 @@ public class EmployeeSalary {
     private String empName;
     private String empPhone;
     private String empCardNum;
-    private String empType;
+    private Integer empType;
     private Date waltzDate;
     private Integer departId;
     private Timestamp createTime;
     private Timestamp updateTime;
-    private int baseSalary;
+    private Integer baseSalary;
 
     private List<Salary> salaryList;
 
@@ -57,11 +57,11 @@ public class EmployeeSalary {
         this.empCardNum = empCardNum;
     }
 
-    public String getEmpType() {
+    public Integer getEmpType() {
         return empType;
     }
 
-    public void setEmpType(String empType) {
+    public void setEmpType(Integer empType) {
         this.empType = empType;
     }
 
@@ -97,11 +97,11 @@ public class EmployeeSalary {
         this.updateTime = updateTime;
     }
 
-    public int getBaseSalary() {
+    public Integer getBaseSalary() {
         return baseSalary;
     }
 
-    public void setBaseSalary(int baseSalary) {
+    public void setBaseSalary(Integer baseSalary) {
         this.baseSalary = baseSalary;
     }
 

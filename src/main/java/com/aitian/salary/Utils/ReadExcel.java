@@ -1,9 +1,6 @@
 package com.aitian.salary.Utils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -15,8 +12,11 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.tomcat.util.http.fileupload.FileUtils;
+import org.aspectj.util.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.ResourceUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
@@ -28,6 +28,7 @@ public class ReadExcel {
     private int totalCells = 0; 
     //错误信息接收器
     private String errorMsg;
+    private List<Salary> salaryList;
     //构造方法
     public ReadExcel(){}
     //获取总行数
@@ -55,55 +56,8 @@ public class ReadExcel {
    *
    * @return
    */
-  public List<Salary> getExcelInfo(String fileName, MultipartFile Mfile){
-      
-      //把spring文件上传的MultipartFile转换成CommonsMultipartFile类型
-       CommonsMultipartFile cf= (CommonsMultipartFile)Mfile; //获取本地存储路径
-       File file = new  File("D:\\fileupload");
-       //创建一个目录 （它的路径名由当前 File 对象指定，包括任一必须的父路径。）
-       if (!file.exists()) file.mkdirs();
-       //新建一个文件
-       File file1 = new File("D:\\fileupload" + new Date().getTime() + ".xlsx"); 
-       //将上传的文件写入新建的文件中
-       try {
-//           cf.getFileItem().write(file1);
-       } catch (Exception e) {
-           e.printStackTrace();
-       }
-       
-       //初始化客户信息的集合    
-       List<Salary> customerList=new ArrayList<Salary>();
-       //初始化输入流
-       InputStream is = null;  
-       try{
-          //验证文件名是否合格
-          if(!validateExcel(fileName)){
-              return null;
-          }
-          //根据文件名判断文件是2003版本还是2007版本
-          boolean isExcel2003 = true; 
-          if(WDWUtil.isExcel2007(fileName)){
-              isExcel2003 = false;  
-          }
-          //根据新建的文件实例化输入流
-          is = new FileInputStream(file1);
-          //根据excel里面的内容读取客户信息
-          customerList = getExcelInfo(is, isExcel2003); 
-          is.close();
-      }catch(Exception e){
-          e.printStackTrace();
-      } finally{
-          if(is !=null)
-          {
-              try{
-                  is.close();
-              }catch(IOException e){
-                  is = null;    
-                  e.printStackTrace();  
-              }
-          }
-      }
-      return customerList;
+  public List<Salary> getExcelInfo(){
+    return salaryList;
   }
   /**
    * 根据excel里面的内容读取客户信息
@@ -181,6 +135,59 @@ public class ReadExcel {
            customerList.add(customer);
        }
        return customerList;
-  }
+    }
+
+    public int[] checkExcel( FileInputStream inputStream, String fileName) {
+       int[] suucess = new int[0];
+        File file1 = null;
+        try {
+            File path = new File(ResourceUtils.getURL("classpath:").getPath());
+            File file = new  File(path.getAbsolutePath(),"\\upload\\");
+            //创建一个目录 （它的路径名由当前 File 对象指定，包括任一必须的父路径。）
+            if (!file.exists()) file.mkdirs();
+            //新建一个文件
+            file1 = new File(file.getAbsoluteFile()+"\\fileupload" + new Date().getTime() + ".xlsx");
+            //将上传的文件写入新建的文件中
+
+            FileUtil.copyStream(inputStream, new FileOutputStream(file1));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        //初始化客户信息的集合
+        List<Salary> salarys=new ArrayList<Salary>();
+        //初始化输入流
+        InputStream is = null;
+        try{
+            //验证文件名是否合格
+            if(!validateExcel(fileName)){
+                return null;
+            }
+            //根据文件名判断文件是2003版本还是2007版本
+            boolean isExcel2003 = true;
+            if(WDWUtil.isExcel2007(fileName)){
+                isExcel2003 = false;
+            }
+            //根据新建的文件实例化输入流
+            is = new FileInputStream(file1);
+            //根据excel里面的内容读取客户信息
+            salarys = getExcelInfo(is, isExcel2003);
+            is.close();
+        }catch(Exception e){
+            e.printStackTrace();
+        } finally{
+            if(is !=null)
+            {
+                try{
+                    is.close();
+                }catch(IOException e){
+                    is = null;
+                    e.printStackTrace();
+                }
+            }
+        }
+        salaryList = salarys;
+        return  suucess;
+    }
 
 }
