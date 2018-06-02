@@ -107,7 +107,7 @@ option{
     background: url("../img/leftBg.png") 0 0 repeat-y;
     margin-right: 10px;
     /*height: 520px;*/
-    min-height: 520px;
+    min-height: 575px;
 
 }
 .leftH2{
@@ -262,7 +262,7 @@ option{
 /*底部*/
 .footer{
     width: 100%;
-    line-height: 40px;
+    line-height: 30px;
     text-align: center;
     color: #fff;
     background: #4287c2;
