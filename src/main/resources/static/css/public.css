@@ -4,7 +4,6 @@
 }
 body{
     font-size: 12px;
-    background: #4287c2;
 }
 .clear:after{
     content: '';
@@ -170,7 +169,7 @@ li{
 
 /*右边*/
 .right{
-    width: 85%;
+    width: 87%;
 }
 /*右边所在位置栏*/
 .location{
@@ -257,6 +256,7 @@ li{
     line-height: 40px;
     text-align: center;
     color: #fff;
+    background: #4287c2;
 }
 
 .selected{
