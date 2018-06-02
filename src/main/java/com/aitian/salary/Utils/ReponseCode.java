@@ -31,4 +31,9 @@ public class ReponseCode {
      */
     public static final String EXCEL_IMPORT_ERROR = "1005";
 
+    /**
+     * 请求失败
+     */
+    public static final String REQUEST_ERROR = "1006";
+
 }
