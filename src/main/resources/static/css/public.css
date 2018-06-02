@@ -169,7 +169,8 @@ li{
 
 /*右边*/
 .right{
-    width: 87%;
+    width: 88%;
+    padding-right: 10px;
 }
 /*右边所在位置栏*/
 .location{
