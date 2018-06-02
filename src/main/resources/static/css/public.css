@@ -4,7 +4,6 @@
 }
 body{
     font-size: 12px;
-    background: #4287c2;
 }
 .clear:after{
     content: '';
@@ -17,7 +16,15 @@ a{
 li{
     list-style: none;
 }
+select{
+    width: auto;
+    padding: 0 0.8%;
+    margin: 0;
+}
 
+option{
+    text-align:center;
+}
 /*公共样式，头部*/
 .publicHeader{
     height: 48px;
@@ -170,7 +177,8 @@ li{
 
 /*右边*/
 .right{
-    width: 85%;
+    width: 88%;
+    padding-right: 10px;
 }
 /*右边所在位置栏*/
 .location{
@@ -257,6 +265,7 @@ li{
     line-height: 40px;
     text-align: center;
     color: #fff;
+    background: #4287c2;
 }
 
 .selected{
