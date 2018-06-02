@@ -28,9 +28,9 @@
         <h2 class="leftH2"><span class="span1"></span>功能列表 <span></span></h2>
         <nav>
             <ul id="menuUl" style="display: none" class="list">
-                <li><a onclick="menuClick('providerList',this)">工资管理</a></li>
-                <li id="empSalaryQuery"><a onclick="menuClick('providerList',this)">工资查询</a></li>
-                <li><a onclick="menuClick('billList',this)">员工管理</a></li>
+                <li><a onclick="menuClick('salarymanager/list.html',this)">工资管理</a></li>
+                <li id="empSalaryQuery"><a onclick="menuClick('salaryuser/list.html',this)">工资查询</a></li>
+                <li><a onclick="menuClick('employee/list.html',this)">员工管理</a></li>
             </ul>
         </nav>
     </div>
@@ -74,6 +74,19 @@
 </script>
 <div id="loading">
     <img src="../static/img/loading.gif">
+</div>
+
+<!--点击删除按钮后弹出的页面-->
+<div class="zhezhao"></div>
+<div class="remove" id="removeBi">
+    <div class="removerChid">
+        <h2>提示</h2>
+        <div class="removeMain">
+            <p>你确定要删除该订单吗？</p>
+            <a href="#" id="yes">确定</a>
+            <a href="#" id="no">取消</a>
+        </div>
+    </div>
 </div>
 </body>
 </html>
