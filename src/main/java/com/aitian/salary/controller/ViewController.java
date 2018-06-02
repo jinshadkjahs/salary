@@ -17,4 +17,9 @@ public class ViewController {
         return request.getRequestURI();
     }
 
+
+    @RequestMapping("*/*.html")
+    public String html(HttpServletRequest request) {
+        return request.getRequestURI();
+    }
 }
