@@ -1,0 +1,50 @@
+﻿<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../static/css/public.css"/>
+    <link rel="stylesheet" href="../static/css/style.css"/>
+</head>
+<body>
+        <div class="location">
+            <strong>你现在所在的位置是:</strong>
+            <span>员工管理</span>
+        </div>
+        <div class="search">
+            <span>员工编号：</span>
+            <input id="empNo" type="text" placeholder="请输入员工编号"/>
+
+            <span>员工姓名：</span>
+            <input id="empName" type="text" placeholder="请输入员工姓名"/>
+
+            <!--<span>是否付款：</span>
+            <select name="fukuan">
+                <option value="">&#45;&#45;请选择&#45;&#45;</option>
+                <option value="">已付款</option>
+                <option value="">未付款</option>
+            </select>-->
+
+            <input id="queryEmp" onclick="queryEmp()" type="button" value="查询"/>
+            <a onclick="addEmployee()">添加员工</a>
+        </div>
+        <table id="employee" class="providerTable" cellpadding="0" cellspacing="0">
+            <tr class="firstTr">
+                <th width="10%">员工编号</th>
+                <th width="20%">员工姓名</th>
+                <th width="10%">手机号</th>
+                <th width="10%">身份证编号</th>
+                <th width="10%">员工类别</th>
+                <th width="10%">基本工资</th>
+                <th width="10%">操作</th>
+            </tr>
+
+        </table>
+        <div id="empPage">
+
+        </div>
+<script src="../static/js/jquery.js"></script>
+<script src="../static/js/js.js"></script>
+<script src="../static/js/page.js"></script>
+<script src="../static/js/empManage.js"></script>
+</body>
+</html>
