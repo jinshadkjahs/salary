@@ -19,4 +19,6 @@ public interface EmployeeService {
     public PageInfo<Employee> findEmployee(String empId, String empName, Integer page, Integer pageSize);
 
     public Employee queryEmpForUser(String empId);
+
+    public void deleteEmp(String empId);
 }

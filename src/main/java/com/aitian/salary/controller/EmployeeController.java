@@ -63,5 +63,21 @@ public class EmployeeController {
         return br;
     }
 
+    @RequestMapping(value = "/deleteEmp",method = RequestMethod.POST)
+    @ResponseBody
+    public Object deleteEmp(HttpServletRequest request){
+        BaseResponse br = new BaseResponse();
+        String empId = request.getParameter("empId");
+        try{
+            employeeService.deleteEmp(empId);
+            br.setCode(ReponseCode.REQUEST_SUCCESS);
+            br.setMessage("删除成功！");
+        }catch (Exception ex){
+            br.setCode(ReponseCode.REQUEST_ERROR);
+            br.setMessage("删除错误：\n"+ex.getMessage());
+
+        }
+        return br;
+    }
 
 }

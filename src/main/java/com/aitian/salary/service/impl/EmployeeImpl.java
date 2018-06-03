@@ -27,7 +27,7 @@ public class EmployeeImpl implements EmployeeService {
         if(StringUtils.isNotBlank(empName)){
             employee.setEmpName(empName);
         }
-        List<Employee> employeeList = employeeMapper.selectAll();
+        List<Employee> employeeList = employeeMapper.select(employee);
         PageInfo<Employee> pageInfo = new PageInfo<>(employeeList);
         return pageInfo;
     }
@@ -40,6 +40,15 @@ public class EmployeeImpl implements EmployeeService {
         }
         Employee emp = employeeMapper.selectByPrimaryKey(employee);
         return emp;
+    }
+
+    @Override
+    public void deleteEmp(String empId) {
+        Employee employee = new Employee();
+        if(StringUtils.isNotBlank(empId)){
+            employee.setEmpId(empId);
+        }
+        employeeMapper.delete(employee);
     }
 }
 

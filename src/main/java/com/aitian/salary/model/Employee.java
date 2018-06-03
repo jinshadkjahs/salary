@@ -30,7 +30,7 @@ public class Employee {
     @Column(name = "update_time")
     private Timestamp updateTime;
     @Column(name = "base_salary")
-    private int baseSalary;
+    private Integer baseSalary;
 
     public Employee() {
     }
@@ -107,11 +107,11 @@ public class Employee {
         this.updateTime = updateTime;
     }
 
-    public int getBaseSalary() {
+    public Integer getBaseSalary() {
         return baseSalary;
     }
 
-    public void setBaseSalary(int baseSalary) {
+    public void setBaseSalary(Integer baseSalary) {
         this.baseSalary = baseSalary;
     }
 
