@@ -69,13 +69,21 @@ public class EmployeeController {
         BaseResponse br = new BaseResponse();
         String empId = request.getParameter("empId");
         try{
-            employeeService.deleteEmp(empId);
-            br.setCode(ReponseCode.REQUEST_SUCCESS);
-            br.setMessage("删除成功！");
+            List<Employee> employees = employeeService.queryEmpAndUser(empId);
+            if(employees.size()>0){
+                employeeService.deleteEmp(empId);
+                br.setCode(ReponseCode.REQUEST_SUCCESS);
+                br.setMessage("删除成功！");
+            }else{
+                br.setCode(ReponseCode.REQUEST_ERROR);
+                br.setMessage("员工删除失败:\n该员工在用户表中无对应信息！");
+                return br;
+            }
+
         }catch (Exception ex){
             br.setCode(ReponseCode.REQUEST_ERROR);
             br.setMessage("删除错误：\n"+ex.getMessage());
-
+            return br;
         }
         return br;
     }

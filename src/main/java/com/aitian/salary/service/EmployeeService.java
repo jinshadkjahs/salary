@@ -21,4 +21,6 @@ public interface EmployeeService {
     public Employee queryEmpForUser(String empId);
 
     public void deleteEmp(String empId);
+
+    public List<Employee> queryEmpAndUser(String empId);
 }

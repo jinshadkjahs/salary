@@ -1,7 +1,9 @@
 package com.aitian.salary.service.impl;
 
 import com.aitian.salary.mapper.EmployeeMapper;
+import com.aitian.salary.mapper.UserMapper;
 import com.aitian.salary.model.Employee;
+import com.aitian.salary.model.User;
 import com.aitian.salary.service.EmployeeService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -16,6 +18,9 @@ public class EmployeeImpl implements EmployeeService {
 
     @Autowired
     private EmployeeMapper employeeMapper;
+
+    @Autowired
+    private UserMapper userMapper;
 
     @Override
     public PageInfo<Employee> findEmployee(String empId, String empName, Integer page, Integer pageSize){
@@ -45,10 +50,24 @@ public class EmployeeImpl implements EmployeeService {
     @Override
     public void deleteEmp(String empId) {
         Employee employee = new Employee();
+        User user = new User();
+        if(StringUtils.isNotBlank(empId)){
+            employee.setEmpId(empId);
+            user.setEmpId(empId);
+        }
+        employeeMapper.delete(employee);
+        userMapper.delete(user);
+    }
+
+    @Override
+    public List<Employee> queryEmpAndUser(String empId) {
+        Employee employee = new Employee();
         if(StringUtils.isNotBlank(empId)){
             employee.setEmpId(empId);
         }
-        employeeMapper.delete(employee);
+        List<Employee> employees = employeeMapper.queryEmpAndUser(employee);
+
+        return employees;
     }
 }
 

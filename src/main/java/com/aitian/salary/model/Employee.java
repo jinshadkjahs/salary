@@ -3,6 +3,7 @@ package com.aitian.salary.model;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.sql.Date;
 import java.sql.Timestamp;
 
@@ -31,8 +32,21 @@ public class Employee {
     private Timestamp updateTime;
     @Column(name = "base_salary")
     private Integer baseSalary;
-
+    @Transient
+    private User user;
     public Employee() {
+    }
+
+    public void setDepartId(Integer departId) {
+        this.departId = departId;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public String getEmpId() {
