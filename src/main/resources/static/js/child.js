@@ -16,3 +16,9 @@ function confirmShow(confirmTishi, functionName, args){
 function confirmHide(){
     parent.confirmHide();
 }
+
+function toLogin(code) {
+    if(data.code == "1111" || data.code == "1003"){
+        parent.toLogin();
+    }
+}

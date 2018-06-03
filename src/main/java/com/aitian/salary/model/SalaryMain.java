@@ -1,10 +1,11 @@
 package com.aitian.salary.model;
 
+import java.sql.Date;
 import javax.persistence.*;
-import java.util.Date;
+import java.util.List;
 
-@Table(name = "s_salary")
-public class Salary {
+@Table(name = "s_salary_main")
+public class SalaryMain {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "Mysql")
@@ -13,12 +14,6 @@ public class Salary {
 
     @Column(name = "emp_id")
     private String empId;
-
-    @Column(name = "money")
-    private Long money;
-
-    @Column(name = "salary_type")
-    private Integer salaryType;
 
     @Column(name = "salary_date")
     private String salaryDate;
@@ -32,8 +27,19 @@ public class Salary {
     @Column(name = "update_user_id")
     private Long updateUserId;
 
-    @Transient
-    private SalaryType salaryTypeobj;
+    /**
+     * 应发工资
+     */
+    @Column(name = "gross_pay")
+    private Long grossPay;
+
+    /**
+     * 实发工资
+     */
+    @Column(name = "net_payroll")
+    private Long netPayroll;
+
+
     /**
      * @return salary_id
      */
@@ -60,34 +66,6 @@ public class Salary {
      */
     public void setEmpId(String empId) {
         this.empId = empId;
-    }
-
-    /**
-     * @return money
-     */
-    public Long getMoney() {
-        return money;
-    }
-
-    /**
-     * @param money
-     */
-    public void setMoney(Long money) {
-        this.money = money;
-    }
-
-    /**
-     * @return salary_type
-     */
-    public Integer getSalaryType() {
-        return salaryType;
-    }
-
-    /**
-     * @param salaryType
-     */
-    public void setSalaryType(Integer salaryType) {
-        this.salaryType = salaryType;
     }
 
     /**
@@ -146,11 +124,42 @@ public class Salary {
         this.updateUserId = updateUserId;
     }
 
-    public SalaryType getSalaryTypeobj() {
-        return salaryTypeobj;
+
+    public Long getGrossPay() {
+        return grossPay;
     }
 
-    public void setSalaryTypeobj(SalaryType salaryTypeobj) {
-        this.salaryTypeobj = salaryTypeobj;
+    public void setGrossPay(Long grossPay) {
+        this.grossPay = grossPay;
+    }
+
+    public Long getNetPayroll() {
+        return netPayroll;
+    }
+
+    public void setNetPayroll(Long netPayroll) {
+        this.netPayroll = netPayroll;
+    }
+
+    @Transient
+    private List<SalaryTypeEmp> salaryTypeEmpList;
+
+    @Transient
+    private Employee employee;
+
+    public List<SalaryTypeEmp> getSalaryTypeEmpList() {
+        return salaryTypeEmpList;
+    }
+
+    public void setSalaryTypeEmpList(List<SalaryTypeEmp> salaryTypeEmpList) {
+        this.salaryTypeEmpList = salaryTypeEmpList;
+    }
+
+    public Employee getEmployee() {
+        return employee;
+    }
+
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
     }
 }

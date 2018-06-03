@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>工资管理系统</title>
+    <link rel="stylesheet" href="../../static/css/public.css"/>
+    <link rel="stylesheet" href="../../static/css/style.css"/>
+</head>
+<body>
+<!--头部-->
+
+<div class="location">
+    <strong>你现在所在的位置是:</strong>
+    <span>工资管理</span>
+</div>
+<div class="search">
+    <form id="salarySearchForm" style="display: inline-block">
+        <span>员工类型：</span>
+        <select id="empType" name="empType">
+
+        </select>
+        <span>员工姓名：</span>
+        <input type="text" style="width: 105px" id="empName" name="empName" placeholder="请输入员工姓名"/>
+        <input type="hidden" id="pageN" name="pageN" />
+        <input type="hidden" id="salaryDate" name="salaryDate" />
+
+        <span>科室</span>
+        <select id="departId" name="departId">
+            <option value="">--请选择--</option>
+        </select>
+
+        <span>年月：</span>
+        <select id="salaryYear" name="salaryYear">
+            <option value="">--请选择--</option>
+        </select>
+        <select id="salaryMonth" name="salaryMonth">
+            <option value="">--请选择--</option>
+        </select>
+    </form>
+
+    <input type="button" onclick="queryPage(1)" value="查询"/>
+    <a href="billAdd.html">添加订单</a>
+</div>
+<table id="dataTab" class="providerTable" cellpadding="0" cellspacing="0">
+    <tr class="firstTr">
+        <th width="10%">序号</th>
+        <th width="15%">职工编号</th>
+        <th width="10%">科室</th>
+        <th width="10%">姓名</th>
+        <th width="10%">类别</th>
+        <th width="10%">日期</th>
+        <th width="10%">应领工资</th>
+        <th width="10%">实领工资</th>
+        <th width="20%">操作</th>
+    </tr>
+</table>
+<div id="pageInfo">
+</div>
+<!--<input id="aaa">
+<input id="bbb">
+<button onclick="cccc()">1111</button>-->
+<script type="text/javascript" src="../../static/js/jquery.js"></script>
+<script src="../../static/js/child.js"></script>
+<script src="../../static/js/salaryManager.js"></script>
+<script src="../../static/js/page.js"></script>
+<script>
+    function cccc() {
+        $("#sss").empty();
+        $("#sss").append(getPageHtml(parseInt($("#aaa").val()),parseInt($("#bbb").val()),"klll"))
+    }
+    $(function () {
+        $("#sss").append(getPageHtml(1,10,"klll"));
+    })
+    function klll(obj) {
+        alert($(obj).attr("forPage"));
+    }
+</script>
+</body>
+</html>

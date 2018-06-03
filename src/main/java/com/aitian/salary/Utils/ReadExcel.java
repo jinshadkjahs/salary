@@ -5,7 +5,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.aitian.salary.model.Salary;
+import com.aitian.salary.model.SalaryMain;
+import com.aitian.salary.model.SalaryTypeEmp;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -28,7 +29,7 @@ public class ReadExcel {
     private int totalCells = 0; 
     //错误信息接收器
     private String errorMsg;
-    private List<Salary> salaryList;
+    private List<SalaryMain> salaryList;
     //构造方法
     public ReadExcel(){}
     //获取总行数
@@ -56,7 +57,7 @@ public class ReadExcel {
    *
    * @return
    */
-  public List<Salary> getExcelInfo(){
+  public List<SalaryMain> getExcelInfo(){
     return salaryList;
   }
   /**
@@ -66,8 +67,8 @@ public class ReadExcel {
    * @return
    * @throws IOException
    */
-  public  List<Salary> getExcelInfo(InputStream is,boolean isExcel2003){
-       List<Salary> customerList=null;
+  public  List<SalaryMain> getExcelInfo(InputStream is,boolean isExcel2003){
+       List<SalaryMain> customerList=null;
        try{
            /** 根据版本选择创建Workbook的方式 */
            Workbook wb = null;
@@ -91,7 +92,7 @@ public class ReadExcel {
    * @param wb
    * @return
    */
-  private List<Salary> readExcelValue(Workbook wb){
+  private List<SalaryMain> readExcelValue(Workbook wb){
       //得到第一个shell  
        Sheet sheet=wb.getSheetAt(0);
        
@@ -103,13 +104,13 @@ public class ReadExcel {
             this.totalCells=sheet.getRow(0).getPhysicalNumberOfCells();
        }
        
-       List<Salary> customerList=new ArrayList<Salary>();
-      Salary customer;
+       List<SalaryMain> customerList=new ArrayList<SalaryMain>();
+      SalaryMain customer;
       //循环Excel行数,从第二行开始。标题不入库
        for(int r=1;r<totalRows;r++){
            Row row = sheet.getRow(r);
            if (row == null) continue;
-           customer = new Salary();
+           customer = new SalaryMain();
            
            //循环Excel的列
            for(int c = 0; c <this.totalCells; c++){    
@@ -155,7 +156,7 @@ public class ReadExcel {
         }
 
         //初始化客户信息的集合
-        List<Salary> salarys=new ArrayList<Salary>();
+        List<SalaryMain> salarys=new ArrayList<SalaryMain>();
         //初始化输入流
         InputStream is = null;
         try{

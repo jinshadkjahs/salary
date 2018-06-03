@@ -23,6 +23,9 @@ function confirmHide(){
     $('.zhezhao').css('display', 'none');
     $('#removeBi').fadeOut();
 }
+function toLogin(){
+    location.href = "../loin.html";
+}
 
 $(function () {
     $('#confirmno').click(function () {

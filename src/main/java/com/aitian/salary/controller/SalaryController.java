@@ -3,8 +3,8 @@ package com.aitian.salary.controller;
 import com.aitian.salary.Utils.ConverterSystem;
 import com.aitian.salary.Utils.ReponseCode;
 import com.aitian.salary.controller.response.BaseResponse;
-import com.aitian.salary.model.EmployeeSalary;
-import com.aitian.salary.model.Salary;
+import com.aitian.salary.model.SalaryMain;
+import com.aitian.salary.model.SalaryTypeEmp;
 import com.aitian.salary.service.SalaryService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,17 +15,13 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,13 +34,13 @@ public class SalaryController {
     @Resource
     private SalaryService salaryService;
 
-    @RequestMapping(value = "/getSalarys")
+    @RequestMapping(value = "/getSalarys",method =RequestMethod.GET)
     @ResponseBody
-    public String getSalaryList(HttpServletRequest request) throws Exception {
+    public BaseResponse getSalaryList(HttpServletRequest request) throws Exception {
         BaseResponse br = new BaseResponse();
-        String empNme = request.getParameter("empNme");
+        String empNme = request.getParameter("empName");
         String salaryDate = request.getParameter("salaryDate");
-        String empId = request.getParameter("salaryDate");
+        String empId = request.getParameter("empId");
         String departIdStr = request.getParameter("departId");
         String empTypeStr = request.getParameter("empType");
         String pageNStr = request.getParameter("pageN");
@@ -87,23 +83,23 @@ public class SalaryController {
 
         if (paramterIllegal){
             //验证通过
-            PageInfo<EmployeeSalary> salaryPageInfo = salaryService.findEmpSalary(empNme,empId,salaryDate,departId,empType,pageN, ConverterSystem.PAGE_SIZE);
+            PageInfo<SalaryMain> salaryPageInfo = salaryService.findEmpSalary(empNme,empId,salaryDate,departId,empType,pageN, ConverterSystem.PAGE_SIZE);
             br.setData(salaryPageInfo);
             br.setCode(com.aitian.salary.Utils.ReponseCode.REQUEST_SUCCESS);
         }else {
             br.setCode(com.aitian.salary.Utils.ReponseCode.ILLEGAL_PARAMETER);
             br.setMessage("The parameter is ILLEGAL!");
         }
-        return new ObjectMapper().writeValueAsString(br);
+        return br;
     }
 
     @RequestMapping(value = "/getSalary", method = RequestMethod.GET)
     @ResponseBody
-    public String getSalary(HttpServletRequest request, String empId) throws Exception {
+    public BaseResponse getSalary(HttpServletRequest request, String empId, String salaryDate) throws Exception {
         BaseResponse br = new BaseResponse();
         if(StringUtils.isNotBlank(empId)){
-            PageInfo<EmployeeSalary> salaryPageInfo = salaryService.findEmpSalary(null,empId,null,null,null,1, ConverterSystem.PAGE_SIZE);
-            List<EmployeeSalary> salaries = salaryPageInfo.getList();
+            PageInfo<SalaryMain> salaryPageInfo = salaryService.findEmpSalary(null,empId,salaryDate,null,null,1, ConverterSystem.PAGE_SIZE);
+            List<SalaryMain> salaries = salaryPageInfo.getList();
             if(salaries.size() != 0){
                 br.setData(salaries.get(0));
             }
@@ -112,82 +108,82 @@ public class SalaryController {
             br.setCode(com.aitian.salary.Utils.ReponseCode.PARAMETER_NULL_ERROR);
             br.setMessage("The parameter is NULL!");
         }
-        return new ObjectMapper().writeValueAsString(br);
+        return br;
     }
 
     @RequestMapping(value = "/addSalary", method = RequestMethod.POST)
     @ResponseBody
-    public String addSalary(HttpServletRequest request, List<Salary> salaryList) throws Exception {
+    public BaseResponse addSalary(HttpServletRequest request, SalaryMain salaryMain) throws Exception {
         BaseResponse br = new BaseResponse();
         boolean paramterIllegal = true;
         //数据验证
-        for (Salary salary: salaryList ) {
-            //员工编号是否为空
-            if (StringUtils.isBlank(salary.getEmpId())){
-                paramterIllegal = false;
-                break;
-            }
-            //工资类型是否存在
-            if (ConverterSystem.ALL_SALARY_TYPE.get(salary.getSalaryType()) == null){
-                paramterIllegal = false;
-                break;
-            }
-        }
+//        for (Salary salary: salaryList ) {
+//            //员工编号是否为空
+//            if (StringUtils.isBlank(salary.getEmpId())){
+//                paramterIllegal = false;
+//                break;
+//            }
+//            //工资类型是否存在
+//            if (ConverterSystem.ALL_SALARY_TYPE.get(salary.getSalaryType()) == null){
+//                paramterIllegal = false;
+//                break;
+//            }
+//        }
         if(paramterIllegal){
-            salaryService.addSalaryList(salaryList);
+//            salaryService.addSalaryList(salaryList);
             br.setCode(com.aitian.salary.Utils.ReponseCode.REQUEST_SUCCESS);
         }else {
             br.setCode(com.aitian.salary.Utils.ReponseCode.ILLEGAL_PARAMETER);
             br.setMessage("The parameter is ILLEGAL!");
         }
-        return new ObjectMapper().writeValueAsString(br);
+        return br;
     }
 
     @RequestMapping(value = "/updateSalary", method = RequestMethod.PUT)
     @ResponseBody
-    public String updateSalary(HttpServletRequest request, List<Salary> salaryList) throws Exception {
+    public BaseResponse updateSalary(HttpServletRequest request, List<SalaryMain> salaryList) throws Exception {
         BaseResponse br = new BaseResponse();
         boolean paramterIllegal = true;
         //数据验证
-        for (Salary salary: salaryList ) {
-            //员工编号是否为空
-            if (StringUtils.isBlank(salary.getEmpId())){
-                paramterIllegal = false;
-                break;
-            }
-            //工资类型是否存在
-            if (ConverterSystem.ALL_SALARY_TYPE.get(salary.getSalaryType()) == null){
-                paramterIllegal = false;
-                break;
-            }
-        }
+//        for (Salary salary: salaryList ) {
+//            //员工编号是否为空
+//            if (StringUtils.isBlank(salary.getEmpId())){
+//                paramterIllegal = false;
+//                break;
+//            }
+//            //工资类型是否存在
+//            if (ConverterSystem.ALL_SALARY_TYPE.get(salary.getSalaryType()) == null){
+//                paramterIllegal = false;
+//                break;
+//            }
+//        }
         if(paramterIllegal){
-            salaryService.updateSalarys(salaryList);
+//            salaryService.updateSalarys(salaryList);
             br.setCode(com.aitian.salary.Utils.ReponseCode.REQUEST_SUCCESS);
         }else {
             br.setCode(com.aitian.salary.Utils.ReponseCode.ILLEGAL_PARAMETER);
             br.setMessage("The parameter is ILLEGAL!");
         }
-        return new ObjectMapper().writeValueAsString(br);
+        return br;
     }
 
     @RequestMapping(value = "/deleteSalary", method = RequestMethod.DELETE)
     @ResponseBody
-    public String deleteSalary(HttpServletRequest request, String empId) throws Exception {
+    public BaseResponse deleteSalary(HttpServletRequest request, String salaryId) throws Exception {
         BaseResponse br = new BaseResponse();
-        if(StringUtils.isNotBlank(empId)){
-            salaryService.deleteSalaryByEmpId(empId);
+        if(StringUtils.isNotBlank(salaryId)){
+            salaryService.deleteSalary(salaryId);
             br.setCode(com.aitian.salary.Utils.ReponseCode.REQUEST_SUCCESS);
         }else{
             br.setCode(com.aitian.salary.Utils.ReponseCode.PARAMETER_NULL_ERROR);
             br.setMessage("The parameter is NULL!");
         }
-        return new ObjectMapper().writeValueAsString(br);
+        return br;
     }
 
 
     @RequestMapping(value = "/batchimport", method = RequestMethod.POST)
-    public String getParamFromFileForAjax(HttpServletRequest request, String fileName) throws Exception  {
+    public BaseResponse getParamFromFileForAjax(HttpServletRequest request, String fileName) throws Exception  {
         BaseResponse br = new BaseResponse();
         br.setCode(ReponseCode.ILLEGAL_PARAMETER);
         Map<String, Object> paramMap = new LinkedHashMap<String, Object>();
@@ -217,7 +213,36 @@ public class SalaryController {
             br.setMessage("The file import error!");
             br.setData(arr);
         }
-        return new ObjectMapper().writeValueAsString(br);
+        return br;
+    }
+
+
+    @RequestMapping(value = "/getDeparts", method = RequestMethod.GET)
+    @ResponseBody
+    public BaseResponse getDepartIds(HttpServletRequest request) throws Exception {
+        BaseResponse br = new BaseResponse();
+        if(ConverterSystem.ALL_DEPARTMENT != null){
+            br.setData(ConverterSystem.ALL_DEPARTMENT.values());
+            br.setCode(com.aitian.salary.Utils.ReponseCode.REQUEST_SUCCESS);
+        }else{
+            br.setCode(com.aitian.salary.Utils.ReponseCode.REQUEST_ERROR);
+            br.setMessage("The parameter is NULL!");
+        }
+        return br;
+    }
+
+    @RequestMapping(value = "/getEmpTypes", method = RequestMethod.GET)
+    @ResponseBody
+    public BaseResponse getEmpTypes(HttpServletRequest request) throws Exception {
+        BaseResponse br = new BaseResponse();
+        if(ConverterSystem.ALL_EMPLOYEE_TYPE != null){
+            br.setData(ConverterSystem.ALL_EMPLOYEE_TYPE.values());
+            br.setCode(com.aitian.salary.Utils.ReponseCode.REQUEST_SUCCESS);
+        }else{
+            br.setCode(com.aitian.salary.Utils.ReponseCode.REQUEST_ERROR);
+            br.setMessage("The parameter is NULL!");
+        }
+        return br;
     }
 
 }

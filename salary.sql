@@ -11,7 +11,7 @@
  Target Server Version : 50640
  File Encoding         : 65001
 
- Date: 03/06/2018 17:44:36
+ Date: 03/06/2018 21:18:15
 */
 
 SET NAMES utf8mb4;
@@ -245,33 +245,6 @@ CREATE TABLE `s_employee`  (
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
 
 -- ----------------------------
--- Records of s_employee
--- ----------------------------
-INSERT INTO `s_employee` VALUES ('0', '11', '11', '1', '1', '2018-05-31', 1, '2018-05-31 21:07:55', '2018-05-30 21:07:58', 500000);
-
--- ----------------------------
--- Table structure for s_salary
--- ----------------------------
-DROP TABLE IF EXISTS `s_salary`;
-CREATE TABLE `s_salary`  (
-  `salary_id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `emp_id` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-  `money` bigint(20) DEFAULT NULL,
-  `salary_type` int(3) DEFAULT NULL,
-  `salary_date` date NOT NULL,
-  `create_time` datetime(0) DEFAULT NULL,
-  `update_time` datetime(0) DEFAULT NULL,
-  `update_user_id` bigint(20) DEFAULT NULL,
-  PRIMARY KEY (`salary_id`) USING BTREE,
-  UNIQUE INDEX `emp_salary_date_index`(`salary_id`, `emp_id`, `salary_date`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
-
--- ----------------------------
--- Records of s_salary
--- ----------------------------
-INSERT INTO `s_salary` VALUES (1, '0', 10000, 1, '2018-05-31', '2018-05-31 21:09:17', '2018-05-31 21:09:22', 1);
-
--- ----------------------------
 -- Table structure for s_salary_archive
 -- ----------------------------
 DROP TABLE IF EXISTS `s_salary_archive`;
@@ -286,6 +259,23 @@ CREATE TABLE `s_salary_archive`  (
   `update_user_id` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`salary_id`) USING BTREE,
   UNIQUE INDEX `emp_salary_date_index`(`salary_id`, `emp_id`, `salary_date`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+
+-- ----------------------------
+-- Table structure for s_salary_main
+-- ----------------------------
+DROP TABLE IF EXISTS `s_salary_main`;
+CREATE TABLE `s_salary_main`  (
+  `salary_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `salary_date` varchar(15) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '发哪一个月工资',
+  `emp_id` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `gross_pay` bigint(20) DEFAULT NULL COMMENT '应发工资',
+  `net_payroll` bigint(20) DEFAULT NULL COMMENT '实发工资',
+  `create_time` datetime(0) DEFAULT NULL,
+  `updae_time` datetime(0) DEFAULT NULL,
+  `update_user_id` bigint(20) DEFAULT NULL COMMENT '修改人员',
+  PRIMARY KEY (`salary_id`) USING BTREE,
+  UNIQUE INDEX `salary_index`(`salary_date`, `emp_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
 
 -- ----------------------------
@@ -334,6 +324,19 @@ INSERT INTO `s_salary_type` VALUES (28, '养老', '1', '0');
 INSERT INTO `s_salary_type` VALUES (29, '医疗', '1', '0');
 INSERT INTO `s_salary_type` VALUES (30, '失业', '1', '0');
 INSERT INTO `s_salary_type` VALUES (31, '公积金', '1', '0');
+
+-- ----------------------------
+-- Table structure for s_salary_type_emp
+-- ----------------------------
+DROP TABLE IF EXISTS `s_salary_type_emp`;
+CREATE TABLE `s_salary_type_emp`  (
+  `salary_type_emp_id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `salary_id` bigint(20) NOT NULL,
+  `money` bigint(20) DEFAULT NULL,
+  `salary_type` int(3) DEFAULT NULL,
+  PRIMARY KEY (`salary_type_emp_id`) USING BTREE,
+  UNIQUE INDEX `salary_type_emp_index`(`salary_type_emp_id`, `salary_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Table structure for s_user
