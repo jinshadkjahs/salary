@@ -3,7 +3,9 @@ package com.aitian.salary.controller;
 import com.aitian.salary.Utils.ConverterSystem;
 import com.aitian.salary.Utils.ReponseCode;
 import com.aitian.salary.controller.response.BaseResponse;
+import com.aitian.salary.model.Employee;
 import com.aitian.salary.model.User;
+import com.aitian.salary.service.EmployeeService;
 import com.aitian.salary.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,14 +25,23 @@ public class UserController {
     @Resource
     private UserService userService;
 
+    @Resource
+    private EmployeeService employeeService;
+
     @RequestMapping("/login")
     @ResponseBody
-    public String login(HttpServletRequest request, Model model) throws JsonProcessingException {
+    public String login(HttpServletRequest request, Model model) throws Exception {
         BaseResponse br = new BaseResponse();
         String empId = request.getParameter("id");
         String pwd = request.getParameter("pwd");
         if(StringUtils.isNotBlank(empId)&&StringUtils.isNotBlank(pwd)){
             User user = this.userService.findUserByLogin(empId, pwd);
+            Employee employee = employeeService.queryEmpForUser(empId);
+            if(employee != null){
+                user.setEmployee(employee);
+            }else{
+                throw new Exception("查不到改员工信息，请教检查后重新输入！");
+            }
             if(user != null){
                 request.getSession().setAttribute(ConverterSystem.SESSION_USER_KEY,user);
                 br.setCode(ReponseCode.REQUEST_SUCCESS);
