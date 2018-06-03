@@ -3,6 +3,8 @@ package com.aitian.salary.service.impl;
 import com.aitian.salary.Utils.ConverterSystem;
 import com.aitian.salary.Utils.ReadExcel;
 import com.aitian.salary.mapper.SalaryMapper;
+import com.aitian.salary.mapper.SalaryTypeEmpMapper;
+import com.aitian.salary.model.Employee;
 import com.aitian.salary.model.SalaryMain;
 import com.aitian.salary.model.SalaryType;
 import com.aitian.salary.model.SalaryTypeEmp;
@@ -26,6 +28,9 @@ public class SalaryServiceImpl implements SalaryService {
     @Autowired
     private SalaryMapper salaryMapper;
 
+    @Autowired
+    private SalaryTypeEmpMapper salaryTypeEmpMapper;
+
     @Transactional
     @Override
     public int[] batchImport( FileInputStream inputStream, String fileName) {
@@ -44,37 +49,52 @@ public class SalaryServiceImpl implements SalaryService {
     }
 
     @Override
-    public PageInfo<SalaryMain> findEmpSalary(String empName, String empId, String salaryDate, Integer departId, Integer empType, Integer page, Integer pageSize) {
+    public PageInfo<SalaryMain> findSalarys(String empName, String empId, String salaryDate, Integer departId, Integer empType, Integer page, Integer pageSize) {
         PageHelper.startPage(page, pageSize);
-//        SalaryMain salaryMain = new SalaryMain();
-//        salaryMain.setEmpId(empId);
-//        if(empName != null && StringUtils.isNotBlank(empName)){
-//            employeeSalary.setEmpName("%"+empName+"%");
-//        }
-//        employeeSalary.setDepartId(departId);
-//        employeeSalary.setEmpType(empType);
-//        List<EmployeeSalary> employeeSalaryList = salaryMapper.findEmp(employeeSalary);
-//
-//        employeeSalaryList.forEach(emp -> {
-//            Example example = new Example(Salary.class);
-//            Example.Criteria criteria = example.createCriteria();
-//            if(StringUtils.isNotBlank(salaryDate)){
-//                criteria.andBetween("salaryDate",salaryDate+"-01",salaryDate+"-31");
-//            }
-//            emp.setSalaryList(salaryMapper.selectByExample(example));
-//            emp.setEmpTypeStr(ConverterSystem.ALL_EMPLOYEE_TYPE.get(emp.getEmpType()).getTypeName());
-//            emp.setDepartIdStr(ConverterSystem.ALL_DEPARTMENT.get(emp.getDepartId()).getDepartName());
-//            if(emp.getSalaryList().size()==0)
-//            employeeSalaryList.remove(emp);
-//        });
+        SalaryMain salaryMain = new SalaryMain();
+        salaryMain.setEmpId(empId);
+        salaryMain.setEmployee(new Employee());
+        if(empName != null && StringUtils.isNotBlank(empName)){
+            salaryMain.getEmployee().setEmpName("%"+empName+"%");
+        }
+        salaryMain.getEmployee().setDepartId(departId);
+        if(empType!=null) salaryMain.getEmployee().setEmpType(empType+"");
+        salaryMain.setSalaryDate(salaryDate);
+        List<SalaryMain> salaryList = salaryMapper.findSalarys(salaryMain);
+
+        salaryList.forEach(salary -> {
+            Employee emp = salary.getEmployee();
+            emp.setEmpTypeStr(ConverterSystem.ALL_EMPLOYEE_TYPE.get(emp.getEmpType()).getTypeName());
+            emp.setDepartIdStr(ConverterSystem.ALL_DEPARTMENT.get(emp.getDepartId()).getDepartName());
+        });
         PageInfo<SalaryMain> pageInfo = new PageInfo<>(new ArrayList<>());
         return  pageInfo;
+    }
+
+    @Override
+    public SalaryMain findSalary(String empId, String salaryDate) {
+        SalaryMain salaryMain = new SalaryMain();
+        salaryMain.setEmpId(empId);
+        salaryMain.setSalaryDate(salaryDate);
+        List<SalaryMain> salaryList = salaryMapper.findSalarys(salaryMain);
+
+        salaryList.forEach(salary -> {
+            Employee emp = salary.getEmployee();
+            emp.setEmpTypeStr(ConverterSystem.ALL_EMPLOYEE_TYPE.get(emp.getEmpType()).getTypeName());
+            emp.setDepartIdStr(ConverterSystem.ALL_DEPARTMENT.get(emp.getDepartId()).getDepartName());
+            Example example = new Example(SalaryTypeEmp.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("salaryId",salary.getSalaryId());
+            salary.setSalaryTypeEmpList(salaryTypeEmpMapper.selectByExample(example));
+        });
+        return  salaryList.size()>0?salaryList.get(0):null;
     }
 
     @Transactional
     @Override
     public void addSalaryList(SalaryMain salaryMain) {
         salaryMapper.insert(salaryMain);
+        salaryTypeEmpMapper.insertList(salaryMain.getSalaryTypeEmpList());
     }
 
     @Transactional
@@ -83,13 +103,18 @@ public class SalaryServiceImpl implements SalaryService {
         Example example = new Example(SalaryTypeEmp.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("salaryId",salaryId);
-        salaryMapper.deleteByExample(example);
+        salaryTypeEmpMapper.deleteByExample(example);
         salaryMapper.deleteByPrimaryKey(salaryId);
     }
 
     @Transactional
     @Override
     public void updateSalarys(SalaryMain salaryMain) {
+        Example example = new Example(SalaryTypeEmp.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("salaryId",salaryMain.getSalaryId());
+        salaryTypeEmpMapper.deleteByExample(example);
+        salaryTypeEmpMapper.insertList(salaryMain.getSalaryTypeEmpList());
         salaryMapper.updateByPrimaryKey(salaryMain);
     }
 }

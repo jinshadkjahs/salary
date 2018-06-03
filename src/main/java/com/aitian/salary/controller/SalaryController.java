@@ -83,7 +83,7 @@ public class SalaryController {
 
         if (paramterIllegal){
             //验证通过
-            PageInfo<SalaryMain> salaryPageInfo = salaryService.findEmpSalary(empNme,empId,salaryDate,departId,empType,pageN, ConverterSystem.PAGE_SIZE);
+            PageInfo<SalaryMain> salaryPageInfo = salaryService.findSalarys(empNme,empId,salaryDate,departId,empType,pageN, ConverterSystem.PAGE_SIZE);
             br.setData(salaryPageInfo);
             br.setCode(com.aitian.salary.Utils.ReponseCode.REQUEST_SUCCESS);
         }else {
@@ -98,11 +98,8 @@ public class SalaryController {
     public BaseResponse getSalary(HttpServletRequest request, String empId, String salaryDate) throws Exception {
         BaseResponse br = new BaseResponse();
         if(StringUtils.isNotBlank(empId)){
-            PageInfo<SalaryMain> salaryPageInfo = salaryService.findEmpSalary(null,empId,salaryDate,null,null,1, ConverterSystem.PAGE_SIZE);
-            List<SalaryMain> salaries = salaryPageInfo.getList();
-            if(salaries.size() != 0){
-                br.setData(salaries.get(0));
-            }
+            SalaryMain salary = salaryService.findSalary(empId,salaryDate);
+            br.setData(salary);
             br.setCode(com.aitian.salary.Utils.ReponseCode.REQUEST_SUCCESS);
         }else{
             br.setCode(com.aitian.salary.Utils.ReponseCode.PARAMETER_NULL_ERROR);

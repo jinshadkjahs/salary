@@ -11,11 +11,13 @@ public interface SalaryService {
 
     int[] batchImport( FileInputStream inputStream, String fileName);
 
-    PageInfo<SalaryMain> findEmpSalary(String empName, String empId, String salaryDate, Integer departId, Integer empType, Integer page, Integer pageSize);
+    PageInfo<SalaryMain> findSalarys(String empName, String empId, String salaryDate, Integer departId, Integer empType, Integer page, Integer pageSize);
 
     void addSalaryList(SalaryMain salaryMain);
 
     void deleteSalary(String salaryId);
 
     void updateSalarys(SalaryMain salaryMain);
+
+    SalaryMain findSalary(String empId, String salaryDate);
 }

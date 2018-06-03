@@ -148,4 +148,24 @@ public class Employee {
                 ", baseSalary=" + baseSalary +
                 '}';
     }
+    @Transient
+    private String empTypeStr;
+    @Transient
+    private String departIdStr;
+
+    public String getEmpTypeStr() {
+        return empTypeStr;
+    }
+
+    public void setEmpTypeStr(String empTypeStr) {
+        this.empTypeStr = empTypeStr;
+    }
+
+    public String getDepartIdStr() {
+        return departIdStr;
+    }
+
+    public void setDepartIdStr(String departIdStr) {
+        this.departIdStr = departIdStr;
+    }
 }
