@@ -39,8 +39,6 @@ public class UserController {
             Employee employee = employeeService.queryEmpForUser(empId);
             if(employee != null){
                 user.setEmployee(employee);
-            }else{
-                throw new Exception("查不到改员工信息，请教检查后重新输入！");
             }
             if(user != null){
                 request.getSession().setAttribute(ConverterSystem.SESSION_USER_KEY,user);
