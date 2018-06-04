@@ -1,6 +1,7 @@
 package com.aitian.salary.adapter;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
@@ -21,6 +22,14 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
     // 增加拦截器
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new RequestInterceptor());
+        InterceptorRegistration addInterceptor = registry.addInterceptor(new RequestInterceptor());
+        // 排除配置
+//        addInterceptor.excludePathPatterns("/error");
+        addInterceptor.excludePathPatterns("/login**");
+        addInterceptor.excludePathPatterns("/static/**");
+        addInterceptor.excludePathPatterns("/user/login");
+        // 拦截配置
+        addInterceptor.addPathPatterns("/**");
+
     }
 }

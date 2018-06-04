@@ -29,10 +29,7 @@ public class RequestInterceptor extends HandlerInterceptorAdapter {
             response.getWriter().write(new ObjectMapper().writeValueAsString(br));
             return false;
         }
-        if (request.getRequestURI().indexOf("/login")>-1||request.getRequestURI().indexOf("/static/")>-1){
-            //过滤地址
-            return true;
-        }
+
         HttpSession session = request.getSession();
         if (session.getAttribute(ConverterSystem.SESSION_USER_KEY )!= null)
             return true;

@@ -16,7 +16,10 @@ public class ViewController {
     public String main(HttpServletRequest request) {
         return request.getRequestURI();
     }
-
+    @RequestMapping("/")
+    public String index(HttpServletRequest request) {
+        return "login";
+    }
 
     @RequestMapping("*/*.html")
     public String html(HttpServletRequest request) {
