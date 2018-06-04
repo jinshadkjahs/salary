@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>工资管理系统</title>
+    <link rel="stylesheet" href="../../static/css/public.css"/>
+    <link rel="stylesheet" href="../../static/css/style.css"/>
+</head>
+<body>
+<!--头部-->
+
+<div class="location">
+    <strong>你现在所在的位置是:</strong>
+    <span>工资管理</span>
+</div>
+<div class="search">
+    <form id="salarySearchForm" style="display: inline-block">
+        <span>员工类型：</span>
+        <select id="empType" name="empType">
+
+        </select>
+        <span>员工姓名：</span>
+        <input type="text" style="width: 105px" id="empName" name="empName" placeholder="请输入员工姓名"/>
+        <input type="hidden" id="pageN" name="pageN" />
+        <input type="hidden" id="salaryDate" name="salaryDate" />
+
+        <span>科室</span>
+        <select id="departId" name="departId">
+            <option value="">--请选择--</option>
+        </select>
+
+        <span>年月：</span>
+        <select id="salaryYear" name="salaryYear">
+            <option value="">--请选择--</option>
+        </select>
+        <select id="salaryMonth" name="salaryMonth">
+            <option value="">--请选择--</option>
+        </select>
+    </form>
+
+    <input type="button" onclick="queryPage(1)" value="查询"/>
+</div>
+<script type="text/javascript" src="../../static/js/jquery.js"></script>
+<script src="../../static/js/child.js"></script>
+<script src="../../static/js/salaryManager.js"></script>
+</body>
+</html>

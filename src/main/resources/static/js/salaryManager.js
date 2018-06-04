@@ -1,10 +1,3 @@
-$(function () {
-    loadingShow();
-    loadDateData();
-    loadDepartData();
-    loadSalaryTypeData();
-    queryPage(1);
-});
 
 function  loadDateData() {
     var myDate = new Date();

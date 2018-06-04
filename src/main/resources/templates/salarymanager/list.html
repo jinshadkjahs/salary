@@ -56,24 +56,18 @@
 </table>
 <div id="pageInfo">
 </div>
-<!--<input id="aaa">
-<input id="bbb">
-<button onclick="cccc()">1111</button>-->
 <script type="text/javascript" src="../../static/js/jquery.js"></script>
 <script src="../../static/js/child.js"></script>
 <script src="../../static/js/salaryManager.js"></script>
 <script src="../../static/js/page.js"></script>
 <script>
-    function cccc() {
-        $("#sss").empty();
-        $("#sss").append(getPageHtml(parseInt($("#aaa").val()),parseInt($("#bbb").val()),"klll"))
-    }
     $(function () {
-        $("#sss").append(getPageHtml(1,10,"klll"));
-    })
-    function klll(obj) {
-        alert($(obj).attr("forPage"));
-    }
+        loadingShow();
+        loadDateData();
+        loadDepartData();
+        loadSalaryTypeData();
+        queryPage(1);
+    });
 </script>
 </body>
 </html>
