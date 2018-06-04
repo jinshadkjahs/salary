@@ -49,10 +49,12 @@ public class SalaryController {
         Integer empType = null;
         Integer pageN = null;
 
+        if("-".equals(salaryDate)) salaryDate = null;
+
         boolean paramterIllegal = true;
         //参数验证
         if(StringUtils.isNotBlank(salaryDate)){
-            if(!salaryDate.matches("[0-9][0-9][0-9][0-9]-[0-9][0-9]")){
+            if(!(salaryDate.matches("[0-9][0-9][0-9][0-9]-[0-9][0-9]")||salaryDate.matches("[0-9][0-9][0-9][0-9]-")||salaryDate.matches("-[0-9][0-9]"))){
                 paramterIllegal = false;
             }
         }

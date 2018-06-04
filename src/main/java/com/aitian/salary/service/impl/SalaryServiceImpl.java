@@ -2,6 +2,7 @@ package com.aitian.salary.service.impl;
 
 import com.aitian.salary.Utils.ConverterSystem;
 import com.aitian.salary.Utils.ReadExcel;
+import com.aitian.salary.mapper.EmployeeMapper;
 import com.aitian.salary.mapper.SalaryMapper;
 import com.aitian.salary.mapper.SalaryTypeEmpMapper;
 import com.aitian.salary.model.Employee;
@@ -31,6 +32,9 @@ public class SalaryServiceImpl implements SalaryService {
     @Autowired
     private SalaryTypeEmpMapper salaryTypeEmpMapper;
 
+    @Autowired
+    private EmployeeMapper employeeEmpMapper;
+
     @Transactional
     @Override
     public int[] batchImport( FileInputStream inputStream, String fileName) {
@@ -59,15 +63,23 @@ public class SalaryServiceImpl implements SalaryService {
         }
         salaryMain.getEmployee().setDepartId(departId);
         if(empType!=null) salaryMain.getEmployee().setEmpType(empType+"");
-        salaryMain.setSalaryDate(salaryDate);
+        if(salaryDate!=null){
+            if(salaryDate.matches("[0-9][0-9][0-9][0-9]-[0-9][0-9]")){
+                salaryMain.setSalaryDate(salaryDate);
+            }else if(salaryDate.startsWith("-")){
+                salaryMain.setSalaryDate("%"+salaryDate);
+            }else if(salaryDate.endsWith("-")){
+                salaryMain.setSalaryDate(salaryDate+"%");
+            }
+        }
+
         List<SalaryMain> salaryList = salaryMapper.findSalarys(salaryMain);
 
         salaryList.forEach(salary -> {
-            Employee emp = salary.getEmployee();
-            emp.setEmpTypeStr(ConverterSystem.ALL_EMPLOYEE_TYPE.get(emp.getEmpType()).getTypeName());
-            emp.setDepartIdStr(ConverterSystem.ALL_DEPARTMENT.get(emp.getDepartId()).getDepartName());
+            salary.setEmpType(ConverterSystem.ALL_EMPLOYEE_TYPE.get(Integer.parseInt(salary.getEmpType())).getTypeName());
+            salary.setDepartId(ConverterSystem.ALL_DEPARTMENT.get(Integer.parseInt(salary.getDepartId())).getDepartName());
         });
-        PageInfo<SalaryMain> pageInfo = new PageInfo<>(new ArrayList<>());
+        PageInfo<SalaryMain> pageInfo = new PageInfo<>(salaryList);
         return  pageInfo;
     }
 
@@ -76,12 +88,13 @@ public class SalaryServiceImpl implements SalaryService {
         SalaryMain salaryMain = new SalaryMain();
         salaryMain.setEmpId(empId);
         salaryMain.setSalaryDate(salaryDate);
-        List<SalaryMain> salaryList = salaryMapper.findSalarys(salaryMain);
+        List<SalaryMain> salaryList = salaryMapper.select(salaryMain);
 
         salaryList.forEach(salary -> {
-            Employee emp = salary.getEmployee();
+            Employee emp = employeeEmpMapper.selectByPrimaryKey(salary.getEmpId());
             emp.setEmpTypeStr(ConverterSystem.ALL_EMPLOYEE_TYPE.get(emp.getEmpType()).getTypeName());
             emp.setDepartIdStr(ConverterSystem.ALL_DEPARTMENT.get(emp.getDepartId()).getDepartName());
+            salary.setEmployee(emp);
             Example example = new Example(SalaryTypeEmp.class);
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("salaryId",salary.getSalaryId());

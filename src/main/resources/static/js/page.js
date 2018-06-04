@@ -1,5 +1,11 @@
 //拼接分页
 function getPageHtml(pageNum, pageToal, functionName) {
+    if(pageToal || pageToal == 0){
+        pageToal = 1;
+    }
+    if(pageNum || pageNum == 0){
+        pageNum = 1;
+    }
     var firstPage = "onclick='"+functionName+"(this)'";
     var lastPage = "onclick='"+functionName+"(this)'";
     var prevPageNumber = pageNum-1;

@@ -23,7 +23,11 @@ public class SalaryDynaSqlProvider {
                     WHERE("s.depart_id like #{employee.departId}");
                 }
                 if(StringUtils.isNotBlank(salaryMain.getSalaryDate())){
-                    WHERE("a.salary_date = #{salaryDate}");
+                    if(salaryMain.getSalaryDate().matches("[0-9][0-9][0-9][0-9]-[0-9][0-9]")) {
+                        WHERE("a.salary_date = #{salaryDate}");
+                    }else {
+                        WHERE("a.salary_date like #{salaryDate}");
+                    }
                 }
                 if(StringUtils.isNotBlank(salaryMain.getEmpId())){
                     WHERE("s.empid = #{empId}");

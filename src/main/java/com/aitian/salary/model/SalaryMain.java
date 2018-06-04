@@ -147,6 +147,13 @@ public class SalaryMain {
     @Transient
     private Employee employee;
 
+    @Transient
+    private String empName;
+    @Transient
+    private String departId;
+    @Transient
+    private String empType;
+
     public List<SalaryTypeEmp> getSalaryTypeEmpList() {
         return salaryTypeEmpList;
     }
@@ -161,5 +168,29 @@ public class SalaryMain {
 
     public void setEmployee(Employee employee) {
         this.employee = employee;
+    }
+
+    public String getEmpName() {
+        return empName;
+    }
+
+    public void setEmpName(String empName) {
+        this.empName = empName;
+    }
+
+    public String getDepartId() {
+        return departId;
+    }
+
+    public void setDepartId(String departId) {
+        this.departId = departId;
+    }
+
+    public String getEmpType() {
+        return empType;
+    }
+
+    public void setEmpType(String empType) {
+        this.empType = empType;
     }
 }

@@ -23,9 +23,9 @@ public interface SalaryMapper extends BaseMapper<SalaryMain> {
             @Result(property="updateUserId",column="update_user_id"),
             @Result(property="grossPay",column="gross_pay"),
             @Result(property="netPayroll",column="net_payroll"),
-            @Result(property="employee.empName",column="emp_name"),
-            @Result(property="employee.departId",column="depart_id"),
-            @Result(property="employee.empType",column="emp_type")
+            @Result(property="empName",column="emp_name"),
+            @Result(property="departId",column="depart_id"),
+            @Result(property="empType",column="emp_type")
     })
     public List<SalaryMain> findSalarys(SalaryMain salaryMain);
 

@@ -69,9 +69,8 @@ function  loadSalaryTypeData() {
 function queryPage(pageNum) {
     loadingShow();
     $("#pageN").val(pageNum);
-    if($("#salaryYear").val()!="" && $("#salaryMonth").val()!=""){
-        $("#salaryDate").val($("#salaryYear").val()+"-"+$("#salaryMonth").val());
-    }
+    $("#salaryDate").val($("#salaryYear").val()+"-"+$("#salaryMonth").val());
+
     var queryPam = $("#salarySearchForm").serialize();
     $.getJSON("../../salary/getSalarys",queryPam,function (data) {
         if (data.code == "0000"){
@@ -89,16 +88,15 @@ function queryPage(pageNum) {
                 "    </tr>");
             var listData = data.data.list;
             for (var i=0;i<listData.length; i++){
-                var salaryList = listData[i].salaryList;
                 $("#dataTab").append("<tr>" +
                                          "<td>"+(i+1)+"</td>" +
                                 "        <td>"+listData[i].empId+"</td>" +
-                                "        <td>"+listData[i].departIdStr+"</td>" +
+                                "        <td>"+listData[i].departId+"</td>" +
                                 "        <td>"+listData[i].empName+"</td>" +
-                                "        <td>"+listData[i].empTypeStr+"</td>" +
-                                "        <td>"+salaryList[0].salaryDate.substring(0,7)+"</td>" +
-                                "        <td>"+listData[i].baseSalary+"</td>" +
-                                "        <td>"+listData[i].baseSalary+"</td>" +
+                                "        <td>"+listData[i].empType+"</td>" +
+                                "        <td>"+listData[i].salaryDate+"</td>" +
+                                "        <td>"+listData[i].grossPay+"</td>" +
+                                "        <td>"+listData[i].netPayroll+"</td>" +
                                 "        <td><a href='#'><img src=\"../../static/img/read.png\" alt=\"查看\" title=\"查看\"/></a>\n" +
                     "                    <a href='#'><img src=\"../../static/img/xiugai.png\" alt=\"修改\" title=\"修改\"/></a>\n" +
                     "                    <a href='#' class='removeBill'><img src=\"../../static/img/schu.png\" alt=\"删除\" title=\"删除\"/></a></td>" +
