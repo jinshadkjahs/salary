@@ -8,8 +8,8 @@ function loadingHide() {
 }
 
 //对话框调用 提示信息，方法名，传入参数
-function confirmShow(confirmTishi, functionName, args){
-    parent.confirmShow(confirmTishi, functionName, args);
+function confirmShow(confirmTishi, yesfn, nofn){
+    parent.confirmShow(confirmTishi, yesfn, nofn);
 }
 
 //对话框隐藏
