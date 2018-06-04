@@ -24,6 +24,13 @@ function  loadDateData() {
         }
         $('#salaryMonth').append("<option value='" + ss + "'>" + i + "月</option>");
     }
+    var time = $(window.parent.document).find("#time").text().substring(0,7).split("年");
+    $("#salaryYear").val(time[0]);
+    var monval = ""+(parseInt(time[1])-1);
+    if((parseInt(time[1])-1)<10){
+        monval = "0"+(parseInt(time[1])-1);
+    }
+    $("#salaryMonth").val(monval);
 }
 
 function  loadDepartData() {
@@ -97,9 +104,9 @@ function queryPage(pageNum) {
                                 "        <td>"+listData[i].salaryDate+"</td>" +
                                 "        <td>"+listData[i].grossPay+"</td>" +
                                 "        <td>"+listData[i].netPayroll+"</td>" +
-                                "        <td><a href='#'><img src=\"../../static/img/read.png\" alt=\"查看\" title=\"查看\"/></a>\n" +
-                    "                    <a href='#'><img src=\"../../static/img/xiugai.png\" alt=\"修改\" title=\"修改\"/></a>\n" +
-                    "                    <a href='#' class='removeBill'><img src=\"../../static/img/schu.png\" alt=\"删除\" title=\"删除\"/></a></td>" +
+                                "        <td><a href='#' onclick='showSalary(\""+listData[i].salaryId+"\")'><img src=\"../../static/img/read.png\" alt=\"查看\" title=\"查看\"/></a>\n" +
+                    "                    <a href='#' onclick='updateSalary(\""+listData[i].salaryId+"\")'><img src=\"../../static/img/xiugai.png\" alt=\"修改\" title=\"修改\"/></a>\n" +
+                    "                    <a href='#' onclick='removeSalary(\""+listData[i].salaryId+"\")'><img src=\"../../static/img/schu.png\" alt=\"删除\" title=\"删除\"/></a></td>" +
                                      "</tr>");
             }
             if(listData.length<10){
@@ -125,4 +132,36 @@ function queryPage(pageNum) {
 
 function queryPageClick(obj) {
     queryPage($(obj).attr("forPage"));
+}
+
+function showSalary(salaryId) {
+
+}
+
+function updateSalary(salaryId) {
+
+}
+
+function removeSalary(salaryId) {
+    confirmShow("确认删除这条工资信息吗",function () {
+        loadingShow();
+        $.ajax({
+            url: "../../salary/deleteSalary?salaryId="+salaryId,
+            type: "DELETE",
+            dataType: "json",
+            async: false,
+            data: {},
+            success: function(data){
+                if(data.code == "0000"){
+                    confirmHide();
+                    alertShow("删除成功！");
+                    queryPage($(".current").attr("forPage"));
+                }else {
+                    confirmHide();
+                    alertShow("删除失败！");
+                }
+            }
+        });
+        loadingHide();
+    })
 }
