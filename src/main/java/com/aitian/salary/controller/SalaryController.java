@@ -171,7 +171,7 @@ public class SalaryController {
     public BaseResponse deleteSalary(HttpServletRequest request, String salaryId) throws Exception {
         BaseResponse br = new BaseResponse();
         if(StringUtils.isNotBlank(salaryId)){
-            salaryService.deleteSalary(salaryId);
+            salaryService.deleteSalary(Integer.parseInt(salaryId));
             br.setCode(com.aitian.salary.Utils.ReponseCode.REQUEST_SUCCESS);
         }else{
             br.setCode(com.aitian.salary.Utils.ReponseCode.PARAMETER_NULL_ERROR);

@@ -15,7 +15,7 @@ public interface SalaryService {
 
     void addSalaryList(SalaryMain salaryMain);
 
-    void deleteSalary(String salaryId);
+    void deleteSalary(Integer salaryId);
 
     void updateSalarys(SalaryMain salaryMain);
 

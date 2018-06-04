@@ -112,7 +112,7 @@ public class SalaryServiceImpl implements SalaryService {
 
     @Transactional
     @Override
-    public void deleteSalary(String salaryId) {
+    public void deleteSalary(Integer salaryId) {
         Example example = new Example(SalaryTypeEmp.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("salaryId",salaryId);

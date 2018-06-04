@@ -10,7 +10,7 @@ public class SalaryMain {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "Mysql")
     @Column(name = "salary_id")
-    private Long salaryId;
+    private Integer salaryId;
 
     @Column(name = "emp_id")
     private String empId;
@@ -43,14 +43,14 @@ public class SalaryMain {
     /**
      * @return salary_id
      */
-    public Long getSalaryId() {
+    public Integer getSalaryId() {
         return salaryId;
     }
 
     /**
      * @param salaryId
      */
-    public void setSalaryId(Long salaryId) {
+    public void setSalaryId(Integer salaryId) {
         this.salaryId = salaryId;
     }
 

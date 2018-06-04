@@ -11,7 +11,8 @@ public class SalaryDynaSqlProvider {
             {
                 SELECT("*");
                 FROM("s_employee s");
-                LEFT_OUTER_JOIN("s_salary_main a on s.empid = a.emp_id");
+                FROM("s_salary_main a ");
+                WHERE("s.empid = a.emp_id");
                 Employee e = salaryMain.getEmployee();
                 if(StringUtils.isNotBlank(e.getEmpType())){
                     WHERE("s.emp_type = #{employee.empType}");
