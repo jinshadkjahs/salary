@@ -56,6 +56,9 @@
     }
 
     $(function(){
+        if(window.top != null&&window.top.document.URL != document.URL){
+            window.top.location = document.URL;
+        }
         $('#loading').show();
         $.get("../../user/getLoginUser", {},function(data){
             $('#loading').hide();

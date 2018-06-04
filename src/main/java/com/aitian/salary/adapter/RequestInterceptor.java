@@ -35,8 +35,15 @@ public class RequestInterceptor extends HandlerInterceptorAdapter {
             return true;
 
         // 跳转登录
-        String url = "/login.html";
-        response.sendRedirect(url);
+        if(request.getRequestURI().endsWith(".html")){
+            String url = "/login.html";
+            response.sendRedirect(url);
+        }else {
+            BaseResponse br = new BaseResponse();
+            br.setCode(ReponseCode.NOT_LOGINED);
+            response.getWriter().write(new ObjectMapper().writeValueAsString(br));
+        }
+
         return false;
     }
 

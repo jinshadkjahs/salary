@@ -45,6 +45,11 @@
                 }
             },'json');
         })
+        $(function () {
+            if(window.top != null && window.top.document.URL != document.URL){
+                window.top.location = document.URL;
+            }
+        })
     </script>
 
     <div id="loading">

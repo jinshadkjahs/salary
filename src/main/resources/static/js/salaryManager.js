@@ -118,8 +118,6 @@ function queryPage(pageNum) {
                 }
             }
             $("#pageInfo").html(getPageHtml(data.data.pageNum, data.data.pages, "queryPageClick"));
-        } else {
-            toLogin(data.code);
         }
         loadingHide();
     });
