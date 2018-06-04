@@ -17,6 +17,21 @@ function confirmHide(){
     parent.confirmHide();
 }
 
+//弹出框
+function alertShow(alertTishi, title){
+    parent.alertShow(alertTishi, title);
+}
+
+//模态框
+function modelShow(id, url,modelTitle, width, height){
+    parent.modelShow(id, url,modelTitle, width, height);
+}
+
+//隐藏模态框
+function modelHide(id){
+    parent.modelHide(id);
+}
+
 function toLogin(code) {
     if(code == "1003"){
         parent.toLogin();
