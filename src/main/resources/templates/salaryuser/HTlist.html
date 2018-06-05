@@ -1,0 +1,93 @@
+﻿<link rel="stylesheet" href="../../static/css/public.css"/>
+<link rel="stylesheet" href="../../static/css/style.css"/>
+<link rel="stylesheet" href="../../static/css/salarylist.css"/>
+<section class="publicMian">
+    <div style="width: 100%">
+        <div class="location">
+            <strong>你现在所在的位置是:</strong>
+            <span>员工工资查询</span>
+        </div>
+        <div class="search">
+            <span>请选择年份：</span>
+            <select id="year" name="year">
+                <option value="">--请选择--</option>
+            </select>
+
+            <span>请选择月份：</span>
+            <select id="month" name="month">
+                <option value="">--请选择--</option>
+            </select>
+
+            <input type="button" onclick="search()" value="查询"/>
+        </div>
+        <!--账单表格 样式和员工信息-->
+        <div class="providerAdd" style="margin: 0px; margin-top: 15px; overflow:scroll; width:96%; height:440px;">
+            <form action="#">
+                <table class="providerTable" cellpadding="0" cellspacing="0">
+                    <tr class="firstTrs">
+                        <th width="10%" colspan="5">****年**月医疗公司职工工资明细表</th>
+                    </tr>
+                    <tr>
+                        <th width="20%">姓名</th>
+                        <th width="20%" colspan="2">张三</th>
+                        <th width="20%">职工编号</th>
+                        <th width="20%">HT789378939</th>
+                    </tr>
+                    <tr>
+                        <th width="20%">身份号</th>
+                        <th width="20%" colspan="4">149902198909097811</th>
+                    </tr>
+                    <tr>
+                        <th width="20%">基本工资</th>
+                        <th width="20%" colspan="2">300.00</th>
+                        <th width="20%">绩效工资</th>
+                        <th width="20%">120</th>
+                    </tr>
+                    <tr>
+                        <th width="20%">节日加班</th>
+                        <th width="20%" colspan="2">300.00</th>
+                        <th width="20%">其他奖</th>
+                        <th width="20%">120</th>
+                    </tr>
+                    <tr>
+                        <th width="20%">全勤奖</th>
+                        <th width="20%" colspan="2">300.00</th>
+                        <th width="20%">补发</th>
+                        <th width="20%">120</th>
+                    </tr>
+                    <tr>
+                        <th width="20%">应领工资</th>
+                        <th width="20%" colspan="4">3000.00</th>
+                    </tr>
+                    <tr>
+                        <th width="20%">其他奖明细</th>
+                        <th width="20%" colspan="4"></th>
+                    </tr>
+                    <tr>
+                        <th width="20%">序号</th>
+                        <th width="20%">金额</th>
+                        <th width="20%" colspan="2">内容</th>
+                        <th width="20%">归口管理部门</th>
+                    </tr>
+
+                </table>
+                <div class="providerAddBtn" style="margin-left:40%; width: 100%;">
+                    <input type="button" value="奖金详情" onclick="ShowbBonus()"/>
+                    <input type="button" value="下载打印" onclick="Printing()"/>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</section>
+
+<!--点击删除按钮后弹出的页面-->
+<div class="zhezhao"></div>
+<script src="../../static/js/jquery.js"></script>
+<script src="../../static/js/js.js"></script>
+<script src="../../static/js/time.js"></script>
+<script src="../../static/js/staffsalary.js"></script>
+<script src="../../static/js/child.js"></script>
+<script src="../../static/js/alert.js"></script>
+
+
