@@ -76,8 +76,12 @@ public class SalaryServiceImpl implements SalaryService {
         List<SalaryMain> salaryList = salaryMapper.findSalarys(salaryMain);
 
         salaryList.forEach(salary -> {
-            salary.setEmpType(ConverterSystem.ALL_EMPLOYEE_TYPE.get(Integer.parseInt(salary.getEmpType())).getTypeName());
-            salary.setDepartId(ConverterSystem.ALL_DEPARTMENT.get(Integer.parseInt(salary.getDepartId())).getDepartName());
+            if(ConverterSystem.ALL_EMPLOYEE_TYPE.containsKey(Integer.parseInt(salary.getEmpType()))){
+                salary.setEmpType(ConverterSystem.ALL_EMPLOYEE_TYPE.get(Integer.parseInt(salary.getEmpType())).getTypeName());
+            }
+            if(ConverterSystem.ALL_DEPARTMENT.containsKey(Integer.parseInt(salary.getDepartId()))){
+                salary.setDepartId(ConverterSystem.ALL_DEPARTMENT.get(Integer.parseInt(salary.getDepartId())).getDepartName());
+            }
         });
         PageInfo<SalaryMain> pageInfo = new PageInfo<>(salaryList);
         return  pageInfo;
@@ -92,13 +96,21 @@ public class SalaryServiceImpl implements SalaryService {
 
         salaryList.forEach(salary -> {
             Employee emp = employeeEmpMapper.selectByPrimaryKey(salary.getEmpId());
-            emp.setEmpTypeStr(ConverterSystem.ALL_EMPLOYEE_TYPE.get(emp.getEmpType()).getTypeName());
-            emp.setDepartIdStr(ConverterSystem.ALL_DEPARTMENT.get(emp.getDepartId()).getDepartName());
-            salary.setEmployee(emp);
-            Example example = new Example(SalaryTypeEmp.class);
-            Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("salaryId",salary.getSalaryId());
-            salary.setSalaryTypeEmpList(salaryTypeEmpMapper.selectByExample(example));
+            if(emp != null){
+                if(ConverterSystem.ALL_EMPLOYEE_TYPE.containsKey(Integer.parseInt(emp.getEmpType()))){
+                    emp.setEmpTypeStr(ConverterSystem.ALL_EMPLOYEE_TYPE.get(Integer.parseInt(emp.getEmpType())).getTypeName());
+                }
+                if(ConverterSystem.ALL_DEPARTMENT.containsKey(emp.getDepartId())){
+                    emp.setDepartIdStr(ConverterSystem.ALL_DEPARTMENT.get(emp.getDepartId()).getDepartName());
+                }
+                salary.setEmployee(emp);
+                Example example = new Example(SalaryTypeEmp.class);
+                Example.Criteria criteria = example.createCriteria();
+                criteria.andEqualTo("salaryId",salary.getSalaryId());
+                salary.setSalaryTypeEmpList(salaryTypeEmpMapper.selectByExample(example));
+            }else {
+                salaryList.remove(salary);
+            }
         });
         return  salaryList.size()>0?salaryList.get(0):null;
     }
@@ -129,5 +141,15 @@ public class SalaryServiceImpl implements SalaryService {
         salaryTypeEmpMapper.deleteByExample(example);
         salaryTypeEmpMapper.insertList(salaryMain.getSalaryTypeEmpList());
         salaryMapper.updateByPrimaryKey(salaryMain);
+    }
+
+    @Override
+    public List<Employee> getEmployees(String empName, String departId) {
+        PageHelper.startPage(1, 10);
+        Example example = new Example(Employee.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("departId", departId);
+        criteria.andLike("empName","%"+empName+"%");
+        return employeeEmpMapper.selectByExample(example);
     }
 }

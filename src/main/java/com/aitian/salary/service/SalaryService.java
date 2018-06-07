@@ -1,6 +1,7 @@
 package com.aitian.salary.service;
 
 
+import com.aitian.salary.model.Employee;
 import com.aitian.salary.model.SalaryMain;
 import com.github.pagehelper.PageInfo;
 
@@ -20,4 +21,6 @@ public interface SalaryService {
     void updateSalarys(SalaryMain salaryMain);
 
     SalaryMain findSalary(String empId, String salaryDate);
+
+    List<Employee> getEmployees(String empName, String departId);
 }

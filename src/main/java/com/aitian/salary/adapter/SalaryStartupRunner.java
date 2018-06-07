@@ -42,6 +42,8 @@ public class SalaryStartupRunner implements CommandLineRunner {
          */
         List<SalaryType> salaryTypes = loadingService.selectAllSalaryType();
         ConverterSystem.ALL_SALARY_TYPE = salaryTypes.stream().collect(Collectors.toMap(SalaryType::getSalaryType, salaryType -> salaryType));
+        ConverterSystem.FORMAL_SALARY_TYPE = salaryTypes.stream().filter(s-> s.getEmpType().indexOf("0")>-1).collect(Collectors.toList());
+        ConverterSystem.PACT_SALARY_TYPE = salaryTypes.stream().filter(s-> s.getEmpType().indexOf("1")>-1).collect(Collectors.toList());
 
         /**
          * 加载所有用户类型

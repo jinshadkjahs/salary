@@ -1,4 +1,6 @@
 
+var salaryTypeList;
+
 function  loadDateData() {
     var myDate = new Date();
     var startyear = 1946;
@@ -46,7 +48,7 @@ function  loadDepartData() {
     });
 }
 
-function  loadSalaryTypeData() {
+function  loadEmpTypeData() {
     $.ajax({
         url: "../../salary/getEmpTypes",
         type: "get",
@@ -157,4 +159,109 @@ function removeSalary(salaryId) {
         });
         loadingHide();
     })
+}
+
+function loadSalaryTypeData() {
+    $.ajax({
+        url: "../../salary/getSalaryTypes",
+        type: "get",
+        dataType: "json",
+        async: false,
+        data: {},
+        success: function(data){
+            if(data.code == "0000"){
+                salaryTypeList = data.data;
+            }
+        }
+    });
+
+}
+
+function loadSalaryTypeTab(empType) {
+    $("#salaryInput").empty();
+    if(salaryTypeList){
+        var list;
+        if("0" == empType){
+            list = salaryTypeList.formal;
+        }else {
+            list = salaryTypeList.pact;
+        }
+        var jiaTr = "";
+        var jiaNum = 1;
+        var jianTr = "";
+        var jianNum = 1;
+        var tr = "";
+        var num = 1;
+        for(var i=0;i<list.length;i++){
+            if(list[i].type == "0"){
+                if(jiaNum%2 == 0){
+                    jiaTr += "<td class='titletd'>"+list[i].salaryName+":</td><td><input id='salaryType_"+list[i].salaryType+"' name='salaryType_"+list[i].salaryType+"' value='0' operate='"+list[i].type+"'></td></tr>";
+                }else{
+                    jiaTr += "<tr><td  class='titletd'>"+list[i].salaryName+":</td><td><input id='salaryType_"+list[i].salaryType+"' value='0' name='salaryType_"+list[i].salaryType+"'  operate='"+list[i].type+"'></td>";
+                }
+                jiaNum++;
+
+            }else if(list[i].type == "1"){
+                if(jianNum%2 == 0){
+                    jianTr += "<td class='titletd'>"+list[i].salaryName+":</td><td><input id='salaryType_"+list[i].salaryType+"' value='0' name='salaryType_"+list[i].salaryType+"'  operate='"+list[i].type+"'></td></tr>";
+                }else{
+                    jianTr += "<tr><td class='titletd'>"+list[i].salaryName+":</td><td><input id='salaryType_"+list[i].salaryType+"' value='0'  name='salaryType_"+list[i].salaryType+"'  operate='"+list[i].type+"'></td>";
+                }
+                jianNum++;
+            }else{
+                if(num%2 == 0){
+                    tr += "<td class='titletd'>"+list[i].salaryName+":</td><td><input id='salaryType_"+list[i].salaryType+"'  value='0'  name='salaryType_"+list[i].salaryType+"'  operate='"+list[i].type+"'></td></tr>";
+                }else{
+                    tr += "<tr><td class='titletd'>"+list[i].salaryName+":</td><td><input id='salaryType_"+list[i].salaryType+"' value='0' name='salaryType_"+list[i].salaryType+"'  operate='"+list[i].type+"'></td>";
+                }
+                num++;
+            }
+        }
+        if(jiaNum!=0&&jiaNum%2==0){
+            jiaTr += "</tr>";
+        }
+        if(jianNum!=0&&jianNum%2==0){
+            jianTr += "</tr>";
+        }
+        if(num!=0&&num%2==0){
+            tr += "</tr>";
+        }
+
+        if(jiaNum!=1) $("#salaryInput").append("<tr><td><div class=\"search\" style='height: auto'><table style=\"width: 100%\">"+jiaTr+"</table></div></td></tr>");
+        if(jianNum!=1) $("#salaryInput").append("<tr><td><div class=\"search\" style='height: auto'><table style=\"width: 100%\">"+jianTr+"</table></div></td></tr>");
+        if(num!=1) $("#salaryInput").append("<tr><td><div class=\"search\" style='height: auto'><table style=\"width: 100%\">"+tr+"</table></td></div></tr>");
+        $("#salaryInput").append("<tr><td><div class=\"search\" style='height: auto'><table style=\"width: 100%\"><tr><td class='titletd'>应领工资:</td><td><input name='grossPay' id='grossPay'  value='0' ></td><td class='titletd'>实领工资:</td><td><input  name='netPayroll' id='netPayroll' value='0'></td></tr></table></div></td></tr>");
+    }
+}
+
+function loadEmployees(obj) {
+    var departid = $("#departId").val();
+    var empName = $(obj).val();
+    $("#emps").empty();
+    $("#empId").val("");
+    if(departid != "" && empName !=""){
+        $.ajax({
+            url: "../../salary/getEmployees",
+            type: "get",
+            dataType: "json",
+            async: true,
+            data: {"departId":departid,"empName":empName},
+            success: function(data){
+                if(data.code == "0000"){
+                    var emps = data.data;
+                    for(var i=0;i<emps.length;i++){
+                        $("#emps").append(" <li empid='"+emps[i].empId+"' empname='"+emps[i].empName+"' emptype='"+emps[i].empType+"' onclick='empliClick(this)'>"+emps[i].empName+"    "+ emps[i].empPhone+"  "+emps[i].waltzDate+"</li>");
+                    }
+                    $("#emps").parent().show();
+                }
+            }
+        });
+    }
+}
+
+function empliClick(obj) {
+    $("#empId").val($(obj).attr("empid"));
+    $("#empName").val($(obj).attr("empname"));
+    $("#emps").parent().hide();
+    loadSalaryTypeTab($(obj).attr("emptype"));
 }

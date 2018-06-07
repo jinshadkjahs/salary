@@ -23,6 +23,10 @@ public class ConverterSystem {
     public static Map<Integer,Department> ALL_DEPARTMENT = null;
     //所有工资类型信息
     public static Map<Integer,SalaryType> ALL_SALARY_TYPE = null;
+    //合同工资类型信息
+    public static List<SalaryType> PACT_SALARY_TYPE = null;
+    //正式工资类型信息
+    public static List<SalaryType> FORMAL_SALARY_TYPE = null;
     //分页数据量
     public static final int PAGE_SIZE = 10;
 

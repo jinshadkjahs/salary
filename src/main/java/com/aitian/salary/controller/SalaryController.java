@@ -3,6 +3,7 @@ package com.aitian.salary.controller;
 import com.aitian.salary.Utils.ConverterSystem;
 import com.aitian.salary.Utils.ReponseCode;
 import com.aitian.salary.controller.response.BaseResponse;
+import com.aitian.salary.model.Employee;
 import com.aitian.salary.model.SalaryMain;
 import com.aitian.salary.model.SalaryTypeEmp;
 import com.aitian.salary.service.SalaryService;
@@ -22,6 +23,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.FileInputStream;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -115,19 +117,7 @@ public class SalaryController {
     public BaseResponse addSalary(HttpServletRequest request, SalaryMain salaryMain) throws Exception {
         BaseResponse br = new BaseResponse();
         boolean paramterIllegal = true;
-        //数据验证
-//        for (Salary salary: salaryList ) {
-//            //员工编号是否为空
-//            if (StringUtils.isBlank(salary.getEmpId())){
-//                paramterIllegal = false;
-//                break;
-//            }
-//            //工资类型是否存在
-//            if (ConverterSystem.ALL_SALARY_TYPE.get(salary.getSalaryType()) == null){
-//                paramterIllegal = false;
-//                break;
-//            }
-//        }
+
         if(paramterIllegal){
 //            salaryService.addSalaryList(salaryList);
             br.setCode(com.aitian.salary.Utils.ReponseCode.REQUEST_SUCCESS);
@@ -225,7 +215,7 @@ public class SalaryController {
             br.setCode(com.aitian.salary.Utils.ReponseCode.REQUEST_SUCCESS);
         }else{
             br.setCode(com.aitian.salary.Utils.ReponseCode.REQUEST_ERROR);
-            br.setMessage("The parameter is NULL!");
+            br.setMessage("The DepartmentList is NULL!");
         }
         return br;
     }
@@ -239,9 +229,48 @@ public class SalaryController {
             br.setCode(com.aitian.salary.Utils.ReponseCode.REQUEST_SUCCESS);
         }else{
             br.setCode(com.aitian.salary.Utils.ReponseCode.REQUEST_ERROR);
-            br.setMessage("The parameter is NULL!");
+            br.setMessage("The employee type List is NULL!");
         }
         return br;
     }
 
+    @RequestMapping(value = "/getSalaryTypes", method = RequestMethod.GET)
+    @ResponseBody
+    public BaseResponse getSalaryTypes(HttpServletRequest request, String empType) throws Exception {
+        BaseResponse br = new BaseResponse();
+        Map<String,Object> map = new HashMap<>();
+        if(ConverterSystem.ALL_SALARY_TYPE != null){
+            if(StringUtils.isNotBlank(empType)){
+                if(empType.equals("0")){
+                    map.put("formal",ConverterSystem.FORMAL_SALARY_TYPE);
+                }else {
+                    map.put("pact",ConverterSystem.PACT_SALARY_TYPE);
+                }
+            }else {
+                map.put("formal",ConverterSystem.FORMAL_SALARY_TYPE);
+                map.put("pact",ConverterSystem.PACT_SALARY_TYPE);
+            }
+            br.setData(map);
+            br.setCode(com.aitian.salary.Utils.ReponseCode.REQUEST_SUCCESS);
+        }else{
+            br.setCode(com.aitian.salary.Utils.ReponseCode.REQUEST_ERROR);
+            br.setMessage("The salary type List is NULL!");
+        }
+        return br;
+    }
+
+    @RequestMapping(value = "/getEmployees", method = RequestMethod.GET)
+    @ResponseBody
+    public BaseResponse getEmployees(HttpServletRequest request, String empName, String departId) throws Exception {
+        BaseResponse br = new BaseResponse();
+        if(StringUtils.isNotBlank(departId)&&StringUtils.isNotBlank(empName)){
+            List<Employee> emps = salaryService.getEmployees(empName.trim(), departId.trim());
+            br.setData(emps);
+            br.setCode(com.aitian.salary.Utils.ReponseCode.REQUEST_SUCCESS);
+        }else{
+            br.setCode(ReponseCode.PARAMETER_NULL_ERROR);
+            br.setMessage("The PARAMETER_  is NULL!");
+        }
+        return br;
+    }
 }
