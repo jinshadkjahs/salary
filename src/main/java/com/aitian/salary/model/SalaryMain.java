@@ -1,6 +1,6 @@
 package com.aitian.salary.model;
 
-import java.sql.Date;
+import java.util.Date;
 import javax.persistence.*;
 import java.util.List;
 

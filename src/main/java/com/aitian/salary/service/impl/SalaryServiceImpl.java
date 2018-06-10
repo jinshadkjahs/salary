@@ -7,7 +7,6 @@ import com.aitian.salary.mapper.SalaryMapper;
 import com.aitian.salary.mapper.SalaryTypeEmpMapper;
 import com.aitian.salary.model.Employee;
 import com.aitian.salary.model.SalaryMain;
-import com.aitian.salary.model.SalaryType;
 import com.aitian.salary.model.SalaryTypeEmp;
 import com.aitian.salary.service.SalaryService;
 import com.github.pagehelper.PageHelper;
@@ -16,11 +15,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 import tk.mybatis.mapper.entity.Example;
 
-import java.io.FileInputStream;
-import java.util.ArrayList;
+import java.io.InputStream;
 import java.util.List;
 
 @Service(value = "salaryService")
@@ -37,7 +34,7 @@ public class SalaryServiceImpl implements SalaryService {
 
     @Transactional
     @Override
-    public int[] batchImport( FileInputStream inputStream, String fileName) {
+    public int[] batchImport(InputStream inputStream, String fileName) {
 
         //创建处理EXCEL
         ReadExcel readExcel=new ReadExcel();
@@ -115,10 +112,34 @@ public class SalaryServiceImpl implements SalaryService {
         return  salaryList.size()>0?salaryList.get(0):null;
     }
 
+    @Override
+    public SalaryMain findSalaryByPk(Integer salaryId) {
+        SalaryMain salary = salaryMapper.selectByPrimaryKey(salaryId);
+
+        Employee emp = employeeEmpMapper.selectByPrimaryKey(salary.getEmpId());
+        if(emp != null) {
+            if (ConverterSystem.ALL_EMPLOYEE_TYPE.containsKey(Integer.parseInt(emp.getEmpType()))) {
+                emp.setEmpTypeStr(ConverterSystem.ALL_EMPLOYEE_TYPE.get(Integer.parseInt(emp.getEmpType())).getTypeName());
+            }
+            if (ConverterSystem.ALL_DEPARTMENT.containsKey(emp.getDepartId())) {
+                emp.setDepartIdStr(ConverterSystem.ALL_DEPARTMENT.get(emp.getDepartId()).getDepartName());
+            }
+            salary.setEmployee(emp);
+            Example example = new Example(SalaryTypeEmp.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("salaryId", salary.getSalaryId());
+            salary.setSalaryTypeEmpList(salaryTypeEmpMapper.selectByExample(example));
+        }
+        return  salary;
+    }
+
     @Transactional
     @Override
     public void addSalaryList(SalaryMain salaryMain) {
         salaryMapper.insert(salaryMain);
+        salaryMain.getSalaryTypeEmpList().forEach(salaryTypeEmp -> {
+            salaryTypeEmp.setSalaryId(salaryMain.getSalaryId());
+        });
         salaryTypeEmpMapper.insertList(salaryMain.getSalaryTypeEmpList());
     }
 
@@ -139,6 +160,9 @@ public class SalaryServiceImpl implements SalaryService {
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("salaryId",salaryMain.getSalaryId());
         salaryTypeEmpMapper.deleteByExample(example);
+        salaryMain.getSalaryTypeEmpList().forEach(salaryTypeEmp -> {
+            salaryTypeEmp.setSalaryId(salaryMain.getSalaryId());
+        });
         salaryTypeEmpMapper.insertList(salaryMain.getSalaryTypeEmpList());
         salaryMapper.updateByPrimaryKey(salaryMain);
     }

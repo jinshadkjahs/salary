@@ -5,12 +5,12 @@ import com.aitian.salary.model.Employee;
 import com.aitian.salary.model.SalaryMain;
 import com.github.pagehelper.PageInfo;
 
-import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.List;
 
 public interface SalaryService {
 
-    int[] batchImport( FileInputStream inputStream, String fileName);
+    int[] batchImport(InputStream inputStream, String fileName);
 
     PageInfo<SalaryMain> findSalarys(String empName, String empId, String salaryDate, Integer departId, Integer empType, Integer page, Integer pageSize);
 
@@ -23,4 +23,6 @@ public interface SalaryService {
     SalaryMain findSalary(String empId, String salaryDate);
 
     List<Employee> getEmployees(String empName, String departId);
+
+    SalaryMain findSalaryByPk(Integer salaryId);
 }

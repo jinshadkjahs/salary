@@ -14,19 +14,20 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.FileInputStream;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping("/salary")
@@ -99,10 +100,15 @@ public class SalaryController {
 
     @RequestMapping(value = "/getSalary", method = RequestMethod.GET)
     @ResponseBody
-    public BaseResponse getSalary(HttpServletRequest request, String empId, String salaryDate) throws Exception {
+    public BaseResponse getSalary(HttpServletRequest request, String empId, String salaryDate,String salaryId) throws Exception {
         BaseResponse br = new BaseResponse();
-        if(StringUtils.isNotBlank(empId)){
-            SalaryMain salary = salaryService.findSalary(empId,salaryDate);
+        if((StringUtils.isNotBlank(empId)&&StringUtils.isNotBlank(salaryDate))||StringUtils.isNotBlank(salaryId)){
+            SalaryMain salary = null;
+            if(StringUtils.isNotBlank(salaryId)){
+                salary = salaryService.findSalaryByPk(Integer.parseInt(salaryId));
+            }else {
+                salary = salaryService.findSalary(empId,salaryDate);
+            }
             br.setData(salary);
             br.setCode(com.aitian.salary.Utils.ReponseCode.REQUEST_SUCCESS);
         }else{
@@ -117,41 +123,97 @@ public class SalaryController {
     public BaseResponse addSalary(HttpServletRequest request, SalaryMain salaryMain) throws Exception {
         BaseResponse br = new BaseResponse();
         boolean paramterIllegal = true;
-
+        String grossPayStr = request.getParameter("grossPay_dob");
+        String netPayrollStr = request.getParameter("netPayroll_dob");
+        if(StringUtils.isBlank(salaryMain.getEmpId()) || StringUtils.isBlank(salaryMain.getSalaryDate()) || StringUtils.isBlank(grossPayStr)|| StringUtils.isBlank(netPayrollStr)){
+            paramterIllegal = false;
+        }
         if(paramterIllegal){
-//            salaryService.addSalaryList(salaryList);
-            br.setCode(com.aitian.salary.Utils.ReponseCode.REQUEST_SUCCESS);
+            if(salaryService.findSalary(salaryMain.getEmpId(),salaryMain.getSalaryDate())!=null){
+                br.setCode(ReponseCode.SALARY_EXIST_ERROR);
+                return  br;
+            }
+            Double grossPayDouble = Double.parseDouble(grossPayStr) * ConverterSystem.MULTIPLE;
+            Double netPayrollDouble = Double.parseDouble(netPayrollStr) * ConverterSystem.MULTIPLE;
+            salaryMain.setGrossPay(grossPayDouble.longValue());
+            salaryMain.setNetPayroll(netPayrollDouble.longValue());
+            Map<String,String[]> map = request.getParameterMap();
+            List<SalaryTypeEmp> list = new ArrayList<>();
+            for(String key:map.keySet()){
+                if(key.startsWith("salaryType_")){
+                    if(map.get(key) != null && map.get(key).length != 0){
+                        SalaryTypeEmp salaryTypeEmp = new SalaryTypeEmp();
+                        String[] keys = key.split("_");
+                        salaryTypeEmp.setSalaryType(Integer.parseInt(keys[1]));
+                        Double amountDouble = Double.parseDouble(map.get(key)[0]) * ConverterSystem.MULTIPLE;
+                        salaryTypeEmp.setMoney(amountDouble.longValue());
+                        list.add(salaryTypeEmp);
+                    }
+                }
+            }
+            if(list.size()>0){
+                salaryMain.setSalaryTypeEmpList(list);
+                salaryMain.setCreateTime(new Date());
+                salaryMain.setUpdateTime(salaryMain.getCreateTime());
+                salaryService.addSalaryList(salaryMain);
+                br.setCode(com.aitian.salary.Utils.ReponseCode.REQUEST_SUCCESS);
+            }else {
+                br.setCode(ReponseCode.PARAMETER_NULL_ERROR);
+            }
         }else {
             br.setCode(com.aitian.salary.Utils.ReponseCode.ILLEGAL_PARAMETER);
-            br.setMessage("The parameter is ILLEGAL!");
         }
         return br;
     }
 
+    @RequestMapping(value = "/intoUpdate/*")
+    public String intoUpdate(HttpServletRequest request) throws Exception {
+        return "/salarymanager/update";
+    }
+
     @RequestMapping(value = "/updateSalary", method = RequestMethod.PUT)
     @ResponseBody
-    public BaseResponse updateSalary(HttpServletRequest request, List<SalaryMain> salaryList) throws Exception {
+    public BaseResponse updateSalary(HttpServletRequest request,  SalaryMain salaryMain) throws Exception {
         BaseResponse br = new BaseResponse();
         boolean paramterIllegal = true;
-        //数据验证
-//        for (Salary salary: salaryList ) {
-//            //员工编号是否为空
-//            if (StringUtils.isBlank(salary.getEmpId())){
-//                paramterIllegal = false;
-//                break;
-//            }
-//            //工资类型是否存在
-//            if (ConverterSystem.ALL_SALARY_TYPE.get(salary.getSalaryType()) == null){
-//                paramterIllegal = false;
-//                break;
-//            }
-//        }
+        String grossPayStr = request.getParameter("grossPay_dob");
+        String netPayrollStr = request.getParameter("netPayroll_dob");
+        if(StringUtils.isBlank(salaryMain.getEmpId()) || StringUtils.isBlank(salaryMain.getSalaryDate()) || StringUtils.isBlank(grossPayStr)|| StringUtils.isBlank(netPayrollStr) ||  salaryMain.getSalaryId()==null){
+            paramterIllegal = false;
+        }
         if(paramterIllegal){
-//            salaryService.updateSalarys(salaryList);
-            br.setCode(com.aitian.salary.Utils.ReponseCode.REQUEST_SUCCESS);
+            SalaryMain salaryMainOld = salaryService.findSalary(salaryMain.getEmpId(),salaryMain.getSalaryDate());
+
+            Double grossPayDouble = Double.parseDouble(grossPayStr) * ConverterSystem.MULTIPLE;
+            Double netPayrollDouble = Double.parseDouble(netPayrollStr) * ConverterSystem.MULTIPLE;
+            salaryMain.setGrossPay(grossPayDouble.longValue());
+            salaryMain.setNetPayroll(netPayrollDouble.longValue());
+            Map<String,String[]> map = request.getParameterMap();
+            List<SalaryTypeEmp> list = new ArrayList<>();
+            for(String key:map.keySet()){
+                if(key.startsWith("salaryType_")){
+                    if(map.get(key) != null && map.get(key).length != 0){
+                        SalaryTypeEmp salaryTypeEmp = new SalaryTypeEmp();
+                        String[] keys = key.split("_");
+                        salaryTypeEmp.setSalaryType(Integer.parseInt(keys[1]));
+                        Double amountDouble = Double.parseDouble(map.get(key)[0]) * ConverterSystem.MULTIPLE;
+                        salaryTypeEmp.setMoney(amountDouble.longValue());
+                        list.add(salaryTypeEmp);
+                    }
+                }
+            }
+            if(list.size()>0){
+                salaryMain.setSalaryTypeEmpList(list);
+                salaryMain.setCreateTime(salaryMainOld.getCreateTime());
+                salaryMain.setUpdateTime(salaryMain.getCreateTime());
+//                salaryMain.setUpdateUserId(request.getSession().get);
+                salaryService.updateSalarys(salaryMain);
+                br.setCode(com.aitian.salary.Utils.ReponseCode.REQUEST_SUCCESS);
+            }else {
+                br.setCode(ReponseCode.PARAMETER_NULL_ERROR);
+            }
         }else {
             br.setCode(com.aitian.salary.Utils.ReponseCode.ILLEGAL_PARAMETER);
-            br.setMessage("The parameter is ILLEGAL!");
         }
         return br;
     }
@@ -172,35 +234,41 @@ public class SalaryController {
 
 
     @RequestMapping(value = "/batchimport", method = RequestMethod.POST)
-    public BaseResponse getParamFromFileForAjax(HttpServletRequest request, String fileName) throws Exception  {
+    public BaseResponse getParamFromFileForAjax(HttpServletRequest request) throws Exception  {
         BaseResponse br = new BaseResponse();
         br.setCode(ReponseCode.ILLEGAL_PARAMETER);
-        Map<String, Object> paramMap = new LinkedHashMap<String, Object>();
-        FileInputStream inputStream = null;
+        MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+        MultiValueMap<String, MultipartFile> multiFileMap = multipartRequest.getMultiFileMap();
+        if(multiFileMap.size()>0){
+            for (String key : multiFileMap.keySet()) {
+                List<MultipartFile> multipartFiles = multiFileMap.get(key);
+                if(multipartFiles.size()>0){
+                    MultipartFile file = multipartFiles.get(0);
+                    if (!file.isEmpty()) {
+                        String fileName = file.getOriginalFilename();
+                        String fileExtension = fileName.substring(fileName.lastIndexOf("."));
+                        if(!Arrays.asList(ConverterSystem.EXTENSIONPERMIT).contains(fileExtension)){
+                            br.setCode(ReponseCode.NOT_ALLOW_FILE);
+                            break;
+                        }
+                        int[] arr = salaryService.batchImport(file.getInputStream(), file.getName());
+                        // arr 三个 第一个错误类型   第二、三个错误行、列数
+                        if(arr.length == 0){
+                            br.setCode(com.aitian.salary.Utils.ReponseCode.REQUEST_SUCCESS);
+                        }else {
+                            br.setCode(ReponseCode.EXCEL_IMPORT_ERROR);
+                            br.setMessage("The file import error!");
+                            br.setData(arr);
+                        }
+                    }
 
-        //把Request强转成多部件请求对象
-        MultipartHttpServletRequest multipartHttpServletRequest = (MultipartHttpServletRequest) request;
-        //根据文件名称获取文件对象
-        CommonsMultipartFile commonsMultipartFile = (CommonsMultipartFile) multipartHttpServletRequest.getFile(fileName);
-
-        log.info(" batchimport() start");
-
-        String filename = commonsMultipartFile.getName();
-        String originalFilename = commonsMultipartFile.getOriginalFilename();
-
-        System.out.println("FileName = " + filename);
-        System.out.println("originalFilename = " + originalFilename);
-
-
-        inputStream = (FileInputStream) commonsMultipartFile.getInputStream();
-        int[] arr = salaryService.batchImport(inputStream, fileName);
-        // arr 三个 第一个错误类型   第二、三个错误行、列数
-        if(arr.length == 0){
-            br.setCode(com.aitian.salary.Utils.ReponseCode.REQUEST_SUCCESS);
-        }else {
-            br.setCode(ReponseCode.EXCEL_IMPORT_ERROR);
-            br.setMessage("The file import error!");
-            br.setData(arr);
+                }else {
+                    br.setCode(ReponseCode.HAS_NOT_FILE);
+                }
+                break;
+            }
+        }else{
+            br.setCode(ReponseCode.HAS_NOT_FILE);
         }
         return br;
     }

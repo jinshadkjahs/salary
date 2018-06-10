@@ -42,7 +42,7 @@
 </div>
 <div class="providerAdd">
 
-    <form id="salarySearchForm" style="overflow: auto;height: 490px;">
+    <form id="salaryAddForm" style="overflow: auto;height: 490px;" onsubmit="return false">
         <table style="width: 100%">
             <tr>
                 <td>员工信息</td>
@@ -56,7 +56,8 @@
                             <td  class="titletd">员工姓名：</td>
                             <td>
                                 <input type="hidden" name="empId" id="empId" />
-                                <input type="text" id="empName" name="empName" style="width: 65%;" onfocus="loadEmployees(this)" onkeyup="loadEmployees(this)" placeholder="请输入员工姓名"/>
+                                <input type="hidden" name="salaryId" id="salaryId" />
+                                <input type="text" id="empName" name="empName" style="width: 65%;" onfocus="loadEmployees(this)" onkeyup="loadEmployees(this)" placeholder="请输入员工姓名" required/>
                                 <div class="xialaDiv" style="margin: 0px;margin-top: -5px;" >
                                     <ul id="emps" >
                                     </ul>
@@ -66,10 +67,8 @@
                         <tr>
                             <td class="titletd">年月：</td>
                             <td class="titletd"> <select id="salaryYear" name="salaryYear" style="width: 34%;margin: 0px">
-                                <option value="">--请选择--</option>
                             </select>
                             <select id="salaryMonth" name="salaryMonth"  style="width: 34%;margin: 0px">
-                                <option value="">--请选择--</option>
                             </select>
                             <input type="hidden" id="salaryDate" name="salaryDate" /></td>
                         </td>
@@ -91,8 +90,8 @@
             </tr>
         </table>
         <div class="removeMain">
-            <a href="#" style="margin: 0px;margin-right: 30px">确定</a>
-            <a href="#"style="margin: 0px;" onclick="window.history.back();" >返回</a>
+            <a  onclick="salarySave()" style="margin: 0px;margin-right: 30px">确定</a>
+            <a style="margin: 0px;" onclick="window.location='list.html'" >返回</a>
         </div>
     </form>
 

@@ -138,7 +138,7 @@ public class ReadExcel {
        return customerList;
     }
 
-    public int[] checkExcel( FileInputStream inputStream, String fileName) {
+    public int[] checkExcel( InputStream inputStream, String fileName) {
        int[] suucess = new int[0];
         File file1 = null;
         try {
