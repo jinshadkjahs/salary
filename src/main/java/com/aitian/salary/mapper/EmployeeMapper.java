@@ -3,6 +3,7 @@ package com.aitian.salary.mapper;
 import com.aitian.salary.Utils.BaseMapper;
 import com.aitian.salary.mapper.provider.EmployeeDynaSqlProvider;
 import com.aitian.salary.model.Employee;
+import com.aitian.salary.model.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.SelectProvider;
 import org.slf4j.Logger;
@@ -20,5 +21,11 @@ public interface EmployeeMapper extends BaseMapper<Employee> {
 
     @SelectProvider(type = EmployeeDynaSqlProvider.class,method = "queryEmpAndUser")
     List<Employee> queryEmpAndUser(Employee emp);
+
+    @SelectProvider(type = EmployeeDynaSqlProvider.class,method = "insertEmp")
+    void insertEmp(Employee emp);
+
+    @SelectProvider(type = EmployeeDynaSqlProvider.class,method = "insertUser")
+    void insertUser(User user);
 
 }

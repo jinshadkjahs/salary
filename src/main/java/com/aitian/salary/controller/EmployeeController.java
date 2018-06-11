@@ -6,7 +6,6 @@ import com.aitian.salary.controller.response.BaseResponse;
 import com.aitian.salary.model.Employee;
 import com.aitian.salary.service.EmployeeService;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,10 +14,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +42,7 @@ public class EmployeeController {
     public Object queryEmpInfo(HttpServletRequest request, HttpServletResponse response) throws JsonProcessingException {
         BaseResponse br = new BaseResponse();
         String empId = request.getParameter("empNo");
+        String empType = request.getParameter("empType");
         String empName = request.getParameter("empName");
         String pageNStr = request.getParameter("pageNum");
         boolean paramterIllegal = true;
@@ -52,7 +58,7 @@ public class EmployeeController {
             pageN = 1;
         }
         if(paramterIllegal){
-            PageInfo<Employee> employee = employeeService.findEmployee(empId, empName, pageN, ConverterSystem.PAGE_SIZE);
+            PageInfo<Employee> employee = employeeService.findEmployee(empId, empName,empType, pageN, ConverterSystem.PAGE_SIZE);
             br.setData(employee);
             br.setCode(ReponseCode.REQUEST_SUCCESS);
         }else{
@@ -88,4 +94,22 @@ public class EmployeeController {
         return br;
     }
 
+
+    @RequestMapping(value = "/importEmp",method = {RequestMethod.POST})
+    @ResponseBody
+    public Object importEmp(HttpServletRequest request) throws Exception {
+        MultipartHttpServletRequest multiReq = (MultipartHttpServletRequest) request;
+        MultipartFile fileExcel = multiReq.getFile("importEmp");
+        String fileName = null;
+        if (fileExcel != null){
+            fileName = fileExcel.getOriginalFilename();
+        }
+        InputStream in = fileExcel.getInputStream();
+        String path = System.getProperty("java.io.tmpdir");
+        File diskFile =  new File(path + "/" + fileName);
+        fileExcel.transferTo(diskFile);
+        employeeService.importEmp(in,fileName);
+
+        return null;
+    }
 }
