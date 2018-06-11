@@ -13,7 +13,7 @@
         <jdbcConnection driverClass="com.mysql.jdbc.Driver"
                         connectionURL="jdbc:mysql://localhost:3306/salary?characterEncoding=UTF-8"
                         userId="root"
-                        password="123456">
+                        password="mysql">
 
             <property name="useActualColumnNames" value="true"/>
 
@@ -45,7 +45,7 @@
             <!--<property name="enableSubPackages" value="true"/>-->
         <!--</javaClientGenerator>-->
 
-        <table tableName="s_salary_type" domainObjectName="SalaryType"
+        <table tableName="s_bonus_info" domainObjectName="BonusInfo"
                enableCountByExample="false" enableUpdateByExample="false"
                enableDeleteByExample="false" enableSelectByExample="false"
                selectByExampleQueryId="false">
