@@ -2,13 +2,11 @@ package com.aitian.salary.service.impl;
 
 import com.aitian.salary.Utils.ConverterSystem;
 import com.aitian.salary.Utils.ReadExcel;
+import com.aitian.salary.mapper.BonusInfoMapper;
 import com.aitian.salary.mapper.EmployeeMapper;
 import com.aitian.salary.mapper.SalaryMapper;
 import com.aitian.salary.mapper.SalaryTypeEmpMapper;
-import com.aitian.salary.model.Employee;
-import com.aitian.salary.model.SalaryMain;
-import com.aitian.salary.model.SalaryType;
-import com.aitian.salary.model.SalaryTypeEmp;
+import com.aitian.salary.model.*;
 import com.aitian.salary.service.SalaryService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -35,6 +33,9 @@ public class SalaryServiceImpl implements SalaryService {
     @Autowired
     private EmployeeMapper employeeEmpMapper;
 
+    @Autowired
+    private BonusInfoMapper bonusInfoMapper;
+
     @Transactional
     @Override
     public int[] batchImport( FileInputStream inputStream, String fileName) {
@@ -49,7 +50,7 @@ public class SalaryServiceImpl implements SalaryService {
             salaryMapper.insertList(salaryList);
         }
 
-       return arr;
+        return arr;
     }
 
     @Override
@@ -108,6 +109,9 @@ public class SalaryServiceImpl implements SalaryService {
                 Example.Criteria criteria = example.createCriteria();
                 criteria.andEqualTo("salaryId",salary.getSalaryId());
                 salary.setSalaryTypeEmpList(salaryTypeEmpMapper.selectByExample(example));
+                salary.getSalaryTypeEmpList().forEach(salaryTypeEmp -> {
+                    salaryTypeEmp.setSalaryTypeObj(ConverterSystem.ALL_SALARY_TYPE.get(salaryTypeEmp.getSalaryType()));
+                });
             }else {
                 salaryList.remove(salary);
             }
@@ -151,5 +155,13 @@ public class SalaryServiceImpl implements SalaryService {
         criteria.andEqualTo("departId", departId);
         criteria.andLike("empName","%"+empName+"%");
         return employeeEmpMapper.selectByExample(example);
+    }
+
+    @Override
+    public List<BonusInfo> findBonusInfo(String empId) {
+        BonusInfo bonusinfo = new BonusInfo();
+        bonusinfo.setEmpId(empId);
+        List<BonusInfo> bonusInfo = bonusInfoMapper.select(bonusinfo);
+        return  bonusInfo;
     }
 }

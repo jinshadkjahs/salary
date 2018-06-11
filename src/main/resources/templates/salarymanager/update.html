@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>工资管理系统</title>
+    <link rel="stylesheet" href="../../static/css/public.css"/>
+    <link rel="stylesheet" href="../../static/css/style.css"/>
+</head>
+<body>
+<!--头部-->
+<style>
+    .titletd{
+        width: 15%;
+        min-width: 80px;
+    }
+    .xialaDiv{
+        display: none;
+        position: absolute;
+        background-color: #fff;
+        margin: 0px;
+        height: 100px;
+        overflow: auto;
+        border: 1px #ccc solid;
+        border-radius: 5px;
+        margin-top: -5px;
+        width: 20%;
+    }
+    #emps li{
+        background-color: #6aa7d6;
+        line-height: 40px;
+        margin-bottom: 2px;
+        padding-left: 15px;
+    }
+    #emps li:hover{
+        background-color: #3a8dc1;
+    }
+</style>
+
+<div class="location">
+    <strong>你现在所在的位置是:</strong>
+    <span>修改员工工资信息</span>
+</div>
+<div class="providerAdd">
+
+    <form id="salaryUpdateForm" style="overflow: auto;height: 490px;" onsubmit="return false">
+        <table style="width: 100%">
+            <tr>
+                <td>员工信息</td>
+                <td><div class="search" style="height: auto">
+                    <table style="width: 100%"><tr>
+                        <td class="titletd">员工科室：</td>
+                        <td style="width: 35%"> <input id="departId" name="departId" readonly="readonly" style="width: 65%;background-color: #cccccc" />
+                        </td>
+                        <td  class="titletd">员工姓名：</td>
+                        <td>
+                            <input type="hidden" name="empId" id="empId" />
+                            <input type="hidden" name="salaryId" id="salaryId" />
+                            <input type="text" id="empName" name="empName" style="width: 65%;background-color: #cccccc"  readonly="readonly" />
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="titletd">年月：</td>
+                            <td class="titletd">
+                                <input type="text" id="salaryDate" name="salaryDate" style="width: 65%;background-color: #cccccc"  readonly="readonly" /></td>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                </td>
+            </tr>
+            <tr>
+                <td>工资信息</td>
+                <td>
+                    <table id="salaryInput" style="width: 100%">
+                        <tr><td>
+                            <div class="search" style="height: 100px">
+
+                            </div></td></tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+        <div class="removeMain">
+            <a  onclick="salaryUpdateSave()" style="margin: 0px;margin-right: 30px">确定</a>
+            <a style="margin: 0px;" onclick="  window.location.href='/salarymanager/list.html'" >返回</a>
+        </div>
+    </form>
+
+</div>
+<script type="text/javascript" src="../../static/js/jquery.js"></script>
+<script src="../../static/js/child.js"></script>
+<script src="../../static/js/salaryManager.js"></script>
+<script>
+    $(function () {
+        loadingShow();
+        var url = window.location.href;
+        var slaryId = url.substring(url.lastIndexOf("/")+1);
+        if(slaryId != "" && slaryId != "undefined"){
+            loadSalaryTypeData();
+            loadSalaryData(slaryId);
+            loadingHide();
+        }else {
+            loadingHide();
+            alertShow("系统出错！");
+            history.back(-1);
+        }
+    });
+</script>
+</body>
+</html>

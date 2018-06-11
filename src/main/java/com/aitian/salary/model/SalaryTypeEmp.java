@@ -50,4 +50,15 @@ public class SalaryTypeEmp {
     public void setSalaryType(Integer salaryType) {
         this.salaryType = salaryType;
     }
+
+    @Transient
+    public SalaryType salaryTypeObj;
+
+    public SalaryType getSalaryTypeObj() {
+        return salaryTypeObj;
+    }
+
+    public void setSalaryTypeObj(SalaryType salaryTypeObj) {
+        this.salaryTypeObj = salaryTypeObj;
+    }
 }

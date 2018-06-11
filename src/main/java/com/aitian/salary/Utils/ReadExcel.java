@@ -109,15 +109,21 @@ public class ReadExcel {
        if(totalRows>=1 && sheet.getRow(0) != null){
             this.totalCells=sheet.getRow(0).getPhysicalNumberOfCells();
        }
-       
-       List<SalaryMain> customerList=new ArrayList<SalaryMain>();
-      SalaryMain customer;
+       if(totalCells == 12){
+
+       }else if(totalCells == 6){
+
+       }else if(totalCells == 32){
+
+       }
+
+       List<SalaryMain> salaryMainList=new ArrayList<SalaryMain>();
+      SalaryMain salaryMain;
       //循环Excel行数,从第二行开始。标题不入库
        for(int r=1;r<totalRows;r++){
            Row row = sheet.getRow(r);
            if (row == null) continue;
-           customer = new SalaryMain();
-           
+           salaryMain = new SalaryMain();
            //循环Excel的列
            for(int c = 0; c <this.totalCells; c++){    
                Cell cell = row.getCell(c);
@@ -139,12 +145,12 @@ public class ReadExcel {
 //               }
            }
            //添加客户
-           customerList.add(customer);
+           salaryMainList.add(salaryMain);
        }
-       return customerList;
+       return salaryMainList;
     }
 
-    public int[] checkExcel( FileInputStream inputStream, String fileName) {
+    public int[] checkExcel( InputStream inputStream, String fileName) {
        int[] suucess = new int[0];
         File file1 = null;
         try {

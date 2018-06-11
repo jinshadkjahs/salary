@@ -36,4 +36,21 @@ public class ReponseCode {
      */
     public static final String REQUEST_ERROR = "1006";
 
+    /**
+     * 员工当月工资信息已经存在
+     */
+    public static final String SALARY_EXIST_ERROR = "1007";
+
+    /**
+     * 没有选择文件
+     */
+    public static final String HAS_NOT_FILE = "1008";
+
+    /**
+     * 文件格式不对
+     */
+    public static final String NOT_ALLOW_FILE = "1009";
+
+
+
 }

@@ -29,5 +29,10 @@ public class ConverterSystem {
     public static List<SalaryType> FORMAL_SALARY_TYPE = null;
     //分页数据量
     public static final int PAGE_SIZE = 10;
+    //扩大多少倍
+    public static final double MULTIPLE = 10000;
+    /** 允许上传的扩展名*/
+    public static String [] EXTENSIONPERMIT = {"xlsx","xls"};
+
 
 }
