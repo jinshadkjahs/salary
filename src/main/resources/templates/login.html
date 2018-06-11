@@ -44,7 +44,17 @@
                     alert("密码或用户错误!");
                 }
             },'json');
-        })
+        });
+        document.onkeydown=keyDownSearch;
+        function keyDownSearch(e) {
+            var theEvent = e || window.event;
+            var code = theEvent.keyCode || theEvent.which || theEvent.charCode;
+            if (code == 13) {
+                $("#loginFrom").submit();
+                return false;
+            }
+            return true;
+        }
         $(function () {
             if(window.top != null && window.top.document.URL != document.URL){
                 window.top.location = document.URL;
