@@ -6,8 +6,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import com.aitian.salary.model.BonusInfo;
 import com.aitian.salary.model.SalaryMain;
+import com.aitian.salary.model.SalaryType;
 import com.aitian.salary.model.SalaryTypeEmp;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -23,6 +26,8 @@ import org.springframework.util.ResourceUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
+import javax.persistence.criteria.CriteriaBuilder;
+
 
 public class ReadExcel {
     //总行数
@@ -31,11 +36,12 @@ public class ReadExcel {
     private int totalCells = 0; 
     //错误信息接收器
     private String errorMsg;
-    private List<SalaryMain> salaryList;
+    private List<Object> objList;
     //2003- 版本的excel
     private final static String excel2003L =".xls";
     //2007+ 版本的excel
     private final static String excel2007U =".xlsx";
+    int[] suucess = new int[3];
     //构造方法
     public ReadExcel(){}
     //获取总行数
@@ -63,8 +69,8 @@ public class ReadExcel {
    *
    * @return
    */
-  public List<SalaryMain> getExcelInfo(){
-    return salaryList;
+  public List<Object> getExcelInfo(){
+    return objList;
   }
   /**
    * 根据excel里面的内容读取客户信息
@@ -73,8 +79,8 @@ public class ReadExcel {
    * @return
    * @throws IOException
    */
-  public  List<SalaryMain> getExcelInfo(InputStream is,boolean isExcel2003){
-       List<SalaryMain> customerList=null;
+  public  List<Object> getExcelInfo(InputStream is,boolean isExcel2003){
+       List<Object> objList=null;
        try{
            /** 根据版本选择创建Workbook的方式 */
            Workbook wb = null;
@@ -86,19 +92,19 @@ public class ReadExcel {
                wb = new XSSFWorkbook(is); 
            }
            //读取Excel里面客户的信息
-           customerList=readExcelValue(wb);
+           objList=readExcelValue(wb);
        }
        catch (IOException e)  {  
            e.printStackTrace();  
        }  
-       return customerList;
+       return objList;
   }
   /**
    * 读取Excel里面客户的信息
    * @param wb
    * @return
    */
-  private List<SalaryMain> readExcelValue(Workbook wb){
+  private List<Object> readExcelValue(Workbook wb){
       //得到第一个shell  
        Sheet sheet=wb.getSheetAt(0);
        
@@ -109,49 +115,231 @@ public class ReadExcel {
        if(totalRows>=1 && sheet.getRow(0) != null){
             this.totalCells=sheet.getRow(0).getPhysicalNumberOfCells();
        }
-       if(totalCells == 12){
-
-       }else if(totalCells == 6){
-
-       }else if(totalCells == 32){
-
-       }
-
-       List<SalaryMain> salaryMainList=new ArrayList<SalaryMain>();
-      SalaryMain salaryMain;
-      //循环Excel行数,从第二行开始。标题不入库
-       for(int r=1;r<totalRows;r++){
-           Row row = sheet.getRow(r);
-           if (row == null) continue;
-           salaryMain = new SalaryMain();
-           //循环Excel的列
-           for(int c = 0; c <this.totalCells; c++){    
-               Cell cell = row.getCell(c);
-//               if (null != cell){
-//                   if(c==0){//第一列不读
-//                   }else if(c==1){
-//                       customer.setcName(cell.getStringCellValue());//客户名称
-//                   }else if(c==2){
-//                       customer.setSimpleName(cell.getStringCellValue());//客户简称
-//                   }else if(c==3){
-//                       customer.setTrade(cell.getStringCellValue());//行业
-//                   }else if(c==4){
-//                       customer.setSource(cell.getStringCellValue());//客户来源
-//                   }else if(c==5){
-//                       customer.setAddress(cell.getStringCellValue());//地址
-//                   }else if(c==6){
-//                       customer.setRemark(cell.getStringCellValue());//备注信息
-//                   }
-//               }
+       List<Object> objList=new ArrayList<Object>();
+       try{
+           if(totalCells == 12){
+               objList = getPactSalary(sheet);
+           }else if(totalCells == 6){
+               objList = getBonusDetail(sheet);
+           }else if(totalCells == 32){
+               objList = getFormalSalary(sheet);
+           }else{
+               suucess[0] = 1;
            }
-           //添加客户
-           salaryMainList.add(salaryMain);
+       }catch (Error e){
+            suucess[0] = 2;
+            if(e.getMessage().matches("[0-9]*-[0-9]*")){
+                String[] strArr = e.getMessage().split("-");
+                suucess[1] = Integer.parseInt(strArr[0]);
+                suucess[1] = Integer.parseInt(strArr[1]);
+            }else {
+                suucess[0] = 3;
+            }
        }
-       return salaryMainList;
+       return objList;
+    }
+
+    public List<Object> getBonusDetail(Sheet sheet){
+        List<Object> objList=new ArrayList<Object>();
+        for(int r=1;r<totalRows;r++){
+            Row row = sheet.getRow(r);
+            if (row == null) continue;
+            BonusInfo info = new BonusInfo();
+            //循环Excel的列
+            for(int c = 0; c <this.totalCells; c++){
+                Cell cell = row.getCell(c);
+                Object val = getCellValue(cell);
+               if (null != cell){
+                   if(c==0){//第一列不读
+                   }else if(c==1){
+                       if(val == null){
+                            throw new RuntimeException((r+1)+"-"+(c+1));
+                       }
+                       info.setEmpId(getCellValue(cell).toString());//职工编号
+                   }else if(c==2){
+                       info.setEmpName(val == null?"":val.toString());//姓名
+                   }else if(c==3){
+                       if(val == null){
+                           throw new RuntimeException((r+1)+"-"+(c+1));
+                       }
+                       info.setMoney(val == null?"":val.toString());//金额
+                   }else if(c==4){
+                       info.setCont(val == null?"":val.toString());//内容
+                   }else if(c==5){
+                       info.setManageDepart(val == null?"":val.toString());//归口管理部门
+                   }
+               }
+            }
+            objList.add(info);
+        }
+        return objList;
+    }
+
+
+    public List<Object> getPactSalary(Sheet sheet){
+        List<Object> objList=new ArrayList<Object>();
+        int c = 0;
+        int r = 0;
+        try {
+            Row oneRow = sheet.getRow(0);
+            Integer[] ids = new Integer[this.totalCells];
+            for(c = 5; c <this.totalCells-1; c++){
+                Cell cell = oneRow.getCell(c);
+                if (null != cell) {
+                    List<SalaryType> types = ConverterSystem.FORMAL_SALARY_TYPE.stream().filter(type ->
+                            type.getSalaryName().equals(getCellValue(cell).toString())
+                    ).collect(Collectors.toList());
+                    if(types.size()>0){
+                        ids[c] = types.get(0).getSalaryType();
+                    }
+                }
+            }
+            for(r=1;r<totalRows;r++){
+                Row row = sheet.getRow(r);
+                if (row == null) continue;
+                SalaryMain info = new SalaryMain();
+                info.setSalaryTypeEmpList(new ArrayList<>());
+                //循环Excel的列
+                for(c = 0; c <this.totalCells; c++){
+                    Cell cell = row.getCell(c);
+                    Object val = getCellValue(cell);
+                    if (null != cell){
+                        if(c==0){//第一列不读
+                        }else if(c==1){
+                            if(val == null){
+                                throw new RuntimeException((r+1)+"-"+(c+1));
+                            }
+                            info.setEmpId(val.toString());//职工编号
+                        }else if(c==2){
+    //                        info.setDepartId(getCellValue(cell).toString());//科室
+                        }else if(c==3){
+                            //姓名
+                        }else if(c==4){
+                            //身份证号
+                        }else if(c>=5 && c<=10){
+                            //基本工资
+                            //绩效
+                            //节加
+                            //其他奖
+                            //全勤奖
+                            //补发
+                            SalaryTypeEmp salaryTypeEmp = new SalaryTypeEmp();
+                            salaryTypeEmp.setSalaryType(ids[c]);
+                            Long amount = 0l;
+                            if(val != null){
+                                Double d = Long.parseLong(getCellValue(cell).toString()) * ConverterSystem.MULTIPLE;
+                                amount = d.longValue();
+                            }
+                            salaryTypeEmp.setMoney(amount);
+                            info.getSalaryTypeEmpList().add(salaryTypeEmp);
+                        }else if(c==11){
+                            if(val == null){
+                                info.setGrossPay(0L);
+                            }else {
+                                Double d = Long.parseLong(getCellValue(cell).toString())*ConverterSystem.MULTIPLE;
+                                info.setGrossPay(d.longValue());//应领工资
+                            }
+                        }
+                    }
+                }
+                objList.add(info);
+            }
+
+        }catch (Exception e){
+            throw new RuntimeException((r+1)+"-"+(c+1));
+        }
+        return objList;
+    }
+
+    public List<Object> getFormalSalary(Sheet sheet){
+        List<Object> objList=new ArrayList<Object>();
+        int c = 0;
+        int r = 0;
+        try{
+            Row oneRow = sheet.getRow(0);
+            Integer[] ids = new Integer[this.totalCells];
+            for(c = 5; c <this.totalCells-4; c++){
+                Cell cell = oneRow.getCell(c);
+                if (null != cell) {
+                    List<SalaryType> types = ConverterSystem.FORMAL_SALARY_TYPE.stream().filter(type ->
+                        type.getSalaryName().equals(getCellValue(cell).toString())
+                    ).collect(Collectors.toList());
+                    if(types.size()>0){
+                        ids[c] = types.get(0).getSalaryType();
+                    }
+                }
+            }
+
+            for(r=1;r<totalRows;r++){
+                Row row = sheet.getRow(r);
+                if (row == null) continue;
+                SalaryMain info = new SalaryMain();
+                info.setSalaryTypeEmpList(new ArrayList<>());
+                //循环Excel的列
+                for(c = 0; c <this.totalCells; c++){
+                    Cell cell = row.getCell(c);
+                    Object val = getCellValue(cell);
+                    if (null != cell){
+                        if(c==0){
+                            if(val == null){
+                                throw new RuntimeException((r+1)+"-"+(c+1));
+                            }
+                            info.setEmpId(val.toString());//职工编号
+                        }else if(c==1){
+    //                        info.setDepartId(getCellValue(cell).toString());//科室
+                        }else if(c==2){
+                            //姓名
+                        }else if(c==3){
+                            //月工资
+                        }else if(c==4){
+                            //身份证号
+                        }else if(c==28){
+                            if(val == null){
+                                info.setGrossPay(0L);
+                            }else {
+                                Double d = Long.parseLong(getCellValue(cell).toString())*ConverterSystem.MULTIPLE;
+                                info.setGrossPay(d.longValue());//应领工资
+                            }
+                        }else if(c==29){
+                            if(val == null){
+                                info.setGrossPay(0L);
+                            }else {
+                                Double d = Long.parseLong(getCellValue(cell).toString()) * ConverterSystem.MULTIPLE;
+                                info.setNetPayroll(d.longValue());//实发工资
+                            }
+                        }else if(c==30){
+                            //养老号
+                        }else if(c==31){
+                            //身份证号
+                        }else if(c >= 5 && c<=27){
+                                //基本工资
+                                //绩效
+                                //节加
+                                //其他奖
+                                //全勤奖
+                                //补发
+                            SalaryTypeEmp salaryTypeEmp = new SalaryTypeEmp();
+                            salaryTypeEmp.setSalaryType(ids[c]);
+                            Long amount = 0l;
+                            if(val != null){
+                                Double d = Long.parseLong(getCellValue(cell).toString()) * ConverterSystem.MULTIPLE;
+                                amount = d.longValue();
+                            }
+                            salaryTypeEmp.setMoney(amount);
+                            info.getSalaryTypeEmpList().add(salaryTypeEmp);
+                        }
+                    }
+                }
+                objList.add(info);
+            }
+        }catch (Exception e){
+            throw new RuntimeException((r+1)+"-"+(c+1));
+        }
+        return objList;
     }
 
     public int[] checkExcel( InputStream inputStream, String fileName) {
-       int[] suucess = new int[0];
+
         File file1 = null;
         try {
             File path = new File(ResourceUtils.getURL("classpath:").getPath());
@@ -168,13 +356,14 @@ public class ReadExcel {
         }
 
         //初始化客户信息的集合
-        List<SalaryMain> salarys=new ArrayList<SalaryMain>();
+        List<Object> objects=new ArrayList<Object>();
         //初始化输入流
         InputStream is = null;
         try{
             //验证文件名是否合格
             if(!validateExcel(fileName)){
-                return null;
+                suucess[0] = 2;
+                return suucess;
             }
             //根据文件名判断文件是2003版本还是2007版本
             boolean isExcel2003 = true;
@@ -184,7 +373,7 @@ public class ReadExcel {
             //根据新建的文件实例化输入流
             is = new FileInputStream(file1);
             //根据excel里面的内容读取客户信息
-            salarys = getExcelInfo(is, isExcel2003);
+            objects = getExcelInfo(is, isExcel2003);
             is.close();
         }catch(Exception e){
             e.printStackTrace();
@@ -199,7 +388,7 @@ public class ReadExcel {
                 }
             }
         }
-        salaryList = salarys;
+        objList = objects;
         return  suucess;
     }
 

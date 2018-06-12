@@ -3,9 +3,49 @@
     <a href="#" style="margin: 0px;">正式工资模板</a>
     <a href="#" style="margin: 0px;">其他奖模板</a>
 </div>
+<div style="margin-top: 15px">
+年月：
+ <select id="salaryYear" name="salaryYear" style="width: 34%;margin: 0px">
+</select>
+<select id="salaryMonth" name="salaryMonth"  style="width: 34%;margin: 0px">
+</select>
+<input type="hidden" id="salaryDate" name="salaryDate" /></div>
 <input type="file" style="margin-top: 20px;" id="salaryfile" name="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" />
 <p id="showTishi" style="margin-top: 15px;color: red;"></p>
 <div>
     <a href="#" onclick="iframe.fileImport()">确定</a>
     <a href="#" onclick="modelHide();">取消</a>
 </div>
+<script>
+    $(function () {
+        var myDate = new Date();
+        var startyear = 1946;
+        var endyear = myDate.getFullYear();
+        $("#salaryYear").empty();
+        for (i = endyear; i > startyear; i--) {
+            $('#salaryYear').append("<option value='" + i + "'>" + i + "年</option>");
+        }
+        $("#salaryMonth").empty();
+        for (i = 1; i <= 12; i++) {
+            var ss = "" + i;
+            if (i < 10) {
+                ss = "0" + i;
+            }
+            $('#salaryMonth').append("<option value='" + ss + "'>" + i + "月</option>");
+        }
+        var time = $(window.parent.document).find("#time").text().substring(0, 7).split("年");
+        var year = time[0];
+        // var monval = "" + (parseInt(time[1]));
+        var monval = time[1];
+        // if (time[1] == "1") {
+        //     year = "" + (parseInt(time[0]) - 1);
+        //     monval = 12;
+        // } else {
+        //     if ((parseInt(time[1]) - 1) < 10) {
+        //         monval = "0" + (parseInt(time[1]) - 1);
+        //     }
+        // }
+        $("#salaryMonth").val(monval);
+        $("#salaryYear").val(year);
+    })
+</script>

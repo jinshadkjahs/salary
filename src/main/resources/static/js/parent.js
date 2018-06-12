@@ -76,7 +76,7 @@ function modelHide(id){
 }
 
 function toLogin(){
-    location.href = "../loin.html";
+    location.href = "../login.html";
 }
 
 

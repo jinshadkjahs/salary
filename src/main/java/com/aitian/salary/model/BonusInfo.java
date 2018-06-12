@@ -18,6 +18,8 @@ public class BonusInfo {
     private String cont;
     @Column(name = "manage_depart")
     private String manageDepart;
+    @Column(name = "salary_id")
+    private Integer salaryId;
 
     /**
      * 
@@ -113,5 +115,13 @@ public class BonusInfo {
      */
     public void setManageDepart(String manageDepart) {
         this.manageDepart = manageDepart == null ? null : manageDepart.trim();
+    }
+
+    public Integer getSalaryId() {
+        return salaryId;
+    }
+
+    public void setSalaryId(Integer salaryId) {
+        this.salaryId = salaryId;
     }
 }

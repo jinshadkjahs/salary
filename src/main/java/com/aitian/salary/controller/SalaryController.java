@@ -237,6 +237,11 @@ public class SalaryController {
     public BaseResponse getParamFromFileForAjax(HttpServletRequest request) throws Exception  {
         BaseResponse br = new BaseResponse();
         br.setCode(ReponseCode.ILLEGAL_PARAMETER);
+        String salaryDate = request.getParameter("salaryDate");
+        if(!salaryDate.matches("[0-9][0-9][0-9][0-9]-[0-9][0-9]")){
+            br.setCode(ReponseCode.PARAMETER_NULL_ERROR);
+            return br;
+        }
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
         MultiValueMap<String, MultipartFile> multiFileMap = multipartRequest.getMultiFileMap();
         if(multiFileMap.size()>0){
@@ -246,15 +251,16 @@ public class SalaryController {
                     MultipartFile file = multipartFiles.get(0);
                     if (!file.isEmpty()) {
                         String fileName = file.getOriginalFilename();
-                        String fileExtension = fileName.substring(fileName.lastIndexOf("."));
+                        String fileExtension = fileName.substring(fileName.lastIndexOf(".")+1);
                         if(!Arrays.asList(ConverterSystem.EXTENSIONPERMIT).contains(fileExtension)){
                             br.setCode(ReponseCode.NOT_ALLOW_FILE);
                             break;
                         }
-                        int[] arr = salaryService.batchImport(file.getInputStream(), file.getName());
+                        int[] arr = salaryService.batchImport(file.getInputStream(), file.getOriginalFilename(), salaryDate);
                         // arr 三个 第一个错误类型   第二、三个错误行、列数
-                        if(arr.length == 0){
+                        if(arr[0] == 0){
                             br.setCode(com.aitian.salary.Utils.ReponseCode.REQUEST_SUCCESS);
+                            br.setData(arr[1]);
                         }else {
                             br.setCode(ReponseCode.EXCEL_IMPORT_ERROR);
                             br.setMessage("The file import error!");

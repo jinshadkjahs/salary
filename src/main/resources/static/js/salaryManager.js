@@ -349,6 +349,7 @@ function intoImport() {
 }
 
 function fileImport() {
+    parent.$("#salaryDate").val(parent.$("#salaryYear").val() + "-" + parent.$("#salaryMonth").val());
     var file = parent.$("#salaryfile").val();
     var fileName = file.substring(file.lastIndexOf(".")+1);
     parent.$("#showTishi").text("");
@@ -359,10 +360,11 @@ function fileImport() {
         parent.$("#showTishi").text("文件格式必须是xlsx或者xls！");
         return;
     }
+    loadingShow();
     parent.$.ajaxFileUpload
     (
         {
-            url: '../../salary/batchimport', //用于文件上传的服务器端请求地址
+            url: '../../salary/batchimport?salaryDate='+parent.$("#salaryDate").val(), //用于文件上传的服务器端请求地址
             secureuri: false,           //一般设置为false
             fileElementId: "salaryfile", //文件上传控件的id属性  <input type="file" id="file" name="file" /> 注意，这里一定要有name值
             //$("form").serialize(),表单序列化。指把所有元素的ID，NAME 等全部发过去
@@ -372,8 +374,10 @@ function fileImport() {
             },
             success: function (data, status)  //服务器成功响应处理函数
             {
+                loadingHide();
                 if(data.code == "0000"){
                     modelHide("importSalary");
+                    alertShow("共导入"+data.data+"条数据!");
                     location.href = "/salarymanager/list.html";
                 }else if(data.code == "1008"){
                     parent.$("#showTishi").text("没有选择文件！")
@@ -381,17 +385,25 @@ function fileImport() {
                     parent.$("#showTishi").text("文件格式必须是xlsx或者xls！");
                 }else if(data.code == "1005"){
                     var errData = data.data;
-                    if(errData[0] == 0){
+                    if(errData[0] == 1){
                         parent.$("#showTishi").text("文件模板不对！");
-                    }else {
+                    }else if(errData[0] == 2) {
                         parent.$("#showTishi").text("文件导入出错！位置第"+errData[1]+"行 第"+errData[2]+"列");
+                    }else {
+                        parent.$("#showTishi").text("导入失败！");
                     }
+
+                }else if(data.code == "1001"){
+                    parent.$("#showTishi").text("请选择时间！");
+                }else if(data.code == "1003"){
+                    location.href = "/login.html";
 
                 }
             },
             error: function (data, status, e)//服务器响应失败处理函数
             {
                 // alert(e);
+                loadingHide();
             }
         }
     )

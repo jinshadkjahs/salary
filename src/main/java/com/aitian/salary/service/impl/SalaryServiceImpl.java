@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import tk.mybatis.mapper.entity.Example;
 
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,16 +39,36 @@ public class SalaryServiceImpl implements SalaryService {
 
     @Transactional
     @Override
-    public int[] batchImport( FileInputStream inputStream, String fileName) {
+    public int[] batchImport(InputStream inputStream, String fileName, String salaryDate) {
 
         //创建处理EXCEL
         ReadExcel readExcel=new ReadExcel();
         //解析excel，获取信息集合。
         int[] arr = readExcel.checkExcel(inputStream, fileName);
-        List<SalaryMain> salaryList = readExcel.getExcelInfo();
+        List<Object> salaryList = readExcel.getExcelInfo();
 
-        if(salaryList != null){
-            salaryMapper.insertList(salaryList);
+        if(arr[0] == 0){
+            if(salaryList != null && salaryList.size()>0){
+                if(salaryList.get(0) instanceof BonusInfo){
+
+                    salaryList.forEach(salary-> {
+                        BonusInfo info = (BonusInfo)salary;
+                        SalaryMain salaryMain = new SalaryMain();
+                        salaryMain.setEmpId(info.getEmpId());
+                        salaryMain.setSalaryDate(salaryDate);
+                        List<SalaryMain> list = salaryMapper.select(salaryMain);
+                        if(list!=null && list.size()>0){
+                            info.setSalaryId(list.get(0).getSalaryId());
+                            bonusInfoMapper.insert(info);
+                            arr[1]++;
+                        }
+                    });
+                }else if(salaryList.get(0) instanceof SalaryMain) {
+                    salaryList.forEach(salary->this.addSalaryList((SalaryMain) salary));
+                    arr[1] =  salaryList.size();
+                }
+            }
+
         }
 
         return arr;
@@ -123,6 +144,7 @@ public class SalaryServiceImpl implements SalaryService {
     @Override
     public void addSalaryList(SalaryMain salaryMain) {
         salaryMapper.insert(salaryMain);
+        salaryMain.getSalaryTypeEmpList().forEach(salaryTypeEmp -> salaryTypeEmp.setSalaryId(salaryMain.getSalaryId()));
         salaryTypeEmpMapper.insertList(salaryMain.getSalaryTypeEmpList());
     }
 
@@ -163,5 +185,30 @@ public class SalaryServiceImpl implements SalaryService {
         bonusinfo.setEmpId(empId);
         List<BonusInfo> bonusInfo = bonusInfoMapper.select(bonusinfo);
         return  bonusInfo;
+    }
+
+    @Override
+    public SalaryMain findSalaryByPk(Integer salaryId) {
+        SalaryMain salary = salaryMapper.selectByPrimaryKey(salaryId);
+        Employee emp = employeeEmpMapper.selectByPrimaryKey(salary.getEmpId());
+        if(emp != null){
+            if(ConverterSystem.ALL_EMPLOYEE_TYPE.containsKey(Integer.parseInt(emp.getEmpType()))){
+                emp.setEmpTypeStr(ConverterSystem.ALL_EMPLOYEE_TYPE.get(Integer.parseInt(emp.getEmpType())).getTypeName());
+            }
+            if(ConverterSystem.ALL_DEPARTMENT.containsKey(emp.getDepartId())){
+                emp.setDepartIdStr(ConverterSystem.ALL_DEPARTMENT.get(emp.getDepartId()).getDepartName());
+            }
+            salary.setEmployee(emp);
+            Example example = new Example(SalaryTypeEmp.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("salaryId",salary.getSalaryId());
+            salary.setSalaryTypeEmpList(salaryTypeEmpMapper.selectByExample(example));
+            salary.getSalaryTypeEmpList().forEach(salaryTypeEmp -> {
+                salaryTypeEmp.setSalaryTypeObj(ConverterSystem.ALL_SALARY_TYPE.get(salaryTypeEmp.getSalaryType()));
+            });
+        }else {
+            salary = null;
+        }
+        return salary;
     }
 }
