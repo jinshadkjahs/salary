@@ -136,7 +136,7 @@ function queryPageClick(obj) {
 }
 
 function showSalary(salaryId) {
-
+    window.location.href = "../../salary/intoShow/" + salaryId;
 }
 
 function updateSalary(salaryId) {
@@ -374,7 +374,7 @@ function fileImport() {
             },
             success: function (data, status)  //服务器成功响应处理函数
             {
-                loadingHide();
+                loadingHide()
                 if(data.code == "0000"){
                     modelHide("importSalary");
                     alertShow("共导入"+data.data+"条数据!");

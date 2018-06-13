@@ -1,0 +1,111 @@
+<link rel="stylesheet" href="../../static/css/public.css"/>
+<link rel="stylesheet" href="../../static/css/style.css"/>
+
+<section class="publicMian">
+    <div style="width: 100%">
+        <div class="location">
+            <strong>你现在所在的位置是:</strong>
+            <span>员工工资查询</span>
+        </div>
+        <!--账单表格 样式和员工信息-->
+        <div class="providerAdd" style="margin: 0px; margin-top: 15px; overflow:scroll; width:96%; height:440px;">
+            <table id='usertable' class="providerTable" cellpadding="0" cellspacing="0" style="">
+                <!--<tr class="firstTrs">-->
+                <!--<th width="10%" colspan="5">****年**月医疗公司职工工资明细表</th>-->
+                <!--</tr>-->
+                <!--<tr>-->
+                <!--<th width="20%">姓名</th>-->
+                <!--<th width="20%" colspan="2">张三</th>-->
+                <!--<th width="20%">职工编号</th>-->
+                <!--<th width="20%">HT789378939</th>-->
+                <!--</tr>-->
+            </table>
+            <div class="providerAddBtn" style="margin-left:40%; width: 100%;">
+                <input type="button" value="下载打印" onclick="Print('.providerTable')"/>
+                <input type="button" value="返回" onclick="history.back(-1)"/>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!--点击删除按钮后弹出的页面-->
+<div class="zhezhao"></div>
+<script src="../../static/js/jquery.js"></script>
+<script src="../../static/js/js.js"></script>
+<script src="../../static/js/time.js"></script>
+<script>
+    $(function () {
+        var url = window.location.href;
+        var slaryId = url.substring(url.lastIndexOf("/")+1);
+        if(slaryId != "" && slaryId != "undefined"){
+            addTable(slaryId)
+        }else {
+            loadingHide();
+            alertShow("系统出错！");
+            history.back(-1);
+        }
+    });
+    function addTable(slaryId) {
+        loadingShow();
+        $.post("../../staff/findSalary", {'salaryId': slaryId}, function (data) {
+            var reVal = data.data;
+            // if (reVal.emp_type = 0) {
+            Generatdata(reVal);
+            // } else {
+            //     GeneratHTdata(reVal,salaryDate);
+            // }
+            loadingHide();
+        }, 'json');
+    }
+
+
+    function Generatdata(result) {
+        var html = '';
+        var htmlHead = '<tr class="firstTr">' +
+            '<th width="10%" colspan="5">'+result.salaryInfo.salaryDate+'  山西医科大学第六医院职工工资明细表</th>' +
+            '</tr>';
+        html += '<tr>' +
+            '<th width="20%">姓名</th>' +
+            '<th width="20%" colspan="2">'+result.salaryInfo.employee.empName+'</th>' +
+            '<th width="20%">职工编号</th>' +
+            '<th width="20%">'+result.salaryInfo.employee.empId+'</th>' +
+            '</tr><tr>' +
+            '<th width="20%">身份号</th>' +
+            '<th width="20%" colspan="4">'+result.salaryInfo.employee.empCardNum+'</th></tr>';
+        for (var k = 0, length = result.salaryInfo.salaryTypeEmpList.length; k < length; k++) {
+            html +=
+                '<tr>' +
+                '<th width="20%">'+result.salaryInfo.salaryTypeEmpList[k].salaryTypeObj.salaryName+'</th>' +
+                '<th width="20%" colspan="2">'+result.salaryInfo.salaryTypeEmpList[k].money/10000+'</th>';
+            if(k+1<length){
+                html +=
+                    '<th width="20%">'+result.salaryInfo.salaryTypeEmpList[k+1].salaryTypeObj.salaryName+'</th>' +
+                    '<th width="20%">'+result.salaryInfo.salaryTypeEmpList[k+1].money/10000+'</th>';
+            }
+            html += '</tr>';
+            k++;
+        }
+        html +=   '<tr><th width="20%">应领工资</th>' +
+            '<th width="20%" colspan="4">'+result.salaryInfo.grossPay/10000+'</th>' +
+            '</tr><tr>' +
+            '<th width="20%">其他奖明细</th>' +
+            '<th width="20%" colspan="4"></th>' +
+            '</tr>'+'<tr>';
+        html +='<th width="20%">序号</th>' +
+            '<th width="20%">金额</th>' +
+            '<th width="20%" colspan="2">内容</th>' +
+            '<th width="20%">归口管理部门</th>' +
+            '</tr>';
+        for(var i=0;i<result.bonusInfo.length;i++){
+            html +='<tr><th width="20%">'+result.bonusInfo[i].id+'</th>' +
+                '<th width="20%">'+result.bonusInfo[i].money+'</th>' +
+                '<th width="20%" colspan="2">'+result.bonusInfo[i].cont+'</th>' +
+                '<th width="20%">'+result.bonusInfo[i].manageDepart+'</th>' +
+                '</tr>';
+        }
+        $("#usertable").html(htmlHead + html);
+    }
+</script>
+<script src="../../static/js/child.js"></script>
+<script src="../../static/js/Print.js"></script>
+<!--<script src="../../static/js/alert.js"></script>-->

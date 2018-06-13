@@ -19,9 +19,9 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
-import org.aspectj.util.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
@@ -339,20 +339,20 @@ public class ReadExcel {
 
     public int[] checkExcel( InputStream inputStream, String fileName) {
 
-        File file1 = null;
-        try {
-            File path = new File(ResourceUtils.getURL("classpath:").getPath());
-            File file = new  File(path.getAbsolutePath(),"\\upload\\");
-            //创建一个目录 （它的路径名由当前 File 对象指定，包括任一必须的父路径。）
-            if (!file.exists()) file.mkdirs();
-            //新建一个文件
-            file1 = new File(file.getAbsoluteFile()+"\\fileupload" + new Date().getTime() + ".xlsx");
-            //将上传的文件写入新建的文件中
-
-            FileUtil.copyStream(inputStream, new FileOutputStream(file1));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        File file1 = null;
+//        try {
+//            File path = new File(ResourceUtils.getURL("classpath:").getPath());
+//            File file = new  File(path.getAbsolutePath(),"\\upload\\");
+//            //创建一个目录 （它的路径名由当前 File 对象指定，包括任一必须的父路径。）
+//            if (!file.exists()) file.mkdirs();
+//            //新建一个文件
+//            file1 = new File(file.getAbsoluteFile()+"\\fileupload" + new Date().getTime() + ".xlsx");
+//            //将上传的文件写入新建的文件中
+//
+//            FileCopyUtils.copy(inputStream, new FileOutputStream(file1));
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
 
         //初始化客户信息的集合
         List<Object> objects=new ArrayList<Object>();
@@ -370,7 +370,7 @@ public class ReadExcel {
                 isExcel2003 = false;
             }
             //根据新建的文件实例化输入流
-            is = new FileInputStream(file1);
+            is = inputStream;
             //根据excel里面的内容读取客户信息
             objects = getExcelInfo(is, isExcel2003);
             is.close();

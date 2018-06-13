@@ -14,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,11 +23,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
+import sun.net.www.protocol.file.FileURLConnection;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.*;
 
 @Controller
@@ -170,6 +174,11 @@ public class SalaryController {
     public String intoUpdate(HttpServletRequest request) throws Exception {
         return "/salarymanager/update";
     }
+    @RequestMapping(value = "/intoShow/*")
+    public String intoShow(HttpServletRequest request) throws Exception {
+        return "/salarymanager/show";
+    }
+
 
     @RequestMapping(value = "/updateSalary", method = RequestMethod.PUT)
     @ResponseBody
@@ -232,7 +241,7 @@ public class SalaryController {
         return br;
     }
 
-
+    @ResponseBody
     @RequestMapping(value = "/batchimport", method = RequestMethod.POST)
     public BaseResponse getParamFromFileForAjax(HttpServletRequest request) throws Exception  {
         BaseResponse br = new BaseResponse();
@@ -256,7 +265,13 @@ public class SalaryController {
                             br.setCode(ReponseCode.NOT_ALLOW_FILE);
                             break;
                         }
-                        int[] arr = salaryService.batchImport(file.getInputStream(), file.getOriginalFilename(), salaryDate);
+                        String newfile = request.getSession().getServletContext().getRealPath("");
+                        if(!new File(newfile+ File.separator+"upload").exists()){
+                            new File(newfile+ File.separator+"upload").mkdirs();
+                        }
+                        File fileUpload = new File(newfile+ File.separator+"upload"+File.separator+file.getOriginalFilename());
+                        FileCopyUtils.copy(file.getInputStream(),new FileOutputStream(fileUpload));
+                        int[] arr = salaryService.batchImport(new FileInputStream(fileUpload), file.getOriginalFilename(), salaryDate);
                         // arr 三个 第一个错误类型   第二、三个错误行、列数
                         if(arr[0] == 0){
                             br.setCode(com.aitian.salary.Utils.ReponseCode.REQUEST_SUCCESS);
