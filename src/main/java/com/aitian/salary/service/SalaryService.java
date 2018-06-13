@@ -25,7 +25,7 @@ public interface SalaryService {
 
     List<Employee> getEmployees(String empName, String departId);
 
-    List<BonusInfo> findBonusInfo(String empId);
+    List<BonusInfo> findBonusInfo(Integer salaryId);
 
     SalaryMain findSalaryByPk(Integer salaryId);
 }

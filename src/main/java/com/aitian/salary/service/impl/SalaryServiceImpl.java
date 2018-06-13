@@ -64,7 +64,11 @@ public class SalaryServiceImpl implements SalaryService {
                         }
                     });
                 }else if(salaryList.get(0) instanceof SalaryMain) {
-                    salaryList.forEach(salary->this.addSalaryList((SalaryMain) salary));
+                    salaryList.forEach(salary->{
+                        SalaryMain salaryMain = (SalaryMain) salary;
+                        salaryMain.setSalaryDate(salaryDate);
+                        this.addSalaryList(salaryMain);
+                    });
                     arr[1] =  salaryList.size();
                 }
             }
@@ -180,9 +184,9 @@ public class SalaryServiceImpl implements SalaryService {
     }
 
     @Override
-    public List<BonusInfo> findBonusInfo(String empId) {
+    public List<BonusInfo> findBonusInfo(Integer salaryId) {
         BonusInfo bonusinfo = new BonusInfo();
-        bonusinfo.setEmpId(empId);
+        bonusinfo.setSalaryId(salaryId);
         List<BonusInfo> bonusInfo = bonusInfoMapper.select(bonusinfo);
         return  bonusInfo;
     }

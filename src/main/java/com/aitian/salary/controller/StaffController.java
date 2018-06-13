@@ -34,12 +34,24 @@ public class StaffController {
     public BaseResponse findSalary(HttpServletRequest request, String salaryDate) throws Exception {
         BaseResponse br = new BaseResponse();
         HttpSession session = request.getSession();
+        String salaryId = request.getParameter("salaryId");
+        if(StringUtils.isNotBlank(salaryId)){
+            SalaryMain salaryInfo = salaryService.findSalaryByPk(Integer.parseInt(salaryId));
+            List<BonusInfo> bonusInfo = salaryService.findBonusInfo(salaryInfo.getSalaryId());
+            Map result = new HashMap<>();
+            result.put("salaryInfo", salaryInfo);
+            result.put("emp_type", salaryInfo.getEmployee().getEmpType());
+            result.put("bonusInfo", bonusInfo);
+            br.setData(result);
+            br.setCode(com.aitian.salary.Utils.ReponseCode.REQUEST_SUCCESS);
+            return br;
+        }
         User user = (User) session.getAttribute(ConverterSystem.SESSION_USER_KEY);
         String empId = user.getEmpId();
-        String emp_type = user.getUserType();
+        String emp_type = user.getEmployee().getEmpType();
         if (StringUtils.isNotBlank(empId) && StringUtils.isNotBlank(salaryDate)) {
             SalaryMain salaryInfo = salaryService.findSalary(empId, salaryDate);
-            List<BonusInfo> bonusInfo = salaryService.findBonusInfo(empId);
+            List<BonusInfo> bonusInfo = salaryService.findBonusInfo(salaryInfo.getSalaryId());
             Map result = new HashMap<>();
             result.put("salaryInfo", salaryInfo);
             result.put("emp_type", emp_type);
