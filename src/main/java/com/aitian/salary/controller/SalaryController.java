@@ -172,11 +172,11 @@ public class SalaryController {
 
     @RequestMapping(value = "/intoUpdate/*")
     public String intoUpdate(HttpServletRequest request) throws Exception {
-        return "/salarymanager/update";
+        return "salarymanager/update";
     }
     @RequestMapping(value = "/intoShow/*")
     public String intoShow(HttpServletRequest request) throws Exception {
-        return "/salarymanager/show";
+        return "salarymanager/show";
     }
 
 
