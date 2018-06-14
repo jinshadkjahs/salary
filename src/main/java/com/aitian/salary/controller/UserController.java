@@ -69,4 +69,16 @@ public class UserController {
         }
         return new ObjectMapper().writeValueAsString(br);
     }
+
+    @RequestMapping(value = "/signOut",method = RequestMethod.GET,produces = "text/json;charset=UTF-8")
+    @ResponseBody
+    public String signOut(HttpServletRequest request) throws JsonProcessingException {
+        BaseResponse br = new BaseResponse();
+        User user = (User) request.getSession().getAttribute(ConverterSystem.SESSION_USER_KEY);
+        if(user != null){
+            request.getSession().removeAttribute(ConverterSystem.SESSION_USER_KEY);
+            br.setCode(ReponseCode.REQUEST_SUCCESS);
+        }
+        return new ObjectMapper().writeValueAsString(br);
+    }
 }
