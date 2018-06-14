@@ -55,7 +55,7 @@ public class UserController {
     }
 
 
-    @RequestMapping(value = "/getLoginUser",method = RequestMethod.GET)
+    @RequestMapping(value = "/getLoginUser",method = RequestMethod.GET,produces = "text/json;charset=UTF-8")
     @ResponseBody
     public String getLoginUser(HttpServletRequest request) throws JsonProcessingException {
         BaseResponse br = new BaseResponse();

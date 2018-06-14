@@ -64,7 +64,12 @@
         $.get("../../user/getLoginUser", {},function(data){
             $('#loading').hide();
             if(data.code == "0000"){
-                $("#loginUserName").text(data.data.empName);
+                if(data.data.employee){
+                    $("#loginUserName").text(data.data.employee.empName);
+                }else {
+                    $("#loginUserName").text(data.data.empId);
+                }
+
                 if(data.data.userType == 0){
                     $("#empSalaryQuery").hide();
                 }else {

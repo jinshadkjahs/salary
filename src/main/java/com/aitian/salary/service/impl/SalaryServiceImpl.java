@@ -20,6 +20,7 @@ import tk.mybatis.mapper.entity.Example;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service(value = "salaryService")
@@ -67,6 +68,8 @@ public class SalaryServiceImpl implements SalaryService {
                     salaryList.forEach(salary->{
                         SalaryMain salaryMain = (SalaryMain) salary;
                         salaryMain.setSalaryDate(salaryDate);
+                        salaryMain.setCreateTime(new Date());
+                        salaryMain.setUpdateTime(new Date());
                         this.addSalaryList(salaryMain);
                     });
                     arr[1] =  salaryList.size();

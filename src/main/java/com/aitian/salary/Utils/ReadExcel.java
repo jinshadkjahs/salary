@@ -12,6 +12,7 @@ import com.aitian.salary.model.BonusInfo;
 import com.aitian.salary.model.SalaryMain;
 import com.aitian.salary.model.SalaryType;
 import com.aitian.salary.model.SalaryTypeEmp;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -125,12 +126,12 @@ public class ReadExcel {
            }else{
                suucess[0] = 1;
            }
-       }catch (Error e){
+       }catch (Exception e){
             suucess[0] = 2;
             if(e.getMessage().matches("[0-9]*-[0-9]*")){
                 String[] strArr = e.getMessage().split("-");
                 suucess[1] = Integer.parseInt(strArr[0]);
-                suucess[1] = Integer.parseInt(strArr[1]);
+                suucess[2] = Integer.parseInt(strArr[1]);
             }else {
                 suucess[0] = 3;
             }
@@ -152,7 +153,11 @@ public class ReadExcel {
                    if(c==0){//第一列不读
                    }else if(c==1){
                        if(val == null){
-                            throw new RuntimeException((r+1)+"-"+(c+1));
+//                                throw new RuntimeException((r+1)+"-"+(c+1));
+                           break;
+                       }
+                       if(StringUtils.isBlank(val.toString())){
+                           break;
                        }
                        info.setEmpId(getCellValue(cell).toString());//职工编号
                    }else if(c==2){
@@ -169,7 +174,7 @@ public class ReadExcel {
                    }
                }
             }
-            objList.add(info);
+            if(info.getEmpId() != null) objList.add(info);
         }
         return objList;
     }
@@ -186,10 +191,13 @@ public class ReadExcel {
                 Cell cell = oneRow.getCell(c);
                 if (null != cell) {
                     List<SalaryType> types = ConverterSystem.FORMAL_SALARY_TYPE.stream().filter(type ->
-                            type.getSalaryName().equals(getCellValue(cell).toString())
+                            type.getSalaryName().equals(getCellValue(cell).toString().trim())
                     ).collect(Collectors.toList());
                     if(types.size()>0){
                         ids[c] = types.get(0).getSalaryType();
+                    }else {
+                        suucess[0] = 1;
+                        throw new RuntimeException();
                     }
                 }
             }
@@ -206,7 +214,11 @@ public class ReadExcel {
                         if(c==0){//第一列不读
                         }else if(c==1){
                             if(val == null){
-                                throw new RuntimeException((r+1)+"-"+(c+1));
+//                                throw new RuntimeException((r+1)+"-"+(c+1));
+                                break;
+                            }
+                            if(StringUtils.isBlank(val.toString())){
+                                break;
                             }
                             info.setEmpId(val.toString());//职工编号
                         }else if(c==2){
@@ -226,8 +238,10 @@ public class ReadExcel {
                             salaryTypeEmp.setSalaryType(ids[c]);
                             Long amount = 0l;
                             if(val != null){
-                                Double d = Long.parseLong(getCellValue(cell).toString()) * ConverterSystem.MULTIPLE;
-                                amount = d.longValue();
+                                if(StringUtils.isNotBlank(val.toString())) {
+                                    Double d = Double.parseDouble(getCellValue(cell).toString()) * ConverterSystem.MULTIPLE;
+                                    amount = d.longValue();
+                                }
                             }
                             salaryTypeEmp.setMoney(amount);
                             info.getSalaryTypeEmpList().add(salaryTypeEmp);
@@ -235,13 +249,15 @@ public class ReadExcel {
                             if(val == null){
                                 info.setGrossPay(0L);
                             }else {
-                                Double d = Long.parseLong(getCellValue(cell).toString())*ConverterSystem.MULTIPLE;
-                                info.setGrossPay(d.longValue());//应领工资
+                                if(StringUtils.isNotBlank(val.toString())){
+                                    Double d = Double.parseDouble(getCellValue(cell).toString())*ConverterSystem.MULTIPLE;
+                                    info.setGrossPay(d.longValue());//应领工资
+                                }
                             }
                         }
                     }
                 }
-                objList.add(info);
+                if(info.getEmpId() != null) objList.add(info);
             }
 
         }catch (Exception e){
@@ -257,14 +273,17 @@ public class ReadExcel {
         try{
             Row oneRow = sheet.getRow(0);
             Integer[] ids = new Integer[this.totalCells];
-            for(c = 5; c <this.totalCells-4; c++){
+            for(c = 3; c <this.totalCells-4; c++){
                 Cell cell = oneRow.getCell(c);
                 if (null != cell) {
                     List<SalaryType> types = ConverterSystem.FORMAL_SALARY_TYPE.stream().filter(type ->
-                        type.getSalaryName().equals(getCellValue(cell).toString())
+                        type.getSalaryName().equals(getCellValue(cell).toString().trim())
                     ).collect(Collectors.toList());
                     if(types.size()>0){
                         ids[c] = types.get(0).getSalaryType();
+                    }else {
+                        suucess[0] = 1;
+                        throw new RuntimeException();
                     }
                 }
             }
@@ -281,7 +300,11 @@ public class ReadExcel {
                     if (null != cell){
                         if(c==0){
                             if(val == null){
-                                throw new RuntimeException((r+1)+"-"+(c+1));
+//                                throw new RuntimeException((r+1)+"-"+(c+1));
+                                break;
+                            }
+                            if(StringUtils.isBlank(val.toString())){
+                                break;
                             }
                             info.setEmpId(val.toString());//职工编号
                         }else if(c==1){
@@ -296,21 +319,25 @@ public class ReadExcel {
                             if(val == null){
                                 info.setGrossPay(0L);
                             }else {
-                                Double d = Long.parseLong(getCellValue(cell).toString())*ConverterSystem.MULTIPLE;
-                                info.setGrossPay(d.longValue());//应领工资
+                                if(StringUtils.isNotBlank(val.toString())){
+                                    Double d = Double.parseDouble(getCellValue(cell).toString())*ConverterSystem.MULTIPLE;
+                                    info.setGrossPay(d.longValue());//应领工资
+                                }
                             }
                         }else if(c==29){
                             if(val == null){
                                 info.setGrossPay(0L);
                             }else {
-                                Double d = Long.parseLong(getCellValue(cell).toString()) * ConverterSystem.MULTIPLE;
-                                info.setNetPayroll(d.longValue());//实发工资
+                                if(StringUtils.isNotBlank(val.toString())) {
+                                    Double d = Double.parseDouble(getCellValue(cell).toString()) * ConverterSystem.MULTIPLE;
+                                    info.setNetPayroll(d.longValue());//实发工资
+                                }
                             }
                         }else if(c==30){
                             //养老号
                         }else if(c==31){
                             //身份证号
-                        }else if(c >= 5 && c<=27){
+                        }else if(c >= 3 && c<=27){
                                 //基本工资
                                 //绩效
                                 //节加
@@ -321,15 +348,17 @@ public class ReadExcel {
                             salaryTypeEmp.setSalaryType(ids[c]);
                             Long amount = 0l;
                             if(val != null){
-                                Double d = Long.parseLong(getCellValue(cell).toString()) * ConverterSystem.MULTIPLE;
-                                amount = d.longValue();
+                                if(StringUtils.isNotBlank(val.toString())){
+                                    Double d = Double.parseDouble(getCellValue(cell).toString()) * ConverterSystem.MULTIPLE;
+                                    amount = d.longValue();
+                                }
                             }
                             salaryTypeEmp.setMoney(amount);
                             info.getSalaryTypeEmpList().add(salaryTypeEmp);
                         }
                     }
                 }
-                objList.add(info);
+                if(info.getEmpId() != null) objList.add(info);
             }
         }catch (Exception e){
             throw new RuntimeException((r+1)+"-"+(c+1));
