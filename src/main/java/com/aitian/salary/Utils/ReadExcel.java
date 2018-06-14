@@ -127,12 +127,13 @@ public class ReadExcel {
                suucess[0] = 1;
            }
        }catch (Exception e){
-            suucess[0] = 2;
-            if(e.getMessage().matches("[0-9]*-[0-9]*")){
+            if(e.getMessage()!=null&&e.getMessage().matches("[0-9]*-[0-9]*")){
+                suucess[0] = 2;
                 String[] strArr = e.getMessage().split("-");
                 suucess[1] = Integer.parseInt(strArr[0]);
                 suucess[2] = Integer.parseInt(strArr[1]);
             }else {
+                if(suucess[0] == 0)
                 suucess[0] = 3;
             }
        }
@@ -184,23 +185,24 @@ public class ReadExcel {
         List<Object> objList=new ArrayList<Object>();
         int c = 0;
         int r = 0;
-        try {
-            Row oneRow = sheet.getRow(0);
-            Integer[] ids = new Integer[this.totalCells];
-            for(c = 5; c <this.totalCells-1; c++){
-                Cell cell = oneRow.getCell(c);
-                if (null != cell) {
-                    List<SalaryType> types = ConverterSystem.FORMAL_SALARY_TYPE.stream().filter(type ->
-                            type.getSalaryName().equals(getCellValue(cell).toString().trim())
-                    ).collect(Collectors.toList());
-                    if(types.size()>0){
-                        ids[c] = types.get(0).getSalaryType();
-                    }else {
-                        suucess[0] = 1;
-                        throw new RuntimeException();
-                    }
+
+        Row oneRow = sheet.getRow(0);
+        Integer[] ids = new Integer[this.totalCells];
+        for(c = 5; c <this.totalCells-1; c++){
+            Cell cell = oneRow.getCell(c);
+            if (null != cell) {
+                List<SalaryType> types = ConverterSystem.PACT_SALARY_TYPE.stream().filter(type ->
+                        type.getSalaryName().equals(getCellValue(cell).toString().trim())
+                ).collect(Collectors.toList());
+                if(types.size()>0){
+                    ids[c] = types.get(0).getSalaryType();
+                }else {
+                    suucess[0] = 1;
+                    throw new RuntimeException();
                 }
             }
+        }
+        try {
             for(r=1;r<totalRows;r++){
                 Row row = sheet.getRow(r);
                 if (row == null) continue;
@@ -270,24 +272,24 @@ public class ReadExcel {
         List<Object> objList=new ArrayList<Object>();
         int c = 0;
         int r = 0;
-        try{
-            Row oneRow = sheet.getRow(0);
-            Integer[] ids = new Integer[this.totalCells];
-            for(c = 3; c <this.totalCells-4; c++){
-                Cell cell = oneRow.getCell(c);
-                if (null != cell) {
-                    List<SalaryType> types = ConverterSystem.FORMAL_SALARY_TYPE.stream().filter(type ->
-                        type.getSalaryName().equals(getCellValue(cell).toString().trim())
-                    ).collect(Collectors.toList());
-                    if(types.size()>0){
-                        ids[c] = types.get(0).getSalaryType();
-                    }else {
-                        suucess[0] = 1;
-                        throw new RuntimeException();
-                    }
+
+        Row oneRow = sheet.getRow(0);
+        Integer[] ids = new Integer[this.totalCells];
+        for(c = 3; c <this.totalCells-4; c++){
+            Cell cell = oneRow.getCell(c);
+            if (null != cell) {
+                List<SalaryType> types = ConverterSystem.FORMAL_SALARY_TYPE.stream().filter(type ->
+                    type.getSalaryName().equals(getCellValue(cell).toString().trim())
+                ).collect(Collectors.toList());
+                if(types.size()>0){
+                    ids[c] = types.get(0).getSalaryType();
+                }else {
+                    suucess[0] = 1;
+                    throw new RuntimeException();
                 }
             }
-
+        }
+        try{
             for(r=1;r<totalRows;r++){
                 Row row = sheet.getRow(r);
                 if (row == null) continue;
