@@ -5,6 +5,7 @@ import com.aitian.salary.model.User;
 import com.aitian.salary.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.List;
 /**
@@ -22,5 +23,14 @@ public class UserServiceImpl implements UserService {
 
         return userMapper.findUserByPhoneByLogin(empId, pwd);
 
+    }
+
+
+    @Override
+    public void updateUser(User user) {
+        Example example = new Example(User.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("empId",user.getEmpId());
+        userMapper.updateByExample(user, example);
     }
 }

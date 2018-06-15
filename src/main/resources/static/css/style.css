@@ -331,7 +331,7 @@ input[type='reset']:active, input[type='reset']:focus, .providerView a:hover, .p
 /*点击删除按钮后弹出的层*/
 .zhezhao {
     display: none;          /* 修改这里可以让遮罩层消失*/
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;

@@ -51,6 +51,8 @@ public class ReponseCode {
      */
     public static final String NOT_ALLOW_FILE = "1009";
 
-
-
+    /**
+     * 密码错误
+     */
+    public static final String PASSWORD_ERROR = "1010";
 }

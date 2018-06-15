@@ -36,11 +36,11 @@ public class UserController {
         String pwd = request.getParameter("pwd");
         if(StringUtils.isNotBlank(empId)&&StringUtils.isNotBlank(pwd)){
             User user = this.userService.findUserByLogin(empId, pwd);
-            Employee employee = employeeService.queryEmpForUser(empId);
-            if(employee != null){
-                user.setEmployee(employee);
-            }
             if(user != null){
+                Employee employee = employeeService.queryEmpForUser(empId);
+                if(employee != null){
+                    user.setEmployee(employee);
+                }
                 request.getSession().setAttribute(ConverterSystem.SESSION_USER_KEY,user);
                 br.setCode(ReponseCode.REQUEST_SUCCESS);
             }else {
@@ -80,5 +80,28 @@ public class UserController {
             br.setCode(ReponseCode.REQUEST_SUCCESS);
         }
         return new ObjectMapper().writeValueAsString(br);
+    }
+    @RequestMapping(value = "/updatePassword",method = RequestMethod.POST)
+    @ResponseBody
+    public BaseResponse updatePassword(HttpServletRequest request) throws JsonProcessingException {
+        BaseResponse br = new BaseResponse();
+        String oldPass = request.getParameter("oldPass");
+        String newPass = request.getParameter("newPass");
+        if(StringUtils.isBlank(oldPass) || StringUtils.isBlank(newPass)){
+            br.setCode(ReponseCode.PARAMETER_NULL_ERROR);
+            return br;
+        }
+        User user = (User) request.getSession().getAttribute(ConverterSystem.SESSION_USER_KEY);
+        if(user != null){
+            if(user.getPassword().equals(oldPass)){
+                user.setPassword(newPass);
+                userService.updateUser(user);
+                request.getSession().removeAttribute(ConverterSystem.SESSION_USER_KEY);
+                br.setCode(ReponseCode.REQUEST_SUCCESS);
+            }else {
+                br.setCode(ReponseCode.PASSWORD_ERROR);
+            }
+        }
+        return br;
     }
 }

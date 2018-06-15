@@ -7,4 +7,6 @@ import java.util.List;
 public interface UserService {
 
     User findUserByLogin(String empid, String pwd);
+
+    void updateUser(User user);
 }

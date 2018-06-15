@@ -15,7 +15,7 @@ function confirmShow(confirmTishi, yesfn, nofn){
     $('.zhezhao').css('display', 'block');
     $('#removeBi').fadeIn();
     var left = (document.body.offsetWidth - 400)/2;
-    var top = (document.body.offsetHeight - 190)/2;
+    var top = (document.body.offsetHeight - 190)/3;
     document.getElementById("removeBi").style.top = top+"px";
     document.getElementById("removeBi").style.left = left+"px";
     document.getElementById('confirmyes').onclick = yesfn;
@@ -43,7 +43,7 @@ function alertShow(alertTishi, title){
     }
     $("#alertTishi").text(alertTishi);
     var left = (document.body.offsetWidth - 400)/2;
-    var top = (document.body.offsetHeight - 190)/2;
+    var top = (document.body.offsetHeight - 190)/3;
     document.getElementById("alertBi").style.top = top+"px";
     document.getElementById("alertBi").style.left = left+"px";
     $('.zhezhao').css('display', 'block');
@@ -59,12 +59,12 @@ function alertHide(){
 function modelShow(id, url,modelTitle, width, height){
     $("#modelTitle").text(modelTitle);
     var left = (document.body.offsetWidth - width)/2;
-    var top = (document.body.offsetHeight - height)/2;
+    var top = (document.body.offsetHeight - height)/3;
     document.getElementById("modelBi").style.width = width+"px";
     document.getElementById("modelBi").style.height = height+"px";
     document.getElementById("modelBi").style.top = top+"px";
     document.getElementById("modelBi").style.left = left+"px";
-    document.getElementById("modelMain").style.height = (height-113)+"px";
+    document.getElementById("modelMain").style.height = (height-78)+"px";
     $("#modelMain").load(url);
     $('.zhezhao').css('display', 'block');
     $('#modelBi').fadeIn();
