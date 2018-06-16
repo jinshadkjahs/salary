@@ -208,7 +208,6 @@ var importEmp = function () {
             },
             success: function (data, status)  //服务器成功响应处理函数
             {
-                alert(777);
                 loadingHide();
                 if(data.code == "0000"){
                     var importData = data.data;
