@@ -1,0 +1,9 @@
+
+#usertable tr th{
+    border: 0.5px solid  #e5f2ff;
+    line-height: 30px;
+}
+
+.firstTr{
+    font-size: 20px;
+}

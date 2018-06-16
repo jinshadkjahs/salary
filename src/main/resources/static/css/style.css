@@ -147,6 +147,8 @@ input[type='reset']:active, input[type='reset']:focus, .providerView a:hover, .p
 .wFont {
     float: left;
     margin-top: 50px;
+    width: 1300px;
+    height: 419px;
 }
 
 .wFont h2 {
