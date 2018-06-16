@@ -87,7 +87,6 @@
           f = document.body.appendChild(iframe);
       iframe.id = "myIframe";
       iframe.style = "position:absolute;width:0;height:0;top:-10px;left:-10px;";
-
       w = f.contentWindow || f.contentDocument;
       doc = f.contentDocument || f.contentWindow.document;
       doc.open();

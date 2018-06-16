@@ -39,7 +39,7 @@ function addTable(salaryDate) {
     $.post("../../staff/findSalary", {'salaryDate': salaryDate}, function (data) {
         var reVal = data.data;
         // if (reVal.emp_type = 0) {
-        Generatdata(reVal,salaryDate);
+        Generatdata(reVal, salaryDate);
         // } else {
         //     GeneratHTdata(reVal,salaryDate);
         // }
@@ -47,51 +47,68 @@ function addTable(salaryDate) {
 }
 
 
-function Generatdata(result,salaryDate) {
+function Generatdata(result, salaryDate) {
     var html = '';
     var htmlHead = '<tr class="firstTr">' +
-        '<th width="10%" colspan="5" style="size: 20px;">'+salaryDate+'  山西医科大学第六医院职工工资明细表</th>' +
+        '<th width="10%" colspan="5" style="size:40px; height:60px;"><img src="../../static/img/logo.jpeg" width="50px" height="50px" align="center" style="padding-left: 20px;">&nbsp;&nbsp;&nbsp;' + salaryDate + '  山西医科大学第六医院职工工资明细表</th>' +
         '</tr>';
     html += '<tr>' +
         '<th width="20%">姓名</th>' +
-        '<th width="20%" colspan="2">'+result.salaryInfo.employee.empName+'</th>' +
+        '<th width="20%" colspan="2">' + result.salaryInfo.employee.empName + '</th>' +
         '<th width="20%">职工编号</th>' +
-        '<th width="20%">'+result.salaryInfo.employee.empId+'</th>' +
+        '<th width="20%">' + result.salaryInfo.employee.empId + '</th>' +
         '</tr><tr>' +
         '<th width="20%">身份号</th>' +
-        '<th width="20%" colspan="4">'+result.salaryInfo.employee.empCardNum+'</th></tr>';
+        '<th width="20%" colspan="4">' + result.salaryInfo.employee.empCardNum + '</th></tr>';
     for (var k = 0, length = result.salaryInfo.salaryTypeEmpList.length; k < length; k++) {
         html +=
             '<tr>' +
-            '<th width="20%">'+result.salaryInfo.salaryTypeEmpList[k].salaryTypeObj.salaryName+'</th>' +
-            '<th width="20%" colspan="2">'+result.salaryInfo.salaryTypeEmpList[k].money/10000+'</th>';
-        if(k+1<length){
+            '<th width="20%">' + result.salaryInfo.salaryTypeEmpList[k].salaryTypeObj.salaryName + '</th>' +
+            '<th width="20%" colspan="2">' + result.salaryInfo.salaryTypeEmpList[k].money / 10000 + '</th>';
+        if (k + 1 < length) {
             html +=
-                '<th width="20%">'+result.salaryInfo.salaryTypeEmpList[k+1].salaryTypeObj.salaryName+'</th>' +
-                '<th width="20%">'+result.salaryInfo.salaryTypeEmpList[k+1].money/10000+'</th>';
+                '<th width="20%">' + result.salaryInfo.salaryTypeEmpList[k + 1].salaryTypeObj.salaryName + '</th>' +
+                '<th width="20%">' + result.salaryInfo.salaryTypeEmpList[k + 1].money / 10000 + '</th>';
         }
         html += '</tr>';
         k++;
     }
-    html +=   '<tr><th width="20%">应领工资</th>' +
-        '<th width="20%" colspan="4">'+result.salaryInfo.grossPay/10000+'</th>' +
-        '</tr><tr>' +
+    html += '<tr><th width="20%">应领工资</th>' +
+        '<th width="20%" colspan="4">' + result.salaryInfo.grossPay / 10000 + '</th>' +
+        '</tr><tr><th></th></tr><tr>' +
         '<th width="20%" style="height: 30px;">其他奖明细</th>' +
         '<th width="20%" colspan="4"></th>' +
-        '</tr>'+'<tr>';
-    html +='<th width="20%">序号</th>' +
-        '<th width="20%">金额</th>' +
-        '<th width="20%" colspan="2">内容</th>' +
-        '<th width="20%">归口管理部门</th>' +
-        '</tr>';
-    for(var i=0;i<result.bonusInfo.length;i++){
-        html +='<tr><th width="20%">'+result.bonusInfo[i].id+'</th>' +
-            '<th width="20%">'+result.bonusInfo[i].money+'</th>' +
-            '<th width="20%" colspan="2">'+result.bonusInfo[i].cont+'</th>' +
-            '<th width="20%">'+result.bonusInfo[i].manageDepart+'</th>' +
+        '</tr>' + '<tr>';
+    if(result.bonusInfo.length == 0){
+        html +='<th width="20%" colspan="5">本月无其他奖明细</th></tr>'
+    }else {
+        html += '<th width="20%">序号</th>' +
+            '<th width="20%">金额</th>' +
+            '<th width="20%" colspan="2">内容</th>' +
+            '<th width="20%">归口管理部门</th>' +
             '</tr>';
+        for (var i = 0; i < result.bonusInfo.length; i++) {
+            html += '<tr><th width="20%">' + result.bonusInfo[i].id + '</th>' +
+                '<th width="20%">' + result.bonusInfo[i].money + '</th>' +
+                '<th width="20%" colspan="2">' + result.bonusInfo[i].cont + '</th>' +
+                '<th width="20%">' + result.bonusInfo[i].manageDepart + '</th>' +
+                '</tr>';
+        }
     }
-    $("#usertable").html(htmlHead + html);
+
+    if (result.emp_type = 0) {
+        html += '<tr><th></th></tr><tr style="height: 40px;"><th width="20%">组成规则</th>' +
+            '<th width="20%" colspan="4">工资额=保留工资\n</br>' +
+            '职业=工令工资\n</br>' +
+            '煤气费=个税\n</br>' +
+            '各种补贴=煤气补+水补+交通补\n</br>' +
+            '应领工资=应领A卡+B卡\n</br>' +
+            '实领工资=应领工资-煤气费-养老-医疗-失业-公积金</th></br>' +
+            '</tr>';
+        $("#usertable").html(htmlHead + html);
+    } else {
+        $("#usertable").html(htmlHead + html);
+    }
 }
 
 //
