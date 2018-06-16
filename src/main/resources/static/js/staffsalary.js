@@ -49,8 +49,8 @@ function addTable(salaryDate) {
 
 function Generatdata(result, salaryDate) {
     var html = '';
-    var htmlHead = '<tr class="firstTr" style="height:60px; size:40px;">' +
-        '<th width="10%" colspan="5">' + salaryDate + '  山西医科大学第六医院职工工资明细表</th>' +
+    var htmlHead = '<tr class="firstTr">' +
+        '<th width="10%" colspan="5" style="size:40px; height:60px;"><img src="../../static/img/logo.jpeg" width="50px" height="50px" align="center" style="padding-left: 20px;">&nbsp;&nbsp;&nbsp;' + salaryDate + '  山西医科大学第六医院职工工资明细表</th>' +
         '</tr>';
     html += '<tr>' +
         '<th width="20%">姓名</th>' +
