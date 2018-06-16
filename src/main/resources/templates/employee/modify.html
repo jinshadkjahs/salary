@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>工资管理系统</title>
+    <link rel="stylesheet" href="../../static/css/public.css"/>
+    <link rel="stylesheet" href="../../static/css/style.css"/>
+</head>
+<body>
+<!--头部-->
+<style>
+    .titletd{
+        width: 15%;
+        min-width: 80px;
+    }
+    .xialaDiv{
+        display: none;
+        position: absolute;
+        background-color: #fff;
+        margin: 0px;
+        height: 100px;
+        overflow: auto;
+        border: 1px #ccc solid;
+        border-radius: 5px;
+        margin-top: -5px;
+        width: 20%;
+    }
+    #emps li{
+        background-color: #6aa7d6;
+        line-height: 40px;
+        margin-bottom: 2px;
+        padding-left: 15px;
+    }
+    #emps li:hover{
+        background-color: #3a8dc1;
+    }
+</style>
+
+<div class="location">
+    <strong>你现在所在的位置是:</strong>
+    <span>修改员工基本信息</span>
+</div>
+<div class="providerAdd">
+
+    <form id="employeeUpdateForm" style="overflow: auto;height: 490px;" onsubmit="return false">
+        <table style="width: 100%">
+            <tr>
+                <td>员工基本信息</td>
+                <td><div class="search" style="height: auto">
+                    <table style="width: 100%">
+                     <tr>
+                        <td class="titletd">员工编号：</td>
+                        <td style="width: 35%"> <input id="empId" name="empId" readonly="readonly" style="width: 65%;background-color: #cccccc" />
+                        </td>
+                        <td  class="titletd">员工姓名：</td>
+                        <td>
+                            <input type="text" id="empName" name="empName" style="width: 65%" />
+                        </td>
+                     </tr>
+                     <tr>
+                        <td  class="titletd">手机号：</td>
+                        <td>
+                            <input type="text" id="empPhone" name="empPhone" style="width: 65%" />
+                        </td>
+                        <td  class="titletd">身份证编号：</td>
+                        <td>
+                            <input type="text" id="empCardNum" name="empCardNum" style="width: 65%" />
+                        </td>
+                     </tr>
+                     <tr>
+                        <td  class="titletd">员工类别：</td>
+                        <td>
+                            <select style="width: 65%" id="empType" name="empType">
+                                <option>正式员工</option>
+                                <option>合同员工</option>
+                            </select>
+                        </td>
+                        <td  class="titletd">基本工资：</td>
+                        <td>
+                            <input type="text" id="baseSalary" name="baseSalary" style="width: 65%" />
+                        </td>
+                    </tr>
+                    </table>
+                </div>
+                </td>
+            </tr>
+        </table>
+        <div class="removeMain">
+            <a  onclick="employeeModifySave(this)" style="margin: 0px;margin-right: 30px">确定</a>
+            <a style="margin: 0px;" onclick="window.location.href='/employee/billList.html'" >返回</a>
+        </div>
+    </form>
+
+</div>
+<script type="text/javascript" src="../../static/js/jquery.js"></script>
+<script src="../../static/js/child.js"></script>
+<script src="../../static/js/empManage.js"></script>
+<script>
+    $(function () {
+        loadingShow();
+        var url = window.location.href;
+        var empId = url.substring(url.lastIndexOf("/")+1);
+        if(empId != "" && empId != "undefined"){
+            loadEmployeeData(empId);
+            loadingHide();
+        }else {
+            loadingHide();
+            alertShow("系统出错！");
+            history.back(-1);
+        }
+    });
+</script>
+</body>
+</html>

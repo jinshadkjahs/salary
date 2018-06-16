@@ -2,6 +2,7 @@ package com.aitian.salary.service;
 
 import com.aitian.salary.mapper.EmployeeMapper;
 import com.aitian.salary.model.Employee;
+import com.aitian.salary.model.ImportEmpInfo;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.StringUtils;
@@ -27,5 +28,10 @@ public interface EmployeeService {
 
     public List<Employee> queryEmpAndUser(String empId);
 
-    public String importEmp(InputStream in,String fileName) throws Exception;
+    public ImportEmpInfo importEmp(InputStream in, String fileName) throws Exception;
+
+    //员工修改加载数据，有点重复了
+    public List<Employee> getEmp(String empId);
+
+    public void modifyEmp(Employee employee);
 }

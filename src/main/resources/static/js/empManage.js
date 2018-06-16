@@ -6,11 +6,9 @@ var queryEmp = function (pageNum) {
     var empName = $("#empName").val();
     var empType = $("#empType").val();
 
-    $.post("../../emp/queryEmpInfo", {'empNo':empNo,'empName':empName,'pageNum':pageNum,'empType':empType},function(data){
+    $.post("../../emp/queryEmpInfo", {'empNo':empNo,'empName':empName,'empType':empType,'pageNum':pageNum},function(data){
         var reVal = data.data;
        var reData = reVal.list;
-
-       console.log(data);
        var html = '';
        var htmlHead = '<tr class="firstTr">\n' +
            '                <th width="10%">员工编号</th>\n' +
@@ -47,8 +45,8 @@ var queryEmp = function (pageNum) {
                    '                <td>'+empTypeDesc+'</td>\n' +
                    '                <td>'+reData[i].baseSalary+'</td>\n' +
                    '                <td>\n' +
-                   '                    <a href="billView.html"><img src="../static/img/read.png" alt="查看" title="查看" /></a>\n' +
-                   '                    <a href="billUpdate.html"><img src="../static/img/xiugai.png" alt="修改" title="修改" /></a>\n' +
+                   /*'                    <a href="#"><img src="../static/img/read.png" alt="查看" title="查看" /></a>\n' +*/
+                   '                    <a onclick="motifyEmp(\''+reData[i].empId+'\')"><img src="../static/img/xiugai.png" alt="修改" title="修改" /></a>\n' +
                    '                    <a onclick="delEmp(this)" class="removeBill"><img src="../static/img/schu.png" alt="删除" title="删除"/></a>\n' +
                    '                </td>\n' +
                    '            </tr>';
@@ -64,6 +62,88 @@ var queryEmp = function (pageNum) {
 
 function pageClick(obj) {
     queryEmp(parseInt($(obj).attr("forPage")));
+}
+
+function motifyEmp(empId) {
+    window.location.href="../../emp/intoModifyEmp/"+empId;
+}
+
+
+
+function employeeModifySave(obj) {
+    var isOk = inputCheck(obj);
+    if(isOk) {
+        confirmShow("确认提交吗", function () {
+
+
+            loadingShow();
+            $.ajax({
+                url: "../../emp/modifyEmp?" + $("#employeeUpdateForm").serialize(),
+                type: "put",
+                dataType: "json",
+                async: false,
+                data: {},
+                success: function (data) {
+                    confirmHide();
+                    loadingHide();
+                    if (data.code == "0000") {
+                        alertShow(data.message);
+                        location.href = "/employee/billList.html";
+                    } else {
+                        alertShow(data.message);
+                    }
+                }
+            });
+        });
+    }
+}
+//表单校验
+var inputCheck = function (obj) {
+    var isOk=true;
+    var empPhone = $('#empPhone').val();
+    var empCardNum = $('#empCardNum').val();
+    console.log(empPhone);
+    console.log(empCardNum);
+    var idCardRegex = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
+    var mobileRegex = /^(((1[3456789][0-9]{1})|(15[0-9]{1}))+\d{8})$/;
+    if(!idCardRegex.test(empCardNum) && empCardNum!=='' && empCardNum!= undefined){
+        //身份证号填写有误！
+        $('#empCardNum').val("身份证编码填写有误!");
+        $('#empCardNum').css({color:'red'});
+        isOk = false;
+    }
+    if(!mobileRegex.test(empPhone) && empPhone!=='' && empPhone!=undefined){
+        $('#empPhone').val("手机号码填写有误!");
+        $('#empPhone').css({color:'red'});
+        isOk = false;
+    }
+    return isOk;
+}
+//员工修改页面加载员工信息
+function loadEmployeeData(empId) {
+    $.ajax({
+        url: "../../emp/getEmp?empId=" + empId,
+        type: "get",
+        dataType: "json",
+        async: false,
+        data: {},
+        success: function (data) {
+            if (data.code == "0000") {
+                var empData = data.data;
+                console.log(empData);
+                $("#empId").val(empData.empId);
+                $("#empName").val(empData.empName);
+                $("#empPhone").val(empData.empPhone);
+                $("#empCardNum").val(empData.empCardNum);
+                var empType = empData.empType;
+                console.log(empType);
+                $("#empType").val(empData.empType==="0"?"正式员工":"合同员工");
+                $("#baseSalary").val(empData.baseSalary);
+            }else{
+                alertShow(data.message);
+            }
+        }
+    });
 }
 
 var delEmp = function(obj){
@@ -86,6 +166,8 @@ var delEmp = function(obj){
     })
 }
 
+
+
 //获取行对象
 function getRowObj(obj){
     var i = 0;
@@ -98,12 +180,61 @@ function getRowObj(obj){
 }
 
 function openImportEmp(){
-    modelShow("str","../../employee/importImp.html","员工导入",600,400);
+    modelShow("importEmployee","../../employee/importImp.html","导入",400,300);
 }
 
 var importEmp = function () {
+    var file = parent.$("#importEmp").val();
+    var fileName = file.substring(file.lastIndexOf(".")+1);
+    parent.$("#showTishi").text("");
+    if(!file && file == ""){
+        return;
+    }
+    if(fileName != "xlsx" && fileName != "xls"){
+        parent.$("#showTishi").text("文件格式必须是xlsx或者xls！");
+        return;
+    }
+    loadingShow();
+    parent.$.ajaxFileUpload
+    (
+        {
+            url: '../../emp/importEmp', //用于文件上传的服务器端请求地址
+            secureuri: false,           //一般设置为false
+            fileElementId: "importEmp", //文件上传控件的id属性  <input type="file" id="file" name="file" /> 注意，这里一定要有name值
+            //$("form").serialize(),表单序列化。指把所有元素的ID，NAME 等全部发过去
+            dataType: 'json',//返回值类型 一般设置为json
+            enctype:'multipart/form-data',//注意一定要有该参数
+            complete: function () {//只要完成即执行，最后执行
+            },
+            success: function (data, status)  //服务器成功响应处理函数
+            {
+                alert(777);
+                loadingHide();
+                if(data.code == "0000"){
+                    var importData = data.data;
+                    debugger;
+                    console.log(importData);
+                    modelHide("importEmployee");
+                    if(importData.isAllImport){
+                        alertShow("员工数据导入完成，共导入"+importData.successNums+"条!");
+                    }else if(!importData.isAllImport){
+                        alertShow("员工数据导入完成，导入成功"+importData.successNums+"条！"+"导入失败"+importData.failNums+"条！"+"请检查员工编号是否重复！");
+                    }
+                    location.href = "../../employee/list.html";
 
-   if(checkData()){
+                }else if(data.code == "1008"){
+                    parent.$("#showTishi").text("没有选择文件！")
+                }
+            },
+            error: function (data, status, e)//服务器响应失败处理函数
+            {
+                loadingHide();
+                modelHide("importEmployee");
+                alertShow("员工数据导入失败："+e);
+            }
+        }
+    )
+   /*if(checkData()){
        $.ajax({
            url: "../../emp/importEmp",
            type: 'POST',
@@ -111,25 +242,30 @@ var importEmp = function () {
            data: new FormData($("#imoprtForm")[0]),
            processData: false,
            contentType: false,
-           success: function (result) {
+           success: function (data) {
+               if(data.code==='0000'){
+                   modelHide("importEmployee");
+                   alertShow("共导入"+data.data+"条数据!");
+                   location.href = "/employee/billList.html";
+               }
            },
            error: function (err) {
            }
        });
-   }
+   }*/
 
 }
 
 function checkData(){
     var fileName = $("#importEmp").val();
     var suffix = fileName.substr(fileName.lastIndexOf(".") + 1);
-    alert(suffix);
+    console.log(fileName);
     if("" == fileName){
-        alert("选择需要导入的Excel文件！");
+        parent.$("#showTishi").text("请选择需要导入的Excel文件！");
         return false;
     }
     if("xls" != suffix && "xlsx" != suffix ){
-        alert("选择Excel格式的文件导入！");
+        parent.$("#showTishi").text("请选择Excel格式的文件导入！");
         return false;
     }
     return true;

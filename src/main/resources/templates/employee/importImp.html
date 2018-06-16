@@ -1,24 +1,22 @@
-﻿<!DOCTYPE html>
-<html xmlns:background="http://www.w3.org/1999/xhtml">
-<head lang="en">
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="../static/css/public.css"/>
-    <link rel="stylesheet" href="../static/css/style.css"/>
-</head>
-<body>
+﻿<div style="padding-top: 30px">
+    <a href="../static/template/salary2.xlsx" style="margin: 0px;">合同工资模板</a>
+    <a href="../static/template/salary1.xlsx" style="margin: 0px;">正式工资模板</a>
+    <a href="../static/template/detail.xlsx" style="margin: 0px;">其他奖模板</a>
+</div>
+<!--<div class="search">
+    <form id="imoprtForm" enctype="multipart/form-data">
+        <input id="importEmp" name="importEmp" style="background: #87c212;" type="file" value="选择文件"/>
+    </form>
+    &lt;!&ndash;<input id="motifyEmp" style="background: #87c212" onclick="importEmp()" type="button" value="员工导入"/>&ndash;&gt;
+</div>
+<div>
+    <a href="#" onclick="importEmp()">确定</a>
+    <a href="#" onclick="modelHide();">取消</a>
+</div>-->
+<input type="file" style="margin-top: 20px;" id="importEmp" name="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" />
+<p id="showTishi" style="margin-top: 15px;color: red;"></p>
+<div>
+    <a href="#" onclick="iframe.importEmp()">确定</a>
+    <a href="#" onclick="modelHide();">取消</a>
+</div>
 
-        <div class="search">
-            <form id="imoprtForm" enctype="multipart/form-data">
-            <input id="importEmp" name="importEmp" style="background: #87c212;" type="file" value="选择文件"/>
-
-            </form>
-            <input id="motifyEmp" style="background: #87c212" onclick="importEmp()" type="button" value="员工导入"/>
-        </div>
-
-
-<script src="../static/js/jquery.js"></script>
-<script src="../static/js/child.js"></script>
-<script src="../static/js/empManage.js"></script>
-<script src="../static/js/jquery.form.js"></script>
-</body>
-</html>

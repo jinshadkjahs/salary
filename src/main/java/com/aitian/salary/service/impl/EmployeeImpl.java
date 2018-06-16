@@ -7,6 +7,7 @@ import com.aitian.salary.mapper.EmployeeMapper;
 import com.aitian.salary.mapper.UserMapper;
 import com.aitian.salary.model.Department;
 import com.aitian.salary.model.Employee;
+import com.aitian.salary.model.ImportEmpInfo;
 import com.aitian.salary.model.User;
 import com.aitian.salary.service.EmployeeService;
 import com.github.pagehelper.PageHelper;
@@ -51,7 +52,7 @@ public class EmployeeImpl implements EmployeeService {
             employee.setEmpName(empName);
         }
         if(StringUtils.isNotBlank(empType)){
-            employee.setEmpName(empType);
+            employee.setEmpType(empType);
         }
 
         List<Employee> employeeList = employeeMapper.select(employee);
@@ -67,6 +68,21 @@ public class EmployeeImpl implements EmployeeService {
         }
         Employee emp = employeeMapper.selectByPrimaryKey(employee);
         return emp;
+    }
+
+    @Override
+    public List<Employee> getEmp(String empId) {
+        Employee employee = new Employee();
+        if(StringUtils.isNotBlank(empId)){
+            employee.setEmpId(empId);
+        }
+        List<Employee> employees = employeeMapper.select(employee);
+        return employees;
+    }
+
+    @Override
+    public void modifyEmp(Employee employee) {
+        this.employeeMapper.updateByPrimaryKeySelective(employee);
     }
 
     @Override
@@ -93,7 +109,7 @@ public class EmployeeImpl implements EmployeeService {
     }
 
     @Override
-    public String importEmp(InputStream in,String fileName) throws Exception {
+    public ImportEmpInfo importEmp(InputStream in, String fileName) throws Exception {
 
         List<Employee> empList = new ArrayList<>();
         List<User> userList = new ArrayList<>();
@@ -101,6 +117,11 @@ public class EmployeeImpl implements EmployeeService {
         List<User> listsingleUser = new ArrayList<>();
         ReadExcel readExcel = new ReadExcel();
         List<List<String>> list = null;
+        int successNums = 0;
+        int failNums = 0;
+        int importNums = 0;
+        String failEmpNo="";
+        ImportEmpInfo importEmpInfo = new ImportEmpInfo();
         Workbook work = readExcel.getWorkbook(in,fileName);
         if(null == work){
             throw new Exception("创建Excel工作薄为空！");
@@ -190,9 +211,20 @@ public class EmployeeImpl implements EmployeeService {
                         listsingleUser.clear();
                     }
                 }
+                importNums = empList.size();
                 for(int i =0; i<empList.size(); i++){
                     final Employee employee = empList.get(i);
                     final User user = userList.get(i);
+                    List<Employee> list1 = this.queryEmpAndUser(employee.getEmpId());
+                    if(list1.size()>0){
+                        failNums++;
+                        if(i<empList.size()){
+                            failEmpNo+=employee.getEmpId()+",";
+                        }else{
+                            failEmpNo+=employee.getEmpId();
+                        }
+                        continue;
+                    }
                     try{
                        this.employeeMapper.insertEmp(employee);
                        this.employeeMapper.insertUser(user);
@@ -201,6 +233,15 @@ public class EmployeeImpl implements EmployeeService {
                     }
 
                 }
+                successNums = importNums-failNums;
+                importEmpInfo.setSuccessNums(successNums);
+                importEmpInfo.setFailNums(failNums);
+                importEmpInfo.setFailEmpNo(failEmpNo);
+                if(successNums==importNums){
+                    importEmpInfo.setAllImport(true);
+                }else{
+                    importEmpInfo.setAllImport(false);
+                }
 
             }
             //正式工数据导入
@@ -208,7 +249,7 @@ public class EmployeeImpl implements EmployeeService {
                 for(int i=0; i<list.size(); i++){
                     List<String> list1 = list.get(i);
                     //员工编号
-                    String empId = list1.get(28);
+                    String empId = list1.get(27);
                     //员工部门
                     String empDepartment = list1.get(0);
                     //部门ID
@@ -260,9 +301,20 @@ public class EmployeeImpl implements EmployeeService {
                         listsingleUser.clear();
                     }
                 }
+                importNums = empList.size();
                 for(int i =0; i<empList.size(); i++){
                     final Employee employee = empList.get(i);
                     final User user = userList.get(i);
+                    List<Employee> list1 = this.queryEmpAndUser(employee.getEmpId());
+                    if(list1.size()>0){
+                        failNums++;
+                        if(i<empList.size()){
+                            failEmpNo+=employee.getEmpId()+",";
+                        }else{
+                            failEmpNo+=employee.getEmpId();
+                        }
+                        continue;
+                    }
                     try{
                         this.employeeMapper.insertEmp(employee);
                         this.employeeMapper.insertUser(user);
@@ -272,10 +324,20 @@ public class EmployeeImpl implements EmployeeService {
 
                 }
             }
-
+            successNums = importNums-failNums;
+            importEmpInfo.setSuccessNums(successNums);
+            importEmpInfo.setFailNums(failNums);
+            importEmpInfo.setFailEmpNo(failEmpNo);
+            if(successNums==importNums){
+                importEmpInfo.setAllImport(true);
+            }else{
+                importEmpInfo.setAllImport(false);
+            }
         }
-        logger.info("员工导入成功！");
-        return null;
+        logger.info("员工导入完成！"+importEmpInfo.toString());
+        return importEmpInfo;
     }
+
+
 }
 

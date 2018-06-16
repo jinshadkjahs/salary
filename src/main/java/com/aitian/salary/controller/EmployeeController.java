@@ -1,16 +1,21 @@
 package com.aitian.salary.controller;
 
 import com.aitian.salary.Utils.ConverterSystem;
+import com.aitian.salary.Utils.EmpConstant;
 import com.aitian.salary.Utils.ReponseCode;
 import com.aitian.salary.controller.response.BaseResponse;
 import com.aitian.salary.model.Employee;
+import com.aitian.salary.model.ImportEmpInfo;
 import com.aitian.salary.service.EmployeeService;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.FileCopyUtils;
+import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,12 +26,10 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.util.List;
-import java.util.Map;
+import java.io.*;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Controller
 @RequestMapping("/emp")
@@ -88,28 +91,120 @@ public class EmployeeController {
 
         }catch (Exception ex){
             br.setCode(ReponseCode.REQUEST_ERROR);
-            br.setMessage("删除错误：\n"+ex.getMessage());
+            br.setMessage("删除错误：\n"+ex. getMessage());
             return br;
         }
         return br;
     }
 
+    @RequestMapping(value = "/intoModifyEmp/*")
+    public String intoModifyEmp(HttpServletRequest request){
+        return "/employee/modify";
+    }
+
+    @RequestMapping(value="/getEmp")
+    @ResponseBody
+    public Object getEmp(HttpServletRequest request,String empId){
+        BaseResponse br = new BaseResponse();
+        try{
+            List<Employee> emp = this.employeeService.getEmp(empId);
+            if(emp.size()==1){
+                br.setData(emp.get(0));
+                br.setCode(ReponseCode.REQUEST_SUCCESS);
+            }else{
+                br.setCode(ReponseCode.REQUEST_ERROR);
+                String str = "";
+                for(int i=0; i<emp.size(); i++){
+                    if(i<emp.size()){
+                        str+=emp.get(i).getEmpName()+",";
+                    }else {
+                        str+=emp.get(i).getEmpName();
+                    }
+                }
+                br.setMessage("员工数据获取错误，加载到多个员工："+str);
+            }
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+        return br;
+    }
+
+    @RequestMapping(value = "/modifyEmp",method = RequestMethod.PUT)
+    @ResponseBody
+    public Object modifyEmp(HttpServletRequest request,Employee employee){
+        BaseResponse br = new BaseResponse();
+        Map<String,String[]> map = request.getParameterMap();
+        String empId = employee.getEmpId();
+        String empType = employee.getEmpType();
+        if(!StringUtils.isEmpty(empType)&&(EmpConstant.STR_OFFICIAL_EMPLOYEE.equals(empType))){
+            employee.setEmpType(EmpConstant.OFFICIAL_EMPLOYEE);
+        }else if(!StringUtils.isEmpty(empType) && (EmpConstant.STR_NON_OFFICIAL_EMPLOYEE.equals(empType))){
+            employee.setEmpType(EmpConstant.NON_OFFICIAL_EMPLOYEE);
+        }
+        Employee employeeOld = this.employeeService.queryEmpForUser(empId);
+        if(employee.getEmpName().equals(employeeOld.getEmpName())
+                && employee.getEmpType().equals(employeeOld.getEmpType())
+                && employee.getEmpPhone().equals(employeeOld.getEmpPhone())
+                && employee.getEmpCardNum().equals(employeeOld.getEmpCardNum())
+                && employee.getBaseSalary().equals(employeeOld.getBaseSalary())){
+            br.setCode(ReponseCode.REQUEST_ERROR);
+            br.setMessage("修改失败，员工信息未做更改！");
+        }else{
+            Date date = new Date();
+            Timestamp updateTime = new Timestamp(date.getTime());
+            employee.setUpdateTime(updateTime);
+            this.employeeService.modifyEmp(employee);
+            br.setCode(ReponseCode.REQUEST_SUCCESS);
+            br.setMessage("员工信息更新成功！");
+        }
+        return br;
+    }
 
     @RequestMapping(value = "/importEmp",method = {RequestMethod.POST})
     @ResponseBody
     public Object importEmp(HttpServletRequest request) throws Exception {
+        BaseResponse br = new BaseResponse();
         MultipartHttpServletRequest multiReq = (MultipartHttpServletRequest) request;
-        MultipartFile fileExcel = multiReq.getFile("importEmp");
-        String fileName = null;
-        if (fileExcel != null){
-            fileName = fileExcel.getOriginalFilename();
-        }
-        InputStream in = fileExcel.getInputStream();
-        String path = System.getProperty("java.io.tmpdir");
-        File diskFile =  new File(path + "/" + fileName);
-        fileExcel.transferTo(diskFile);
-        employeeService.importEmp(in,fileName);
+        MultiValueMap<String, MultipartFile> multiFileMap = multiReq.getMultiFileMap();
+        if(multiFileMap.size()>0){
+            for(String key : multiFileMap.keySet()){
+                List<MultipartFile> multipartFiles = multiFileMap.get(key);
+                if(multipartFiles.size()>0){
+                    MultipartFile multipartFile = multipartFiles.get(0);
+                    if(!multipartFile.isEmpty())    {
+                        String originalFilename = multipartFile.getOriginalFilename();
+                        String fileExtension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
+                        if(!Arrays.asList(ConverterSystem.EXTENSIONPERMIT).contains(fileExtension)){
+                            br.setCode(ReponseCode.NOT_ALLOW_FILE);
+                            break;
+                        }
+                        String newfile = request.getSession().getServletContext().getRealPath("");
+                        if(!new File(newfile+ File.separator+"upload").exists()){
+                            new File(newfile+ File.separator+"upload").mkdirs();
+                        }
+                        File fileUpload = new File(newfile+ File.separator+"upload"+File.separator+multipartFile.getOriginalFilename());
+                        FileCopyUtils.copy(multipartFile.getInputStream(),new FileOutputStream(fileUpload));
 
-        return null;
+                        ImportEmpInfo importEmpInfo = employeeService.importEmp(new FileInputStream(fileUpload), originalFilename);
+                        if(importEmpInfo!=null){
+                            /*Map map = new HashMap();
+                            map.put("successNums",importEmpInfo.getSuccessNums());
+                            map.put("failNums",importEmpInfo.getFailNums());
+                            map.put("failEmpNo",importEmpInfo.getFailEmpNo());
+                            map.put("isAllImport",importEmpInfo.isAllImport());*/
+                            br.setCode(ReponseCode.REQUEST_SUCCESS);
+                            br.setData(importEmpInfo);
+                        }
+                    }
+
+                }else{
+                    br.setCode(ReponseCode.HAS_NOT_FILE);
+                }
+                break;
+            }
+        }else{
+            br.setCode(ReponseCode.HAS_NOT_FILE);
+        }
+        return br;
     }
 }

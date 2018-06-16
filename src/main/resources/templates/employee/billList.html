@@ -23,16 +23,9 @@
                 <option value="0">正式员工</option>
                 <option value="1">合同员工</option>
             </select>
-
-            <!--<span>是否付款：</span>
-            <select name="fukuan">
-                <option value="">&#45;&#45;请选择&#45;&#45;</option>
-                <option value="">已付款</option>
-                <option value="">未付款</option>
-            </select>-->
             <input id="queryEmp" onclick="queryEmp()" type="button" value="查询"/>
-            <input id="importEmp" style="background: #87c212" onclick="openImportEmp()" type="button" value="员工导入"/>
-            <a onclick="addEmployee()">添加员工</a>
+            <a  style="width: auto;padding-right: 10px;margin: 10px;" onclick="addEmployee()">添加员工</a>
+            <a  id="importEmp" style="width: auto;padding-right: 10px;margin: 10px;" onclick="openImportEmp()">导入</a>
         </div>
         <table id="employee" class="providerTable" cellpadding="0" cellspacing="0">
             <tr class="firstTr">
@@ -50,10 +43,10 @@
 
         </div>
 <script src="../static/js/jquery.js"></script>
-<script src="../static/js/js.js"></script>
 <script src="../static/js/page.js"></script>
 <script src="../static/js/child.js"></script>
 <script src="../static/js/empManage.js"></script>
+<script src="../static/js/jquery.form.js"></script>
 <div id="loading">
     <img src="../static/img/loading.gif">
 </div>
