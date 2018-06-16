@@ -19,7 +19,7 @@ var queryEmp = function (pageNum) {
            '                <th width="10%">基本工资</th>\n' +
            '                <th width="10%">操作</th>\n' +
            '            </tr>';
-       if(reData.length>0){
+       if(data.code==='0000'){
            for(var i=0; i<reData.length; i++){
                var empPhone = reData[i].empPhone;
                var empCardNum = reData[i].empCardNum;
@@ -45,7 +45,6 @@ var queryEmp = function (pageNum) {
                    '                <td>'+empTypeDesc+'</td>\n' +
                    '                <td>'+reData[i].baseSalary+'</td>\n' +
                    '                <td>\n' +
-                   /*'                    <a href="#"><img src="../static/img/read.png" alt="查看" title="查看" /></a>\n' +*/
                    '                    <a onclick="motifyEmp(\''+reData[i].empId+'\')"><img src="../static/img/xiugai.png" alt="修改" title="修改" /></a>\n' +
                    '                    <a onclick="delEmp(this)" class="removeBill"><img src="../static/img/schu.png" alt="删除" title="删除"/></a>\n' +
                    '                </td>\n' +
@@ -53,7 +52,26 @@ var queryEmp = function (pageNum) {
 
            }
        }
-       $("#employee").html(htmlHead+html);
+
+        if (reData.length < 10) {
+            for (var i = reData.length; i < 10; i++) {
+                html+='<tr style=\'height: 40.8px\'>\n' +
+                    '                <td></td>\n' +
+                    '                <td></td>\n' +
+                    '                <td></td>\n'+
+                    '                <td></td>\n' +
+                    '                <td></td>\n' +
+                    '                <td></td>\n' +
+                    '                <td>\n' +
+                    '                    <a><img style="display: none;" src="../static/img/xiugai.png" alt="修改" title="修改" /></a>\n' +
+                    '                    <a><img style="display: none;" src="../static/img/schu.png" alt="删除" title="删除"/></a>\n' +
+                    '                </td>\n' +
+                    '            </tr>';
+            }
+        }
+       var lastHtml = htmlHead+html;
+       console.log(lastHtml);
+       $("#employee").html(lastHtml);
        $("#empPage").html(getPageHtml(reVal.pageNum,reVal.pages,"pageClick"));
        loadingHide();
        },'json');
@@ -214,12 +232,12 @@ var importEmp = function () {
                     debugger;
                     console.log(importData);
                     modelHide("importEmployee");
-                    if(importData.isAllImport){
-                        alertShow("员工数据导入完成，共导入"+importData.successNums+"条!");
-                    }else if(!importData.isAllImport){
-                        alertShow("员工数据导入完成，导入成功"+importData.successNums+"条！"+"导入失败"+importData.failNums+"条！"+"请检查员工编号是否重复！");
+                    if(importData.allImport){
+                        alertShow("导入完成，共导入"+importData.successNums+"条!");
+                    }else if(!importData.allImport){
+                        alertShow("导入完成，导入成功"+importData.successNums+"条！"+"导入失败"+importData.failNums+"条！"+"请检查员工编号是否重复！");
                     }
-                    location.href = "../../employee/list.html";
+                    location.href = "/employee/billList.html";
 
                 }else if(data.code == "1008"){
                     parent.$("#showTishi").text("没有选择文件！")
@@ -233,26 +251,6 @@ var importEmp = function () {
             }
         }
     )
-   /*if(checkData()){
-       $.ajax({
-           url: "../../emp/importEmp",
-           type: 'POST',
-           cache: false,
-           data: new FormData($("#imoprtForm")[0]),
-           processData: false,
-           contentType: false,
-           success: function (data) {
-               if(data.code==='0000'){
-                   modelHide("importEmployee");
-                   alertShow("共导入"+data.data+"条数据!");
-                   location.href = "/employee/billList.html";
-               }
-           },
-           error: function (err) {
-           }
-       });
-   }*/
-
 }
 
 function checkData(){
@@ -268,4 +266,17 @@ function checkData(){
         return false;
     }
     return true;
+}
+
+var exportEmpModel=function (importType) {
+    //正式工模板
+    if(importType==='0'){
+
+
+    }
+    //合同工模板
+    if(importType==='1'){
+
+    }
+
 }

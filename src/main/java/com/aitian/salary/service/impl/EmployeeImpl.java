@@ -13,13 +13,12 @@ import com.aitian.salary.service.EmployeeService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,6 +82,40 @@ public class EmployeeImpl implements EmployeeService {
     @Override
     public void modifyEmp(Employee employee) {
         this.employeeMapper.updateByPrimaryKeySelective(employee);
+    }
+
+    @Override
+    public XSSFWorkbook exportEmpModel(String exportType) {
+        XSSFWorkbook  workBook = new XSSFWorkbook();
+        XSSFCellStyle cellStyle = workBook.createCellStyle();
+        XSSFDataFormat format = workBook.createDataFormat();
+        cellStyle.setDataFormat(format.getFormat("@"));
+        String[] rowName = null;
+        //合同员工：0
+        if(EmpConstant.NON_OFFICIAL_EMPLOYEE.equals(exportType)){
+            rowName = new String[]{"序号","员工编号","科室","姓名","工资","奖金","节加","其他奖","全勤奖","补发","应领工资"};
+        }
+        //正式员工
+        if(EmpConstant.OFFICIAL_EMPLOYEE.equals(exportType)){
+            rowName = new String[]{"单位","姓名","职称","编号","工作时间","月工资","挂率","回民","保健","夜班",
+                    "护岗","岗位","工种","等级","岗级","房补","卫生费","公积金","GJJ","电视费","十五","养老","医疗",
+                    "失业","月缴费工资","ASD","见习工资","医保号","养老号","SFZH","SY","ZH1","养老1","失业1"};
+        }
+        XSSFSheet sheet = workBook.createSheet();
+        workBook.setSheetName(0,"合同工导入模板");
+        //所有列都设置成文本
+        for(int i=0;i<rowName.length;i++){
+            sheet.setColumnWidth(i,4000);
+            sheet.setDefaultColumnStyle(i, cellStyle);
+        }
+        //列名
+        XSSFRow headRow = sheet.createRow(0);
+        int columnNum = rowName.length;
+        for(int i=0; i<columnNum; i++){
+            headRow.createCell(i).setCellValue(rowName[i]);
+        }
+
+    return workBook;
     }
 
     @Override

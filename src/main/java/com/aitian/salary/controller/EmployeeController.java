@@ -10,6 +10,8 @@ import com.aitian.salary.service.EmployeeService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pagehelper.PageInfo;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
@@ -206,5 +209,23 @@ public class EmployeeController {
             br.setCode(ReponseCode.HAS_NOT_FILE);
         }
         return br;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/exportEmpModel",method = RequestMethod.GET)
+    public void exportEmpModel(HttpServletRequest request,HttpServletResponse response) throws Exception {
+        String importType = request.getParameter("importType");
+        String fileName = "其他导入模板.xlsx";
+        if(EmpConstant.OFFICIAL_EMPLOYEE.equals(importType)){
+            fileName="正式工导入模板.xlsx";
+        }else{
+            fileName="合同工导入模板.xlsx";
+        }
+        response.setContentType("octets/stream");
+        response.addHeader("Content-Disposition", "attachment;filename="+new String( fileName.getBytes("gb2312"), "ISO8859-1" ));
+        XSSFWorkbook hssfWorkbook = this.employeeService.exportEmpModel(importType);
+        hssfWorkbook.write(response.getOutputStream());
+        response.getOutputStream().flush();
+        response.getOutputStream().close();
     }
 }
