@@ -65,6 +65,10 @@ function toLogin(code) {
             success:function(data, textStatus){
                 //成功回调方法增强处理
                 toLogin(data.code);
+                if(data.code == "2222"){
+                    alertShow("没有权限访问！");
+                    return;
+                }
                 fn.success(data, textStatus);
             },
             beforeSend:function(XHR){

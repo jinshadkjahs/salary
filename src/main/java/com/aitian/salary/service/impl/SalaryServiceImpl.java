@@ -153,6 +153,12 @@ public class SalaryServiceImpl implements SalaryService {
         salaryMapper.insert(salaryMain);
         salaryMain.getSalaryTypeEmpList().forEach(salaryTypeEmp -> salaryTypeEmp.setSalaryId(salaryMain.getSalaryId()));
         salaryTypeEmpMapper.insertList(salaryMain.getSalaryTypeEmpList());
+
+        if(salaryMain.getBonusInfos()!=null && salaryMain.getBonusInfos().size()>0){
+            salaryMain.getBonusInfos().forEach(bonusInfo -> {bonusInfo.setSalaryId(salaryMain.getSalaryId());});
+             bonusInfoMapper.insertList(salaryMain.getBonusInfos());
+        }
+
     }
 
     @Transactional
@@ -162,6 +168,12 @@ public class SalaryServiceImpl implements SalaryService {
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("salaryId",salaryId);
         salaryTypeEmpMapper.deleteByExample(example);
+
+        Example exampleBonus = new Example(BonusInfo.class);
+        Example.Criteria criteriaBonus = exampleBonus.createCriteria();
+        criteriaBonus.andEqualTo("salaryId",salaryId);
+        salaryMapper.deleteByExample(exampleBonus);
+
         salaryMapper.deleteByPrimaryKey(salaryId);
     }
 
@@ -172,7 +184,16 @@ public class SalaryServiceImpl implements SalaryService {
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("salaryId",salaryMain.getSalaryId());
         salaryTypeEmpMapper.deleteByExample(example);
+
         salaryTypeEmpMapper.insertList(salaryMain.getSalaryTypeEmpList());
+
+        Example exampleBonus = new Example(BonusInfo.class);
+        Example.Criteria criteriaBonus = exampleBonus.createCriteria();
+        criteriaBonus.andEqualTo("salaryId",salaryMain.getSalaryId());
+        bonusInfoMapper.deleteByExample(exampleBonus);
+
+        if(salaryMain.getBonusInfos()!=null && salaryMain.getBonusInfos().size()>0) bonusInfoMapper.insertList(salaryMain.getBonusInfos());
+
         salaryMapper.updateByPrimaryKey(salaryMain);
     }
 

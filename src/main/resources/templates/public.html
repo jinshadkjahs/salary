@@ -31,7 +31,7 @@
                 <li><a onclick="menuClick('salarymanager/list.html',this)">工资管理</a></li>
                 <li id="empSalaryQuery"><a onclick="menuClick('salaryuser/list.html',this)">工资查询</a></li>
                 <li><a onclick="menuClick('employee/billList.html',this)">员工管理</a></li>
-                <li><a onclick="modifyPass()">修改密码</a></li>
+                <li id="modifyPass"><a onclick="modifyPass()">修改密码</a></li>
             </ul>
         </nav>
     </div>
@@ -87,9 +87,9 @@
                 }
 
                 if(data.data.userType == 0){
-                    $("#empSalaryQuery").hide();
+                    $("#empSalaryQuery").remove();
                 }else {
-                    $("#empSalaryQuery").siblings().hide();
+                    $("#empSalaryQuery").siblings().not("[id='modifyPass']").remove();
                 }
                 $("#menuUl").show();
             }else  if(data.code == "1003"){

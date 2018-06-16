@@ -11,6 +11,10 @@ public class ReponseCode {
      */
     public static final String ILLEGAL_REQUEST = "1111";
     /**
+     * 没有权限
+     */
+    public static final String NOT_ALLOW = "2222";
+    /**
      *  参数为空
      */
     public static final String PARAMETER_NULL_ERROR = "1001";

@@ -193,4 +193,14 @@ public class SalaryMain {
     public void setEmpType(String empType) {
         this.empType = empType;
     }
+    @Transient
+    public List<BonusInfo> bonusInfos;
+
+    public List<BonusInfo> getBonusInfos() {
+        return bonusInfos;
+    }
+
+    public void setBonusInfos(List<BonusInfo> bonusInfos) {
+        this.bonusInfos = bonusInfos;
+    }
 }

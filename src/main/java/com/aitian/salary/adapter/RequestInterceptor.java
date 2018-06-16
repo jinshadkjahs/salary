@@ -39,9 +39,14 @@ public class RequestInterceptor extends HandlerInterceptorAdapter {
             String url = "/login.html";
             response.sendRedirect(url);
         }else {
-            BaseResponse br = new BaseResponse();
-            br.setCode(ReponseCode.NOT_LOGINED);
-            response.getWriter().write(new ObjectMapper().writeValueAsString(br));
+            if(request.getRequestURI().startsWith("/salary/intoUpdate") || request.getRequestURI().startsWith("/salary/intoShow")){
+                String url = "/login.html";
+                response.sendRedirect(url);
+            }else {
+                BaseResponse br = new BaseResponse();
+                br.setCode(ReponseCode.NOT_LOGINED);
+                response.getWriter().write(new ObjectMapper().writeValueAsString(br));
+            }
         }
 
         return false;
