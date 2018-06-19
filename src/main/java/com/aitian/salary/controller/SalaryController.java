@@ -3,6 +3,7 @@ package com.aitian.salary.controller;
 import com.aitian.salary.Utils.ConverterSystem;
 import com.aitian.salary.Utils.ReponseCode;
 import com.aitian.salary.controller.response.BaseResponse;
+import com.aitian.salary.model.BonusInfo;
 import com.aitian.salary.model.Employee;
 import com.aitian.salary.model.SalaryMain;
 import com.aitian.salary.model.SalaryTypeEmp;
@@ -113,6 +114,9 @@ public class SalaryController {
             }else {
                 salary = salaryService.findSalary(empId,salaryDate);
             }
+            if(salary != null){
+                salary.setBonusInfos(salaryService.findBonusInfo(salary.getSalaryId()));
+            }
             br.setData(salary);
             br.setCode(com.aitian.salary.Utils.ReponseCode.REQUEST_SUCCESS);
         }else{
@@ -154,6 +158,23 @@ public class SalaryController {
                         list.add(salaryTypeEmp);
                     }
                 }
+            }
+            String bunsIds = request.getParameter("bunsIds");
+            if(StringUtils.isNotBlank(bunsIds)){
+                List<BonusInfo> infos = new ArrayList<>();
+                String[] bunsIdArr = bunsIds.split(",");
+                for(String bunsId:bunsIdArr){
+                    if(StringUtils.isNotBlank(bunsId)){
+                        BonusInfo info = new BonusInfo();
+                        info.setSalaryId(salaryMain.getSalaryId());
+                        info.setEmpId(salaryMain.getEmpId());
+                        info.setMoney(request.getParameter("money_"+bunsId));
+                        info.setCont(request.getParameter("cont_"+bunsId));
+                        info.setManageDepart(request.getParameter("manageDepart_"+bunsId));
+                        infos.add(info);
+                    }
+                }
+                salaryMain.setBonusInfos(infos);
             }
             if(list.size()>0){
                 salaryMain.setSalaryTypeEmpList(list);
@@ -205,11 +226,29 @@ public class SalaryController {
                         SalaryTypeEmp salaryTypeEmp = new SalaryTypeEmp();
                         String[] keys = key.split("_");
                         salaryTypeEmp.setSalaryType(Integer.parseInt(keys[1]));
+                        salaryTypeEmp.setSalaryId(salaryMain.getSalaryId());
                         Double amountDouble = Double.parseDouble(map.get(key)[0]) * ConverterSystem.MULTIPLE;
                         salaryTypeEmp.setMoney(amountDouble.longValue());
                         list.add(salaryTypeEmp);
                     }
                 }
+            }
+            String bunsIds = request.getParameter("bunsIds");
+            if(StringUtils.isNotBlank(bunsIds)){
+                List<BonusInfo> infos = new ArrayList<>();
+                String[] bunsIdArr = bunsIds.split(",");
+                for(String bunsId:bunsIdArr){
+                    if(StringUtils.isNotBlank(bunsId)){
+                        BonusInfo info = new BonusInfo();
+                        info.setSalaryId(salaryMain.getSalaryId());
+                        info.setEmpId(salaryMain.getEmpId());
+                        info.setMoney(request.getParameter("money_"+bunsId));
+                        info.setCont(request.getParameter("cont_"+bunsId));
+                        info.setManageDepart(request.getParameter("manageDepart_"+bunsId));
+                        infos.add(info);
+                    }
+                }
+                salaryMain.setBonusInfos(infos);
             }
             if(list.size()>0){
                 salaryMain.setSalaryTypeEmpList(list);

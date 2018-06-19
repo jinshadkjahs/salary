@@ -13,11 +13,9 @@ import com.aitian.salary.model.SalaryMain;
 import com.aitian.salary.model.SalaryType;
 import com.aitian.salary.model.SalaryTypeEmp;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,7 +105,6 @@ public class ReadExcel {
   private List<Object> readExcelValue(Workbook wb){
       //得到第一个shell  
        Sheet sheet=wb.getSheetAt(0);
-       
       //得到Excel的行数
        this.totalRows=sheet.getPhysicalNumberOfRows();
        
@@ -161,6 +158,9 @@ public class ReadExcel {
                            break;
                        }
                        info.setEmpId(getCellValue(cell).toString());//职工编号
+                       if(info.getEmpId().contains(".")){
+                           info.setEmpId(info.getEmpId().substring(0,info.getEmpId().indexOf(".")));
+                       }
                    }else if(c==2){
                        info.setEmpName(val == null?"":val.toString());//姓名
                    }else if(c==3){
@@ -223,6 +223,9 @@ public class ReadExcel {
                                 break;
                             }
                             info.setEmpId(val.toString());//职工编号
+                            if(info.getEmpId().contains(".")){
+                                info.setEmpId(info.getEmpId().substring(0,info.getEmpId().indexOf(".")));
+                            }
                         }else if(c==2){
     //                        info.setDepartId(getCellValue(cell).toString());//科室
                         }else if(c==3){
@@ -263,6 +266,7 @@ public class ReadExcel {
             }
 
         }catch (Exception e){
+            e.printStackTrace();
             throw new RuntimeException((r+1)+"-"+(c+1));
         }
         return objList;
@@ -272,7 +276,6 @@ public class ReadExcel {
         List<Object> objList=new ArrayList<Object>();
         int c = 0;
         int r = 0;
-
         Row oneRow = sheet.getRow(0);
         Integer[] ids = new Integer[this.totalCells];
         for(c = 3; c <this.totalCells-4; c++){
@@ -309,6 +312,9 @@ public class ReadExcel {
                                 break;
                             }
                             info.setEmpId(val.toString());//职工编号
+                            if(info.getEmpId().contains(".")){
+                                info.setEmpId(info.getEmpId().substring(0,info.getEmpId().indexOf(".")));
+                            }
                         }else if(c==1){
     //                        info.setDepartId(getCellValue(cell).toString());//科室
                         }else if(c==2){
@@ -363,6 +369,7 @@ public class ReadExcel {
                 if(info.getEmpId() != null) objList.add(info);
             }
         }catch (Exception e){
+            e.printStackTrace();
             throw new RuntimeException((r+1)+"-"+(c+1));
         }
         return objList;
@@ -422,38 +429,85 @@ public class ReadExcel {
         return  suucess;
     }
 
-    public  Object getCellValue(Cell cell){
-        Object value = null;
-        //格式化number String字符
-        DecimalFormat df = new DecimalFormat("0");
-        //日期格式化
-        SimpleDateFormat sdf = new SimpleDateFormat("yyy-MM-dd");
-        //格式化数字
-        DecimalFormat df2 = new DecimalFormat("0.00");
-
-        switch (cell.getCellType()) {
-            case Cell.CELL_TYPE_STRING:
-                value = cell.getRichStringCellValue().getString();
-                break;
-            case Cell.CELL_TYPE_NUMERIC:
-                if("General".equals(cell.getCellStyle().getDataFormatString())){
-                    value = df.format(cell.getNumericCellValue());
-                }else if("m/d/yy".equals(cell.getCellStyle().getDataFormatString())){
-                    value = sdf.format(cell.getDateCellValue());
-                }else{
-                    value = df2.format(cell.getNumericCellValue());
-                }
-                break;
-            case Cell.CELL_TYPE_BOOLEAN:
-                value = cell.getBooleanCellValue();
-                break;
-            case Cell.CELL_TYPE_BLANK:
-                value = "";
-                break;
-            default:
-                break;
+//    public  Object getCellValue(Cell cell){
+//        Object value = null;
+//        //格式化number String字符
+//        DecimalFormat df = new DecimalFormat("0");
+//        //日期格式化
+//        SimpleDateFormat sdf = new SimpleDateFormat("yyy-MM-dd");
+//        //格式化数字
+//        DecimalFormat df2 = new DecimalFormat("0.00");
+//
+//        switch (cell.getCellType()) {
+//            case Cell.CELL_TYPE_STRING:
+//                value = cell.getRichStringCellValue().getString();
+//                break;
+//            case Cell.CELL_TYPE_NUMERIC:
+//                if("General".equals(cell.getCellStyle().getDataFormatString())){
+//                    value = df.format(cell.getNumericCellValue());
+//                }else if("m/d/yy".equals(cell.getCellStyle().getDataFormatString())){
+//                    value = sdf.format(cell.getDateCellValue());
+//                }else{
+//                    value = df2.format(cell.getNumericCellValue());
+//                }
+//                break;
+//            case Cell.CELL_TYPE_BOOLEAN:
+//                value = cell.getBooleanCellValue();
+//                break;
+//            case Cell.CELL_TYPE_BLANK:
+//                value = "";
+//                break;
+//            default:
+//                break;
+//        }
+//        return value;
+//    }
+    public Object getCellValue(Cell cell) {
+        Object columnValue = null;
+        if (cell != null) {
+            DecimalFormat df = new DecimalFormat("0");// 格式化 number
+            // String
+            // 字符
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// 格式化日期字符串
+            DecimalFormat nf = new DecimalFormat("0.00");// 格式化数字
+            switch (cell.getCellType()) {
+                case Cell.CELL_TYPE_STRING:
+                    columnValue = cell.getRichStringCellValue().getString();
+                    break;
+                case Cell.CELL_TYPE_NUMERIC:
+//                    if ("@".equals(cell.getCellStyle().getDataFormatString())) {
+//                        columnValue = df.format(cell.getNumericCellValue());
+//                    } else if ("General".equals(cell.getCellStyle().getDataFormatString())) {
+//                        columnValue = nf.format(cell.getNumericCellValue());
+//                    } else {
+//                        columnValue = sdf.format(HSSFDateUtil.getJavaDate(cell.getNumericCellValue()));
+//                    }
+                    if("General".equals(cell.getCellStyle().getDataFormatString())){
+                        columnValue = df.format(cell.getNumericCellValue());
+                    }else if("m/d/yy".equals(cell.getCellStyle().getDataFormatString())){
+                        columnValue = sdf.format(cell.getDateCellValue());
+                    }else{
+                        columnValue = nf.format(cell.getNumericCellValue());
+                    }
+                    break;
+                case Cell.CELL_TYPE_BOOLEAN:
+                    columnValue = cell.getBooleanCellValue();
+                    break;
+                case Cell.CELL_TYPE_BLANK:
+                    columnValue = "";
+                    break;
+                case Cell.CELL_TYPE_FORMULA:
+                    // 格式单元格
+                    FormulaEvaluator evaluator = cell.getSheet().getWorkbook().getCreationHelper().createFormulaEvaluator();
+                    evaluator.evaluateFormulaCell(cell);
+                    CellValue cellValue = evaluator.evaluate(cell);
+                    columnValue = cellValue.getNumberValue();
+                    break;
+                default:
+                    columnValue = cell.toString();
+            }
         }
-        return value;
+        return columnValue;
     }
 
     public  Workbook getWorkbook(InputStream inStr,String fileName) throws Exception{

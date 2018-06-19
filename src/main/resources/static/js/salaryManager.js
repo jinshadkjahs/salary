@@ -201,24 +201,24 @@ function loadSalaryTypeTab(empType) {
         for (var i = 0; i < list.length; i++) {
             if (list[i].type == "0") {
                 if (jiaNum % 2 == 0) {
-                    jiaTr += "<td class='titletd'>" + list[i].salaryName + ":</td><td><input id='salaryType_" + list[i].salaryType + "' name='salaryType_" + list[i].salaryType + "' value='0' operate='" + list[i].type + "'></td></tr>";
+                    jiaTr += "<td class='titletd'>" + list[i].salaryName + ":</td><td><input onkeyup=\"value=value.replace(/[^\\d{1,}\\.\\d{1,}|\\d{1,}]/g,'')\" maxlength='15' id='salaryType_" + list[i].salaryType + "' name='salaryType_" + list[i].salaryType + "' value='0' operate='" + list[i].type + "'></td></tr>";
                 } else {
-                    jiaTr += "<tr><td  class='titletd'>" + list[i].salaryName + ":</td><td><input id='salaryType_" + list[i].salaryType + "' value='0' name='salaryType_" + list[i].salaryType + "'  operate='" + list[i].type + "'></td>";
+                    jiaTr += "<tr><td  class='titletd'>" + list[i].salaryName + ":</td><td><input onkeyup=\"value=value.replace(/[^\\d{1,}\\.\\d{1,}|\\d{1,}]/g,'')\" maxlength='15' id='salaryType_" + list[i].salaryType + "' value='0' name='salaryType_" + list[i].salaryType + "'  operate='" + list[i].type + "'></td>";
                 }
                 jiaNum++;
 
             } else if (list[i].type == "1") {
                 if (jianNum % 2 == 0) {
-                    jianTr += "<td class='titletd'>" + list[i].salaryName + ":</td><td><input id='salaryType_" + list[i].salaryType + "' value='0' name='salaryType_" + list[i].salaryType + "'  operate='" + list[i].type + "'></td></tr>";
+                    jianTr += "<td class='titletd'>" + list[i].salaryName + ":</td><td><input onkeyup=\"value=value.replace(/[^\\d{1,}\\.\\d{1,}|\\d{1,}]/g,'')\" maxlength='15' id='salaryType_" + list[i].salaryType + "' value='0' name='salaryType_" + list[i].salaryType + "'  operate='" + list[i].type + "'></td></tr>";
                 } else {
-                    jianTr += "<tr><td class='titletd'>" + list[i].salaryName + ":</td><td><input id='salaryType_" + list[i].salaryType + "' value='0'  name='salaryType_" + list[i].salaryType + "'  operate='" + list[i].type + "'></td>";
+                    jianTr += "<tr><td class='titletd'>" + list[i].salaryName + ":</td><td><input onkeyup=\"value=value.replace(/[^\\d{1,}\\.\\d{1,}|\\d{1,}]/g,'')\" maxlength='15' id='salaryType_" + list[i].salaryType + "' value='0'  name='salaryType_" + list[i].salaryType + "'  operate='" + list[i].type + "'></td>";
                 }
                 jianNum++;
             } else {
                 if (num % 2 == 0) {
-                    tr += "<td class='titletd'>" + list[i].salaryName + ":</td><td><input id='salaryType_" + list[i].salaryType + "'  value='0'  name='salaryType_" + list[i].salaryType + "'  operate='" + list[i].type + "'></td></tr>";
+                    tr += "<td class='titletd'>" + list[i].salaryName + ":</td><td><input onkeyup=\"value=value.replace(/[^\\d{1,}\\.\\d{1,}|\\d{1,}]/g,'')\" maxlength='15' id='salaryType_" + list[i].salaryType + "'  value='0'  name='salaryType_" + list[i].salaryType + "'  operate='" + list[i].type + "'></td></tr>";
                 } else {
-                    tr += "<tr><td class='titletd'>" + list[i].salaryName + ":</td><td><input id='salaryType_" + list[i].salaryType + "' value='0' name='salaryType_" + list[i].salaryType + "'  operate='" + list[i].type + "'></td>";
+                    tr += "<tr><td class='titletd'>" + list[i].salaryName + ":</td><td><input onkeyup=\"value=value.replace(/[^\\d{1,}\\.\\d{1,}|\\d{1,}]/g,'')\" maxlength='15' id='salaryType_" + list[i].salaryType + "' value='0' name='salaryType_" + list[i].salaryType + "'  operate='" + list[i].type + "'></td>";
                 }
                 num++;
             }
@@ -233,10 +233,10 @@ function loadSalaryTypeTab(empType) {
             tr += "</tr>";
         }
 
-        if (jiaNum != 1) $("#salaryInput").append("<tr><td><div class=\"search\" style='height: auto'><table style=\"width: 100%\">" + jiaTr + "</table></div></td></tr>");
+        if (jiaNum != 1) $("#salaryInput").append("<tr><td><div class=\"search\" style='height: auto'><table style=\"width: 100%\">" + jiaTr + "</table><a id='addBuns' onclick='getBunsTab(this);addBunsTab(bunsNum+1)'>添加奖金详情</a></div></td></tr>");
         if (jianNum != 1) $("#salaryInput").append("<tr><td><div class=\"search\" style='height: auto'><table style=\"width: 100%\">" + jianTr + "</table></div></td></tr>");
         if (num != 1) $("#salaryInput").append("<tr><td><div class=\"search\" style='height: auto'><table style=\"width: 100%\">" + tr + "</table></td></div></tr>");
-        $("#salaryInput").append("<tr><td><div class=\"search\" style='height: auto'><table style=\"width: 100%\"><tr><td class='titletd'>应领工资:</td><td><input name='grossPay_dob' id='grossPay_dob'  value='0' ></td><td class='titletd'>实领工资:</td><td><input  name='netPayroll_dob' id='netPayroll_dob' value='0'></td></tr></table></div></td></tr>");
+        $("#salaryInput").append("<tr><td><div class=\"search\" style='height: auto'><table style=\"width: 100%\"><tr><td class='titletd'>应领工资:</td><td><input onkeyup=\"value=value.replace(/[^\\d{1,}\\.\\d{1,}|\\d{1,}]/g,'')\" maxlength='15' name='grossPay_dob' id='grossPay_dob'  value='0' ></td><td class='titletd'>实领工资:</td><td><input onkeyup=\"value=value.replace(/[^\\d{1,}\\.\\d{1,}|\\d{1,}]/g,'')\" maxlength='15' name='netPayroll_dob' id='netPayroll_dob' value='0'></td></tr></table></div></td></tr>");
     }
 }
 
@@ -275,6 +275,22 @@ function empliClick(obj) {
 
 function salarySave() {
     $("#salaryDate").val($("#salaryYear").val() + "-" + $("#salaryMonth").val());
+    var bunsTr = $("#bunsTab tr")||[];
+    var bunsIds = "";
+    for(var i=0; i<bunsTr.length; i++){
+        if($(bunsTr[i]).attr("num") && $(bunsTr[i]).attr("num")!= ""){
+            bunsIds += $(bunsTr[i]).attr("num")+",";
+        }
+    }
+    $("#bunsIds").val(bunsIds);
+    var input = $("input[name!='salaryId'][name!='bunsIds']");
+    for(var i=0; i<input.length; i++){
+        if(!($(input[i]).val()) || $(input[i]).val()== ""){
+            alertShow("输入框存在为空！");
+            console.log($(input[i]).attr("name"));
+            return;
+        }
+    }
     confirmShow("确认提交吗", function () {
         loadingShow();
         $.post("../../salary/addSalary", $("#salaryAddForm").serialize(), function (data) {
@@ -294,6 +310,22 @@ function salarySave() {
 }
 
 function salaryUpdateSave() {
+    var bunsTr = $("#bunsTab tr")||[];
+    var bunsIds = "";
+    for(var i=0; i<bunsTr.length; i++){
+        if($(bunsTr[i]).attr("num") && $(bunsTr[i]).attr("num")!= ""){
+            bunsIds += $(bunsTr[i]).attr("num")+",";
+        }
+    }
+    $("#bunsIds").val(bunsIds);
+    var input = $("input[name!='bunsIds']");
+    for(var i=0; i<input.length; i++){
+        if(!($(input[i]).val()) || $(input[i]).val()== ""){
+            alertShow("输入框存在为空！");
+            console.log($(input[i]).attr("name"));
+            return;
+        }
+    }
     confirmShow("确认提交吗", function () {
         loadingShow();
         $.ajax({
@@ -338,6 +370,14 @@ function loadSalaryData(salaryId) {
                 $("#netPayroll_dob").val((salary.netPayroll) / 10000);
                 for (var i = 0; i < salary.salaryTypeEmpList.length; i++) {
                     $("[name='salaryType_" + salary.salaryTypeEmpList[i].salaryType + "']").val((salary.salaryTypeEmpList[i].money) / 10000);
+                }
+                if(data.data.bonusInfos){
+                    getBunsTab(document.getElementById("addBuns"));
+                    var bonusInfos = data.data.bonusInfos;
+                    for(var i=0; i<bonusInfos.length; i++){
+                        addBunsTab(i,bonusInfos[i].money, bonusInfos[i].cont, bonusInfos[i].manageDepart);
+                    }
+                    bunsNum = bonusInfos.length;
                 }
             }
         }
@@ -407,4 +447,47 @@ function fileImport() {
             }
         }
     )
+}
+
+
+function getBunsTab(obj) {
+    var html ="<div class=\"search\" style=\"height: auto\">\n" +
+        "                        <table id='bunsTab' style=\"width: 100%\"><tr>\n" +
+        "                            <th class=\"titletd\" style='width: 30%'>金额</th>\n" +
+        "                            <th style='width: 30%'>内容</th>\n" +
+        "                            <th style='width: 30%;' class=\"titletd\">归口管理部门</th>\n" +
+        "                            <th  class=\"titletd\">操作</th>\n" +
+        "                        </tr>\n" +
+        "                    </table>\n" +
+        "                    </div>";
+    $(obj).parent().parent().parent().after("<tr><td>"+html+"</td></tr>");
+    $(obj).attr("onclick","addBunsTab(bunsNum+1)");
+}
+
+function addBunsTab(i, money, cont, manageDepart){
+    bunsNum = i;
+    if(money || cont || manageDepart){
+
+        $("#bunsTab").append("<tr num='"+i+"'>" +
+            "                                    <td class=\"titletd\"><input style='width: 70%'  onkeyup=\"value=value.replace(/[^\\d{1,}\\.\\d{1,}|\\d{1,}]/g,'')\" maxlength='15' name='money_"+i+"' value='"+money+"'/></td>" +
+            "                                    <td ><input style='width: 70%'  name='cont_"+i+"' value='"+cont+"' maxlength='50' /></td>" +
+            "                                    <td  class=\"titletd\"><input style='width: 70%' maxlength='50'  name='manageDepart_"+i+"' value='"+manageDepart+"'/></td>" +
+            "                                    <td  class=\"titletd\"><button style='width: 30px;height: 25px' onclick='removeBouns(this)'>-</button></td>" +
+            "                                </tr>");
+
+    }else {
+        $("#bunsTab").append("<tr num='"+i+"'>" +
+            "                                    <td class=\"titletd\"><input style='width: 70%' onkeyup=\"value=value.replace(/[^\\d{1,}\\.\\d{1,}|\\d{1,}]/g,'')\" maxlength='15' name='money_"+i+"' /></td>" +
+            "                                    <td ><input style='width: 70%'  name='cont_"+i+"' maxlength='50' /></td>" +
+            "                                    <td  class=\"titletd\"><input style='width: 70%'maxlength='50'  name='manageDepart_"+i+"' /></td>" +
+            "                                    <td  class=\"titletd\"><button style='width: 30px;height: 25px' onclick='removeBouns(this)'>-</button></td>" +
+            "                                </tr>");
+    }
+}
+
+function removeBouns(obj) {
+    $(obj).parent().parent().remove();
+    if($("#bunsTab tr").length == 1){
+        $("#bunsTab").remove();
+    }
 }

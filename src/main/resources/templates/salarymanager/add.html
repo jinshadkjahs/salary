@@ -57,6 +57,7 @@
                             <td>
                                 <input type="hidden" name="empId" id="empId" />
                                 <input type="hidden" name="salaryId" id="salaryId" />
+                                <input type="hidden" name="bunsIds" id="bunsIds" />
                                 <input type="text" id="empName" name="empName" style="width: 65%;" onfocus="loadEmployees(this)" onkeyup="loadEmployees(this)" placeholder="请输入员工姓名" required/>
                                 <div class="xialaDiv" style="margin: 0px;margin-top: -5px;" >
                                     <ul id="emps" >
@@ -100,6 +101,7 @@
 <script src="../../static/js/child.js"></script>
 <script src="../../static/js/salaryManager.js"></script>
 <script>
+    var bunsNum = 0;
     $(function () {
         loadingShow();
         loadDepartData();

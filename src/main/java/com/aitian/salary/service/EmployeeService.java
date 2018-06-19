@@ -6,6 +6,8 @@ import com.aitian.salary.model.ImportEmpInfo;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,4 +36,6 @@ public interface EmployeeService {
     public List<Employee> getEmp(String empId);
 
     public void modifyEmp(Employee employee);
+
+    public XSSFWorkbook exportEmpModel(String exportType);
 }
