@@ -102,7 +102,7 @@ public class EmployeeController {
 
     @RequestMapping(value = "/intoModifyEmp/*")
     public String intoModifyEmp(HttpServletRequest request){
-        return "/employee/modify";
+        return "employee/modify";
     }
 
     @RequestMapping(value="/getEmp")
@@ -190,11 +190,6 @@ public class EmployeeController {
 
                         ImportEmpInfo importEmpInfo = employeeService.importEmp(new FileInputStream(fileUpload), originalFilename);
                         if(importEmpInfo!=null){
-                            /*Map map = new HashMap();
-                            map.put("successNums",importEmpInfo.getSuccessNums());
-                            map.put("failNums",importEmpInfo.getFailNums());
-                            map.put("failEmpNo",importEmpInfo.getFailEmpNo());
-                            map.put("isAllImport",importEmpInfo.isAllImport());*/
                             br.setCode(ReponseCode.REQUEST_SUCCESS);
                             br.setData(importEmpInfo);
                         }
