@@ -94,7 +94,8 @@ function Generatdata(result, salaryDate) {
             '<th width="20%">归口管理部门</th>' +
             '</tr>';
         for (var i = 0; i < result.bonusInfo.length; i++) {
-            html += '<tr><th width="20%">' + result.bonusInfo[i].id + '</th>' +
+             a = i+1;
+            html += '<tr><th width="20%">' + a + '</th>' +
                 '<th width="20%">' + result.bonusInfo[i].money + '</th>' +
                 '<th width="20%" colspan="2">' + result.bonusInfo[i].cont + '</th>' +
                 '<th width="20%">' + result.bonusInfo[i].manageDepart + '</th>' +
