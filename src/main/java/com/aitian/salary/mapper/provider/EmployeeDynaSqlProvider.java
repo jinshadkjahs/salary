@@ -4,6 +4,7 @@ import com.aitian.salary.model.Employee;
 import com.aitian.salary.model.User;
 import com.sun.org.apache.bcel.internal.generic.IFNULL;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.jdbc.SQL;
 
@@ -39,6 +40,8 @@ public class EmployeeDynaSqlProvider {
                 VALUES("waltz_date","now()");
                 VALUES("create_time","now()");
                 VALUES("update_time","now()");
+                VALUES("emp_phone","#{empPhone}");
+                VALUES("emp_card_num","#{empCardNum}");
                 VALUES("depart_id","#{departId}");
                 VALUES("base_salary","#{baseSalary}");
             }
@@ -57,4 +60,17 @@ public class EmployeeDynaSqlProvider {
             }
         }.toString();
     }
+
+    public String modifyEmployee(Employee employee){
+        return new SQL(){
+            {
+                UPDATE("s_employee");
+                SET("emp_name=#{empName}","emp_type=#{empType}","update_time=now()",
+                        "emp_phone=#{empPhone}","emp_card_num=#{empCardNum}","depart_id=#{departId}","base_salary=#{baseSalary}");
+                WHERE("empid=#{empId}");
+            }
+
+        }.toString();
+    }
+
 }

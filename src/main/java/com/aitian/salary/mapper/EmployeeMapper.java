@@ -28,4 +28,8 @@ public interface EmployeeMapper extends BaseMapper<Employee> {
     @SelectProvider(type = EmployeeDynaSqlProvider.class,method = "insertUser")
     void insertUser(User user);
 
+    @SelectProvider(type = EmployeeDynaSqlProvider.class,method = "modifyEmployee")
+    void modifyEmployee(Employee employee);
+
+
 }

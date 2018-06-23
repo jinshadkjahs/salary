@@ -14,10 +14,8 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.*;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.xssf.usermodel.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,21 +89,34 @@ public class EmployeeImpl implements EmployeeService {
         XSSFDataFormat format = workBook.createDataFormat();
         cellStyle.setDataFormat(format.getFormat("@"));
         String[] rowName = null;
-        //合同员工：0
+        String[] empTypes = new String[]{"正式员工","合同员工"};
+        //统一模板
         if(EmpConstant.NON_OFFICIAL_EMPLOYEE.equals(exportType)){
-            rowName = new String[]{"序号","员工编号","科室","姓名","工资","奖金","节加","其他奖","全勤奖","补发","应领工资"};
+            rowName = new String[]{"序号","员工编号","科室","姓名","工资","手机号","身份证编号","员工类型"};
         }
-        //正式员工
+        /*//正式员工
         if(EmpConstant.OFFICIAL_EMPLOYEE.equals(exportType)){
             rowName = new String[]{"单位","姓名","职称","编号","工作时间","月工资","挂率","回民","保健","夜班",
                     "护岗","岗位","工种","等级","岗级","房补","卫生费","公积金","GJJ","电视费","十五","养老","医疗",
                     "失业","月缴费工资","ASD","见习工资","医保号","养老号","SFZH","SY","ZH1","养老1","失业1"};
-        }
+        }*/
         XSSFSheet sheet = workBook.createSheet();
-        workBook.setSheetName(0,"合同工导入模板");
+        DataValidationHelper helper = sheet.getDataValidationHelper();
+        CellRangeAddressList addressList = new CellRangeAddressList(1, 65535, 7, 7);
+        DataValidationConstraint constraint = helper.createExplicitListConstraint(empTypes);
+        DataValidation dataValidation = helper.createValidation(constraint, addressList);
+        //处理Excel兼容性问题
+        if(dataValidation instanceof XSSFDataValidation) {
+            dataValidation.setSuppressDropDownArrow(true);
+            dataValidation.setShowErrorBox(true);
+        }else {
+            dataValidation.setSuppressDropDownArrow(false);
+        }
+        sheet.addValidationData(dataValidation);
+        workBook.setSheetName(0,"员工导入模板");
         //所有列都设置成文本
         for(int i=0;i<rowName.length;i++){
-            sheet.setColumnWidth(i,4000);
+            sheet.setColumnWidth((short)i,(short)3000);
             sheet.setDefaultColumnStyle(i, cellStyle);
         }
         //列名
@@ -187,11 +198,12 @@ public class EmployeeImpl implements EmployeeService {
             }
         }
         if(list != null){
-            //合同工导入数据
-            if(columnNum== EmpConstant.NON_OFFICIAL_EMPLOYEE_NUMS){
+            //员工数据导入
                 for(int i=0; i<list.size(); i++){
                     List<String> list1 = list.get(i);
-                    //员工编号
+                    if(list1.size()<8){
+                        continue;
+                    }
                     String empId = list1.get(1);
                     //员工部门
                     String empDepartment = list1.get(2);
@@ -201,17 +213,37 @@ public class EmployeeImpl implements EmployeeService {
                     String empName = list1.get(3);
                     //基本工资
                     String baseSalary = list1.get(4);
+                    //手机号
+                    String empPhone = list1.get(5);
+                    //身份证编码
+                    String empCardNum = list1.get(6);
+                    //员工类型
+                    String empType = list1.get(7);
                     //用decimal
                     //final float fBaseSalary = Float.parseFloat(baseSalary);
                     if(StringUtils.isEmpty(empId)){
-                        empId = "unknow";
+                        empId = "";
                     }
                     if(StringUtils.isEmpty(empName)){
-                        empName = "unknow";
+                        empName = "";
                     }
-
                     if(StringUtils.isEmpty(baseSalary)){
                         baseSalary = "0.00";
+                    }
+                    if(StringUtils.isEmpty(empPhone)){
+                        empPhone="";
+                    }
+                    if(StringUtils.isEmpty(empCardNum)){
+                        empCardNum="";
+                    }
+                    if(StringUtils.isEmpty(empType)){
+                        empType="";
+                    }
+                    if(EmpConstant.STR_OFFICIAL_EMPLOYEE.equals(empType)){
+                        empType=EmpConstant.OFFICIAL_EMPLOYEE;
+                    }
+                    if(EmpConstant.STR_NON_OFFICIAL_EMPLOYEE.equals(empType)){
+                        empType=EmpConstant.NON_OFFICIAL_EMPLOYEE;
                     }
                     //departName
                     Collection<Department> values = ConverterSystem.ALL_DEPARTMENT.values();
@@ -220,6 +252,7 @@ public class EmployeeImpl implements EmployeeService {
                         Department next = iterator.next();
                         final String departName = next.getDepartName();
                         if(empDepartment.equals(departName)){
+                            //部门ID
                             empDepId =next.getDepartid();
                         }
                     }
@@ -229,14 +262,16 @@ public class EmployeeImpl implements EmployeeService {
                     employee.setDepartId(empDepId);
                     employee.setEmpName(empName);
                     employee.setBaseSalary((int) fBaseSalary);
-                    employee.setEmpType(EmpConstant.NON_OFFICIAL_EMPLOYEE);
+                    employee.setEmpType(empType);
+                    employee.setEmpPhone(empPhone);
+                    employee.setEmpCardNum(empCardNum);
                     listsingleEmp.add(employee);
                     empList.addAll(listsingleEmp);
 
                     User user = new User();
                     user.setEmpId(empId);
                     user.setPassword(EmpConstant.DEFAULT_PASSWORD);
-                    user.setUserType(EmpConstant.NON_OFFICIAL_EMPLOYEE);
+                    user.setUserType(EmpConstant.COMMON_USER);
                     listsingleUser.add(user);
                     userList.addAll(listsingleUser);
                     if(listsingleEmp!=null && listsingleUser!=null){
@@ -250,13 +285,10 @@ public class EmployeeImpl implements EmployeeService {
                     final User user = userList.get(i);
                     List<Employee> list1 = this.queryEmpAndUser(employee.getEmpId());
                     if(list1.size()>0){
+                    //员工存在，修改员工信息
+                        this.employeeMapper.modifyEmployee(employee);
+                        //作为修改员工数
                         failNums++;
-                        if(i<empList.size()){
-                            failEmpNo+=employee.getEmpId()+",";
-                        }else{
-                            failEmpNo+=employee.getEmpId();
-                        }
-                        continue;
                     }
                     try{
                        this.employeeMapper.insertEmp(employee);
@@ -276,87 +308,6 @@ public class EmployeeImpl implements EmployeeService {
                     importEmpInfo.setAllImport(false);
                 }
 
-            }
-            //正式工数据导入
-            if(columnNum== EmpConstant.OFFICIAL_EMPLOYEE_NUMS){
-                for(int i=0; i<list.size(); i++){
-                    List<String> list1 = list.get(i);
-                    //员工编号
-                    String empId = list1.get(27);
-                    //员工部门
-                    String empDepartment = list1.get(0);
-                    //部门ID
-                    Integer empDepId = null;
-                    //员工姓名
-                    String empName = list1.get(1);
-                    //基本工资
-                    String baseSalary = list1.get(5);
-                    //用decimal
-                    //final float fBaseSalary = Float.parseFloat(baseSalary);
-                    if(StringUtils.isEmpty(empId)){
-                        empId = "unknow";
-                    }
-                    if(StringUtils.isEmpty(empName)){
-                        empName = "unknow";
-                    }
-
-                    if(StringUtils.isEmpty(baseSalary)){
-                        baseSalary = "0.00";
-                    }
-                    //departName
-                    Collection<Department> values = ConverterSystem.ALL_DEPARTMENT.values();
-                    Iterator<Department> iterator = values.iterator();
-                    while (iterator.hasNext()){
-                        Department next = iterator.next();
-                        final String departName = next.getDepartName();
-                        if(empDepartment.equals(departName)){
-                            empDepId =next.getDepartid();
-                        }
-                    }
-                    final float fBaseSalary = Float.parseFloat(baseSalary);
-                    Employee employee = new Employee();
-                    employee.setEmpId(empId);
-                    employee.setDepartId(empDepId);
-                    employee.setEmpName(empName);
-                    employee.setBaseSalary((int) fBaseSalary);
-                    employee.setEmpType(EmpConstant.OFFICIAL_EMPLOYEE);
-                    listsingleEmp.add(employee);
-                    empList.addAll(listsingleEmp);
-
-                    User user = new User();
-                    user.setEmpId(empId);
-                    user.setPassword(EmpConstant.DEFAULT_PASSWORD);
-                    user.setUserType(EmpConstant.OFFICIAL_EMPLOYEE);
-                    listsingleUser.add(user);
-                    userList.addAll(listsingleUser);
-                    if(listsingleEmp!=null && listsingleUser!=null){
-                        listsingleEmp.clear();
-                        listsingleUser.clear();
-                    }
-                }
-                importNums = empList.size();
-                for(int i =0; i<empList.size(); i++){
-                    final Employee employee = empList.get(i);
-                    final User user = userList.get(i);
-                    List<Employee> list1 = this.queryEmpAndUser(employee.getEmpId());
-                    if(list1.size()>0){
-                        failNums++;
-                        if(i<empList.size()){
-                            failEmpNo+=employee.getEmpId()+",";
-                        }else{
-                            failEmpNo+=employee.getEmpId();
-                        }
-                        continue;
-                    }
-                    try{
-                        this.employeeMapper.insertEmp(employee);
-                        this.employeeMapper.insertUser(user);
-                    }catch (Exception ex){
-                        ex.printStackTrace();
-                    }
-
-                }
-            }
             successNums = importNums-failNums;
             importEmpInfo.setSuccessNums(successNums);
             importEmpInfo.setFailNums(failNums);

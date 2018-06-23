@@ -235,7 +235,7 @@ var importEmp = function () {
                     if(importData.allImport){
                         alertShow("导入完成，共导入"+importData.successNums+"条!");
                     }else if(!importData.allImport){
-                        alertShow("导入完成，导入成功"+importData.successNums+"条！"+"导入失败"+importData.failNums+"条！"+"请检查员工编号是否重复！");
+                        alertShow("导入完成，导入成功"+importData.successNums+"条！"+"修改成功"+importData.failNums+"条！");
                     }
                     location.href = "/employee/billList.html";
 

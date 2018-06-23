@@ -13,6 +13,8 @@ public class EmpConstant {
     public static final String STR_NON_OFFICIAL_EMPLOYEE ="合同员工";
     //用户默认密码
     public static final String DEFAULT_PASSWORD="000000";
+    //普通用户
+    public static final String COMMON_USER="1";
 
 
 }

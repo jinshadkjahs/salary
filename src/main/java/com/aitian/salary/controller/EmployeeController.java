@@ -212,9 +212,9 @@ public class EmployeeController {
         String importType = request.getParameter("importType");
         String fileName = "其他导入模板.xlsx";
         if(EmpConstant.OFFICIAL_EMPLOYEE.equals(importType)){
-            fileName="正式工导入模板.xlsx";
+            fileName="员工导入模板.xlsx";
         }else{
-            fileName="合同工导入模板.xlsx";
+            fileName="员工导入模板.xlsx";
         }
         response.setContentType("octets/stream");
         response.addHeader("Content-Disposition", "attachment;filename="+new String( fileName.getBytes("gb2312"), "ISO8859-1" ));
