@@ -289,14 +289,14 @@ public class EmployeeImpl implements EmployeeService {
                         this.employeeMapper.modifyEmployee(employee);
                         //作为修改员工数
                         failNums++;
+                    }else {
+                        try{
+                            this.employeeMapper.insertEmp(employee);
+                            this.employeeMapper.insertUser(user);
+                        }catch (Exception ex){
+                            ex.printStackTrace();
+                        }
                     }
-                    try{
-                       this.employeeMapper.insertEmp(employee);
-                       this.employeeMapper.insertUser(user);
-                    }catch (Exception ex){
-                        ex.printStackTrace();
-                    }
-
                 }
                 successNums = importNums-failNums;
                 importEmpInfo.setSuccessNums(successNums);
