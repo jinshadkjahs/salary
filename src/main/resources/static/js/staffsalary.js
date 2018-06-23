@@ -65,7 +65,7 @@ function Generatdata(result, salaryDate) {
         '<th width="20%">' + result.salaryInfo.employee.empId + '</th>' +
         '</tr><tr>' +
         '<th width="20%">身份号</th>' +
-        '<th width="20%" colspan="4">' + result.salaryInfo.employee.empCardNum + '</th></tr>';
+        '<th width="20%" colspan="4">' + (result.salaryInfo.employee.empCardNum == null?'':result.salaryInfo.employee.empCardNum) + '</th></tr>';
     for (var k = 0, length = result.salaryInfo.salaryTypeEmpList.length; k < length; k++) {
         html +=
             '<tr>' +
@@ -79,12 +79,23 @@ function Generatdata(result, salaryDate) {
         html += '</tr>';
         k++;
     }
-    html += '<tr><th width="20%">应领工资</th>' +
-        '<th width="20%" colspan="4">' + result.salaryInfo.grossPay / 10000 + '</th>' +
-        '</tr><tr><th></th></tr><tr>' +
-        '<th width="20%" style="height: 30px;">其他奖明细</th>' +
-        '<th width="20%" colspan="4"></th>' +
-        '</tr>' + '<tr>';
+    if (result.emp_type == 0) {
+        html += '<tr><th width="20%">应领工资</th>' +
+            '<th width="20%" colspan="2">' + result.salaryInfo.grossPay / 10000 + '</th>' +
+            '<th width="20%">实领工资</th>' +
+            '<th width="20%">' + result.salaryInfo.netPayroll / 10000 + '</th>'+
+            '</tr><tr><th></th></tr><tr>' +
+            '<th width="20%" style="height: 30px;">其他奖明细</th>' +
+            '<th width="20%" colspan="4"></th>' +
+            '</tr>' + '<tr>';
+    }else{
+        html += '<tr><th width="20%">应领工资</th>' +
+            '<th width="20%" colspan="4">' + result.salaryInfo.grossPay / 10000 + '</th>' +
+            '</tr><tr><th></th></tr><tr>' +
+            '<th width="20%" style="height: 30px;">其他奖明细</th>' +
+            '<th width="20%" colspan="4"></th>' +
+            '</tr>' + '<tr>';
+    }
     if(result.bonusInfo.length == 0){
         html +='<th width="20%" colspan="5">本月无其他奖明细</th></tr>'
     }else {
