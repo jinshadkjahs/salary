@@ -128,12 +128,9 @@
 
         if (result.emp_type == 0) {
             html += '<tr><th></th></tr><tr style="height: 40px;"><th width="20%">组成规则</th>' +
-                '<th width="20%" colspan="4">工资额=保留工资\n</br>' +
-                '职业=工令工资\n</br>' +
-                '煤气费=个税\n</br>' +
-                '各种补贴=煤气补+水补+交通补\n</br>' +
+                '<th width="20%" colspan="4">' +
                 '应领工资=应领A卡+B卡\n</br>' +
-                '实领工资=应领工资-煤气费-养老-医疗-失业-公积金</th></br>' +
+                '实领工资=应领工资-个税-养老-医疗-失业-公积金</th></br>' +
                 '</tr>';
             $("#usertable").html(htmlHead + html);
         } else {
