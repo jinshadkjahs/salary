@@ -262,7 +262,23 @@ public class ReadExcel {
                         }
                     }
                 }
-                if(info.getEmpId() != null) objList.add(info);
+                if(info.getEmpId() != null){
+                    //补全工资类型
+                    if(info.getSalaryTypeEmpList().size() < ids.length){
+                        List<Integer> list = info.getSalaryTypeEmpList().stream().map(SalaryTypeEmp::getSalaryType).collect(Collectors.toList());
+                        for(int i = 5; i <this.totalCells-1; i++){
+                            if(!list.contains(ids[i])){
+                                SalaryTypeEmp salaryTypeEmp = new SalaryTypeEmp();
+                                salaryTypeEmp.setSalaryType(ids[i]);
+                                salaryTypeEmp.setMoney(0l);
+                                info.getSalaryTypeEmpList().add(salaryTypeEmp);
+                            }
+                        }
+                    }
+                    if(info.getNetPayroll()==null) info.setNetPayroll(0l);
+                    if(info.getGrossPay()==null) info.setGrossPay(0l);
+                    objList.add(info);
+                }
             }
 
         }catch (Exception e){
@@ -366,7 +382,23 @@ public class ReadExcel {
                         }
                     }
                 }
-                if(info.getEmpId() != null) objList.add(info);
+                if(info.getEmpId() != null) {
+                    //补全工资类型
+                    if(info.getSalaryTypeEmpList().size() < ids.length){
+                        List<Integer> list = info.getSalaryTypeEmpList().stream().map(SalaryTypeEmp::getSalaryType).collect(Collectors.toList());
+                        for(int i = 3; i <this.totalCells-4; i++){
+                            if(!list.contains(ids[i])){
+                                SalaryTypeEmp salaryTypeEmp = new SalaryTypeEmp();
+                                salaryTypeEmp.setSalaryType(ids[i]);
+                                salaryTypeEmp.setMoney(0l);
+                                info.getSalaryTypeEmpList().add(salaryTypeEmp);
+                            }
+                        }
+                    }
+                    if(info.getNetPayroll()==null) info.setNetPayroll(0l);
+                    if(info.getGrossPay()==null) info.setGrossPay(0l);
+                    objList.add(info);
+                }
             }
         }catch (Exception e){
             e.printStackTrace();

@@ -16,9 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @Controller
@@ -37,6 +35,7 @@ public class StaffController {
         String salaryId = request.getParameter("salaryId");
         if(StringUtils.isNotBlank(salaryId)){
             SalaryMain salaryInfo = salaryService.findSalaryByPk(Integer.parseInt(salaryId));
+            salaryInfo.getSalaryTypeEmpList().sort((p1, p2) -> p1.getSalaryType().compareTo(p2.getSalaryType()));
             List<BonusInfo> bonusInfo = salaryService.findBonusInfo(salaryInfo.getSalaryId());
             Map result = new HashMap<>();
             result.put("salaryInfo", salaryInfo);
@@ -51,6 +50,7 @@ public class StaffController {
         String emp_type = user.getEmployee().getEmpType();
         if (StringUtils.isNotBlank(empId) && StringUtils.isNotBlank(salaryDate)) {
             SalaryMain salaryInfo = salaryService.findSalary(empId, salaryDate);
+            salaryInfo.getSalaryTypeEmpList().sort((p1, p2) -> p1.getSalaryType().compareTo(p2.getSalaryType()));
             List<BonusInfo> bonusInfo = salaryService.findBonusInfo(salaryInfo.getSalaryId());
             Map result = new HashMap<>();
             result.put("salaryInfo", salaryInfo);
