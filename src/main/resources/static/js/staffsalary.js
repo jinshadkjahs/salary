@@ -118,7 +118,8 @@ function Generatdata(result, salaryDate) {
         html += '<tr><th></th></tr><tr style="height: 40px;"><th width="20%">组成规则</th>' +
             '<th width="20%" colspan="4">' +
             '应领工资=应领A卡+B卡\n</br>' +
-            '实领工资=应领工资-个税-养老-医疗-失业-公积金</th></br>' +
+            '实领工资=应领工资-个税-养老-医疗-失业-公积金-扣款</br>' +
+            '其他奖包括预算奖，具体见科室薪酬发放构成表</th></br>' +
             '</tr>';
         $("#usertable").html(htmlHead + html);
     } else {
