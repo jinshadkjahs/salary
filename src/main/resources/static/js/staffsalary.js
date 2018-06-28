@@ -123,6 +123,10 @@ function Generatdata(result, salaryDate) {
             '</tr>';
         $("#usertable").html(htmlHead + html);
     } else {
+        html += '<tr><th></th></tr><tr style="height: 40px;"><th width="20%">组成规则</th>' +
+            '<th width="20%" colspan="4">' +
+            '其他奖包括预算奖，具体见科室薪酬发放构成表</th></br>' +
+            '</tr>';
         $("#usertable").html(htmlHead + html);
     }
 }
