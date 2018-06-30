@@ -335,10 +335,6 @@ public class ReadExcel {
     //                        info.setDepartId(getCellValue(cell).toString());//科室
                         }else if(c==2){
                             //姓名
-                        }else if(c==3){
-                            //月工资
-                        }else if(c==4){
-                            //身份证号
                         }else if(c==28){
                             if(val == null){
                                 info.setGrossPay(0L);
