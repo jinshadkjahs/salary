@@ -1,0 +1,256 @@
+<link rel="stylesheet" href="../../static/css/public.css"/>
+<link rel="stylesheet" href="../../static/css/style.css"/>
+
+<section class="publicMian">
+    <div style="width: 100%">
+        <div class="location">
+            <strong>你现在所在的位置是:</strong>
+            <span>员工工资打印</span>
+        </div>
+        <!--账单表格 样式和员工信息-->
+        <div class="providerAdd" style="margin: 0px; margin-top: 15px; overflow-x: hidden; width:96%; height:490px;">
+            <table id="printtable" class="providerTable" cellpadding="0" cellspacing="0" style="">
+                <tbody>
+                <tr class="firstTr">
+                    <th width="10%" colspan="5" style="size:40px; height:60px;" id="print_title">
+
+                    </th>
+                </tr>
+                <tr>
+                    <th width="20%">姓名</th>
+                    <th width="20%" id="empName" colspan="2"></th>
+                    <th width="20%">职工编号</th>
+                    <th width="20%" id="empId"></th>
+                </tr>
+                <tr>
+                    <th width="20%">身份号</th>
+                    <th width="20%" colspan="2" id="empCardNum">--</th>
+                    <th width="20%"></th>
+                    <th width="20%"></th>
+                </tr>
+                <tr>
+                    <th width="20%" rowspan="4">固定部分</th>
+                    <th width="20%">工龄工资</th>
+                    <th width="20%" id="salary_11">--</th>
+                    <th width="20%">保留工资</th>
+                    <th width="20%" id="salary_10">--</th>
+                </tr>
+                <tr>
+                    <th width="20%">各种补贴</th>
+                    <th width="20%" id="subsidy">--</th>
+                    <th width="20%">回民补贴</th>
+                    <th width="20%" id="salary_14">--</th>
+                </tr>
+                <tr>
+                    <th width="20%">房补</th>
+                    <th width="20%" id="salary_12">--</th>
+                    <th width="20%">专项奖</th>
+                    <th width="20%" id="salary_18">--</th>
+                </tr>
+                <tr>
+                    <th width="20%">书报费</th>
+                    <th width="20%" id="salary_16">--</th>
+                    <th width="20%">卫生费</th>
+                    <th width="20%" id="salary_24">--</th>
+                </tr>
+                <tr>
+                    <th width="20%" rowspan="2">浮动部分</th>
+                    <th width="20%">岗薪工资</th>
+                    <th width="20%" id="salary_15">--</th>
+                    <th width="20%">绩效工资</th>
+                    <th width="20%" id="salary_3">--</th>
+                </tr>
+                <tr>
+                    <th width="20%">节日加班</th>
+                    <th width="20%" id="salary_4">--</th>
+                    <th width="20%">其他奖</th>
+                    <th width="20%" id="salary_1">--</th>
+                </tr>
+                <tr>
+                    <th width="20%">其他</th>
+                    <th width="20%">补发</th>
+                    <th width="20%" id="salary_6">--</th>
+                    <th width="20%" id="salary_13">--</th>
+                    <th width="20%">扣款</th>
+                    <th width="20%" id="salary_21">--</th>
+                </tr>
+                <tr>
+                    <th width="20%" rowspan="3">代缴部分</th>
+                    <th width="20%">个税</th>
+                    <th width="20%" id="salary_27">--</th>
+                    <th width="20%">养老</th>
+                    <th width="20%" id="salary_28">--</th>
+                </tr>
+                <tr>
+                    <th width="20%">医疗</th>
+                    <th width="20%" id="salary_29">--</th>
+                    <th width="20%">失业</th>
+                    <th width="20%" id="salary_30">--</th>
+                </tr>
+                <tr>
+                    <th width="20%">公积金</th>
+                    <th width="20%" id="salary_31">--</th>
+                    <th width="20%">其它</th>
+                    <th width="20%">--</th>
+                </tr>
+                <tr>
+                    <th width="20%" colspan="2">应领工资</th>
+                    <th width="20%" id="grossPay">--</th>
+                    <th width="20%">实领工资</th>
+                    <th width="20%" id="netPayroll">--</th>
+                </tr>
+                <tr>
+                    <th width="20%" style="height: 30px;">其他奖明细</th>
+                    <th width="20%" colspan="4"></th>
+                </tr>
+                </tbody>
+            </table>
+            <div class="providerAddBtn" style="margin-left:40%; width: 100%;">
+                <input type="button" value="下载打印" onclick="Print('.providerTable')"/>
+                <!--<input type="button" value="下载" onclick="downloadPdf('printtable')"/>-->
+                <input type="button" value="返回" onclick="history.back(-1)"/>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!--点击删除按钮后弹出的页面-->
+<div class="zhezhao"></div>
+<script src="../../static/js/jquery.js"></script>
+<script src="../../static/js/js.js"></script>
+<script src="../../static/js/time.js"></script>
+<script src="../../static/js/child.js"></script>
+<script src="../../static/js/Print.js"></script>
+<script src="../../static/js/jspdf.min.js"></script>
+<script src="../../static/js/html2canvas.js"></script>
+<script>
+    $(function () {
+        var url = window.location.href;
+        var slaryId = url.substring(url.lastIndexOf("/")+1);
+        if(slaryId != "" && slaryId != "undefined"){
+            addTable(slaryId)
+        }else {
+            loadingHide();
+            alertShow("系统出错！");
+            history.back(-1);
+        }
+    });
+    function addTable(slaryId) {
+        loadingShow();
+        $.post("../../staff/findSalary", {'salaryId': slaryId}, function (data) {
+            var reVal = data.data;
+            // if (reVal.emp_type = 0) {
+            Generatdata(reVal);
+            // } else {
+            //     GeneratHTdata(reVal,salaryDate);
+            // }
+            loadingHide();
+        }, 'json');
+    }
+
+
+    function downloadPdf(need) {
+        var pdf = new jsPDF('p','pt','a4');
+        // 设置打印比例 越大打印越小
+        pdf.internal.scaleFactor = 2;
+        var options = {
+            pagesplit: true, //设置是否自动分页
+            "background": '#FFFFFF'   //如果导出的pdf为黑色背景，需要将导出的html模块内容背景 设置成白色。
+        };
+        var printHtml = $('#'+need).get(0);   // 页面某一个div里面的内容，通过id获取div内容
+        pdf.addHTML(printHtml,15, 15, options,function() {
+            pdf.save('目标.pdf');
+        })
+        }
+    function js_getDPI() {
+        var arrDPI = new Array();
+        if (window.screen.deviceXDPI != undefined) {
+            arrDPI[0] = window.screen.deviceXDPI;
+            arrDPI[1] = window.screen.deviceYDPI;
+        }
+        else {
+            var tmpNode = document.createElement("DIV");
+            tmpNode.style.cssText = "width:1in;height:1in;position:absolute;left:0px;top:0px;z-index:99;visibility:hidden";
+            document.body.appendChild(tmpNode);
+            arrDPI[0] = parseInt(tmpNode.offsetWidth);
+            arrDPI[1] = parseInt(tmpNode.offsetHeight);
+            tmpNode.parentNode.removeChild(tmpNode);
+        }
+        return arrDPI;
+    }
+    
+    function Generatdata(result) {
+        var html = '';
+        if (result.emp_type == 0) {
+            $("#print_title").html(
+                '<img src="../../static/img/logo.jpeg" width="50px" height="50px" align="center" style="padding-left: 20px;">&nbsp;&nbsp;&nbsp;' + result.salaryInfo.salaryDate + ' 山西医科大学第六医院职工工资明细表</th>'
+            );
+        }else{
+            $("#print_title").html('<img src="../../static/img/logo.jpeg" width="50px" height="50px" align="center" style="padding-left: 20px;">&nbsp;&nbsp;&nbsp;' + result.salaryInfo.salaryDate + ' 山西医科大学第六医院合同制职工工资表</th>'
+            );
+        }
+        $("#empName").text(result.salaryInfo.employee.empName);
+        $("#empId").text(result.salaryInfo.employee.empId);
+        $("#empCardNum").text(result.salaryInfo.employee.empCardNum == null?'':result.salaryInfo.employee.empCardNum);
+
+        var subsidy = 0;
+        for (var k = 0, length = result.salaryInfo.salaryTypeEmpList.length; k < length; k++) {
+            var salaryType = result.salaryInfo.salaryTypeEmpList[k].salaryTypeObj.salaryType;
+            var money = result.salaryInfo.salaryTypeEmpList[k].money / 10000;
+            $("#salary_"+salaryType).text(money);
+            if(salaryType == 19 || salaryType == 20 || salaryType == 25){
+                subsidy += money;
+            }
+            if (k + 1 < length) {
+                salaryType = result.salaryInfo.salaryTypeEmpList[k+1].salaryTypeObj.salaryType;
+                money = result.salaryInfo.salaryTypeEmpList[k+1].money / 10000;
+                $("#salary_"+salaryType).text(money);
+                if(salaryType == 19 || salaryType == 20 || salaryType == 25){
+                    subsidy += money;
+                }
+            }
+            k++;
+        }
+        $("#subsidy").text(subsidy);
+        if (result.emp_type == 0) {
+            $("#salary_6").hide();
+            $("#grossPay").text(result.salaryInfo.grossPay / 10000 );
+            $("#netPayroll").text(result.salaryInfo.netPayroll / 10000);
+        }else{
+            $("#salary_13").hide();
+            $("#grossPay").text(result.salaryInfo.grossPay / 10000 );
+        }
+        if(result.bonusInfo.length == 0){
+            html +='<tr><th width="20%" colspan="5">本月无其他奖明细</th></tr>';
+        }else {
+            html += '<tr><th width="20%">序号</th>' +
+                '<th width="20%">金额</th>' +
+                '<th width="20%" colspan="2">内容</th>' +
+                '<th width="20%">归口管理部门</th>' +
+                '</tr>';
+            for (var i = 0; i < result.bonusInfo.length; i++) {
+                a = i+1;
+                html += '<tr><th width="20%">' + a + '</th>' +
+                    '<th width="20%">' + result.bonusInfo[i].money + '</th>' +
+                    '<th width="20%" colspan="2">' + result.bonusInfo[i].cont + '</th>' +
+                    '<th width="20%">' + result.bonusInfo[i].manageDepart + '</th>' +
+                    '</tr>';
+            }
+        }
+
+        // if (result.emp_type == 0) {
+        //     html += '<tr><th></th></tr><tr style="height: 40px;"><th width="20%">组成规则</th>' +
+        //         '<th width="20%" colspan="4">' +
+        //         '应领工资=应领A卡+B卡\n</br>' +
+        //         '实领工资=应领工资-个税-养老-医疗-失业-公积金-扣款</br>' +
+        //         '其他奖包括预算奖，具体见科室薪酬发放构成表</th></br>' +
+        //         '</tr>';
+        // } else {
+        //     html += '<tr><th></th></tr><tr style="height: 40px;"><th width="20%">组成规则</th>' +
+        //         '<th width="20%" colspan="4">' +
+        //         '其他奖包括预算奖，具体见科室薪酬发放构成表</th></br>' +
+        //         '</tr>';
+        // }
+        $("#printtable").find("tbody").append(html);
+    }
+</script>

@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Controller
 @RequestMapping("/salary")
@@ -198,6 +199,11 @@ public class SalaryController {
     @RequestMapping(value = "/intoShow/*")
     public String intoShow(HttpServletRequest request) throws Exception {
         return "salarymanager/show";
+    }
+    @RequestMapping(value = "/intoPrint/*")
+    public String intorint(HttpServletRequest request) throws Exception {
+        return "salarymanager/print";
+
     }
 
 

@@ -50,15 +50,20 @@ public class StaffController {
         String emp_type = user.getEmployee().getEmpType();
         if (StringUtils.isNotBlank(empId) && StringUtils.isNotBlank(salaryDate)) {
             SalaryMain salaryInfo = salaryService.findSalary(empId, salaryDate);
-            salaryInfo.getSalaryTypeEmpList().sort((p1, p2) -> p1.getSalaryType().compareTo(p2.getSalaryType()));
-            List<BonusInfo> bonusInfo = salaryService.findBonusInfo(salaryInfo.getSalaryId());
-            Map result = new HashMap<>();
-            result.put("salaryInfo", salaryInfo);
-            result.put("emp_type", emp_type);
-            result.put("bonusInfo", bonusInfo);
-//            result.put("salaryTypes", "0".equals(emp_type)?ConverterSystem.FORMAL_SALARY_TYPE:ConverterSystem.PACT_SALARY_TYPE);
-            br.setData(result);
-            br.setCode(com.aitian.salary.Utils.ReponseCode.REQUEST_SUCCESS);
+            if(salaryInfo != null){
+                salaryInfo.getSalaryTypeEmpList().sort((p1, p2) -> p1.getSalaryType().compareTo(p2.getSalaryType()));
+                List<BonusInfo> bonusInfo = salaryService.findBonusInfo(salaryInfo.getSalaryId());
+                Map result = new HashMap<>();
+                result.put("salaryInfo", salaryInfo);
+                result.put("emp_type", emp_type);
+                result.put("bonusInfo", bonusInfo);
+    //            result.put("salaryTypes", "0".equals(emp_type)?ConverterSystem.FORMAL_SALARY_TYPE:ConverterSystem.PACT_SALARY_TYPE);
+                br.setData(result);
+                br.setCode(com.aitian.salary.Utils.ReponseCode.REQUEST_SUCCESS);
+            }else {
+                br.setCode(com.aitian.salary.Utils.ReponseCode.NOT_HAS_DATA);
+            }
+
         } else {
             br.setCode(com.aitian.salary.Utils.ReponseCode.PARAMETER_NULL_ERROR);
             br.setMessage("The parameter is NULL!");

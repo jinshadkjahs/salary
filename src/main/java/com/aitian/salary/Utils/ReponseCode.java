@@ -59,4 +59,9 @@ public class ReponseCode {
      * 密码错误
      */
     public static final String PASSWORD_ERROR = "1010";
+
+    /**
+     * 密码错误
+     */
+    public static final String NOT_HAS_DATA = "1011";
 }

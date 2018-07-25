@@ -13,6 +13,10 @@ $(function () {
     }
     //查询工资
     search();
+
+    $("#next").click(function(){
+        window.location.href = "../../salary/intoPrint/" + $(this).attr("salaryId");
+    })
 });
 
 //查询员工工资
@@ -24,22 +28,49 @@ function search() {
         var myDate = new Date();
         var now_year = myDate.getFullYear();
         var now_month = myDate.getMonth() + 1;
-        var now_time = now_year + '-0' + now_month;
-        addTable(now_time);
+        $("#year").val(now_year);
+        $("#month").val(now_month);
+        if(now_month < 10){
+            var now_time = now_year + '-0' + now_month;
+            addTable(now_time);
+        }else{
+            var now_time = now_year + '-' + now_month;
+            addTable(now_time);
+        }
     }
-    else {
-        var time_sel = year + '-0' + month;
-        addTable(time_sel);
+    else{
+        if(month < 10){
+            var time_sel = year + '-0' + month;
+            addTable(time_sel);
+        }else{
+            var time_sel = year + '-' + month;
+            addTable(time_sel);
+        }
     }
     loadingHide();
 }
 
 //得到员工信息，选择展示页面
 function addTable(salaryDate) {
+
     $.post("../../staff/findSalary", {'salaryDate': salaryDate}, function (data) {
+        if(data.code == "1011"){
+            $("#usertable").html("<tr><th>本月没有工资信息！</th>></tr>");
+        }
+        if(data.code != "0000"){
+            return;
+        }
         var reVal = data.data;
         // if (reVal.emp_type = 0) {
+        if (reVal.emp_type == 0){
+            $("#next").siblings().hide();
+            $("#next").show();
+        }else {
+            $("#next").hide();
+            $("#next").siblings().show();
+        }
         Generatdata(reVal, salaryDate);
+        $("#next").attr("salaryId", reVal.salaryInfo.salaryId);
         // } else {
         //     GeneratHTdata(reVal,salaryDate);
         // }

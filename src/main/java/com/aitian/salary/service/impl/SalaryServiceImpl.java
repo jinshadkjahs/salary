@@ -67,9 +67,9 @@ public class SalaryServiceImpl implements SalaryService {
                 }else if(salaryList.get(0) instanceof SalaryMain) {
                     salaryList.forEach(salary->{
                         SalaryMain salaryMain = (SalaryMain) salary;
+                        salaryMain.setSalaryDate(salaryDate);
                         SalaryMain salaryMainOld = this.findSalary(salaryMain.getEmpId(), salaryMain.getSalaryDate());
                         if(salaryMainOld != null) deleteSalary(salaryMainOld.getSalaryId());
-                        salaryMain.setSalaryDate(salaryDate);
                         salaryMain.setCreateTime(new Date());
                         salaryMain.setUpdateTime(new Date());
                         this.addSalaryList(salaryMain);

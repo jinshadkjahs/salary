@@ -5,10 +5,10 @@
     <div style="width: 100%">
         <div class="location">
             <strong>你现在所在的位置是:</strong>
-            <span>员工工资查询</span>
+            <span>员工工资详情</span>
         </div>
         <!--账单表格 样式和员工信息-->
-        <div class="providerAdd" style="margin: 0px; margin-top: 15px; overflow:scroll; width:96%; height:440px;">
+        <div class="providerAdd" style="margin: 0px; margin-top: 15px; overflow-x: hidden; width:96%; height:490px;">
             <table id='usertable' class="providerTable" cellpadding="0" cellspacing="0" style="">
                 <!--<tr class="firstTrs">-->
                 <!--<th width="10%" colspan="5">****年**月医疗公司职工工资明细表</th>-->
@@ -21,7 +21,8 @@
                 <!--</tr>-->
             </table>
             <div class="providerAddBtn" style="margin-left:40%; width: 100%;">
-                <input type="button" value="下载打印" onclick="Print('.providerTable')"/>
+                <input type="button" value="下一步" style="display: none" id="next"/>
+                <input type="button" value="下载打印" style="display: none" id="print" onclick="Print('.providerTable')"/>
                 <input type="button" value="返回" onclick="history.back(-1)"/>
             </div>
         </div>
@@ -36,20 +37,32 @@
 <script>
     $(function () {
         var url = window.location.href;
-        var slaryId = url.substring(url.lastIndexOf("/")+1);
-        if(slaryId != "" && slaryId != "undefined"){
-            addTable(slaryId)
+        var salaryId = url.substring(url.lastIndexOf("/")+1);
+        if(salaryId != "" && salaryId != "undefined"){
+            addTable(salaryId)
         }else {
             loadingHide();
             alertShow("系统出错！");
             history.back(-1);
         }
+
+        $("#next").click(function(){
+            window.location.href = "../../salary/intoPrint/" + salaryId;
+        });
     });
+
     function addTable(slaryId) {
         loadingShow();
         $.post("../../staff/findSalary", {'salaryId': slaryId}, function (data) {
             var reVal = data.data;
             // if (reVal.emp_type = 0) {
+            if (reVal.emp_type == 0){
+                $("#print").hide();
+                $("#next").show();
+            }else {
+                $("#next").hide();
+                $("#print").show();
+            }
             Generatdata(reVal);
             // } else {
             //     GeneratHTdata(reVal,salaryDate);
