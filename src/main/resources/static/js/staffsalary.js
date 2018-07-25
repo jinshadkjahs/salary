@@ -55,7 +55,7 @@ function addTable(salaryDate) {
 
     $.post("../../staff/findSalary", {'salaryDate': salaryDate}, function (data) {
         if(data.code == "1011"){
-            $("#usertable").html("<tr><th>本月没有工资信息！</th>></tr>");
+            $("#usertable").html("<tr><th>本月暂无工资信息！</th>></tr>");
         }
         if(data.code != "0000"){
             return;
