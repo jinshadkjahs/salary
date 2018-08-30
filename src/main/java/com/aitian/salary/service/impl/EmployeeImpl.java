@@ -144,10 +144,8 @@ public class EmployeeImpl implements EmployeeService {
     @Override
     public List<Employee> queryEmpAndUser(String empId) {
         Employee employee = new Employee();
-        if(StringUtils.isNotBlank(empId)){
-            employee.setEmpId(empId);
-        }
-        List<Employee> employees = employeeMapper.queryEmpAndUser(employee);
+        employee.setEmpId(empId);
+        List<Employee> employees = employeeMapper.queryEmployees(employee);
 
         return employees;
     }
@@ -163,6 +161,7 @@ public class EmployeeImpl implements EmployeeService {
         List<List<String>> list = null;
         int successNums = 0;
         int failNums = 0;
+        int modifyNums = 0;
         int importNums = 0;
         String failEmpNo="";
         ImportEmpInfo importEmpInfo = new ImportEmpInfo();
@@ -176,6 +175,7 @@ public class EmployeeImpl implements EmployeeService {
         Cell cell = null;
         int columnNum=0;
         list = new ArrayList<>();
+        short firstCellNum = 0;
         //遍历Excel中所有的sheet
         for (int i = 0; i < work.getNumberOfSheets(); i++) {
             sheet = work.getSheetAt(i);
@@ -191,8 +191,17 @@ public class EmployeeImpl implements EmployeeService {
                 List<String> li = new ArrayList<>();
                 columnNum = row.getPhysicalNumberOfCells();
                 for (int y = row.getFirstCellNum(); y < row.getLastCellNum(); y++) {
+                    firstCellNum = row.getFirstCellNum();
+                    Object cellValue = null;
                     cell = row.getCell(y);
-                    li.add((String) readExcel.getCellValue(cell));
+                    cellValue = readExcel.getCellValue(cell);
+                    if(cellValue instanceof Double  ){
+                        cellValue = String.valueOf(cellValue);
+                    }
+                    if(cellValue == null){
+                        cellValue="";
+                    }
+                    li.add((String) cellValue);
                 }
                 list.add(li);
             }
@@ -201,26 +210,52 @@ public class EmployeeImpl implements EmployeeService {
             //员工数据导入
                 for(int i=0; i<list.size(); i++){
                     List<String> list1 = list.get(i);
-                    if(list1.size()<8){
-                        continue;
+                    String empId="";
+                    String empDepartment="";
+                    Integer empDepId=0;
+                    String empName="";
+                    String baseSalary="";
+                    String empPhone="";
+                    String empCardNum="";
+                    String empType="";
+                    if(list1.size()==8){
+                        empId = list1.get(1);
+                        //员工部门
+                        empDepartment = list1.get(2);
+                        //部门ID
+                        empDepId = null;
+                        //员工姓名
+                        empName = list1.get(3);
+                        //基本工资
+                        baseSalary = list1.get(4);
+                        //手机号
+                        empPhone = list1.get(5);
+                        //身份证编码
+                        empCardNum = list1.get(6);
+                        //员工类型
+                        empType = list1.get(7);
+                        //用decimal
+                        //final float fBaseSalary = Float.parseFloat(baseSalary);
+                    }else if(list1.size()==7){
+                        empId = list1.get(0);
+                        //员工部门
+                        empDepartment = list1.get(1);
+                        //部门ID
+                        empDepId = null;
+                        //员工姓名
+                        empName = list1.get(2);
+                        //基本工资
+                        baseSalary = list1.get(3);
+                        //手机号
+                        empPhone = list1.get(4);
+                        //身份证编码
+                        empCardNum = list1.get(5);
+                        //员工类型
+                        empType = list1.get(6);
+                        //用decimal
+                        //final float fBaseSalary = Float.parseFloat(baseSalary);
                     }
-                    String empId = list1.get(1);
-                    //员工部门
-                    String empDepartment = list1.get(2);
-                    //部门ID
-                    Integer empDepId = null;
-                    //员工姓名
-                    String empName = list1.get(3);
-                    //基本工资
-                    String baseSalary = list1.get(4);
-                    //手机号
-                    String empPhone = list1.get(5);
-                    //身份证编码
-                    String empCardNum = list1.get(6);
-                    //员工类型
-                    String empType = list1.get(7);
-                    //用decimal
-                    //final float fBaseSalary = Float.parseFloat(baseSalary);
+
                     if(StringUtils.isEmpty(empId)){
                         empId = "";
                     }
@@ -284,42 +319,86 @@ public class EmployeeImpl implements EmployeeService {
                     final Employee employee = empList.get(i);
                     final User user = userList.get(i);
                     List<Employee> list1 = this.queryEmpAndUser(employee.getEmpId());
-                    if(list1.size()>0){
-                    //员工存在，修改员工信息
-                        this.employeeMapper.modifyEmployee(employee);
-                        //作为修改员工数
-                        failNums++;
-                    }else {
+                    //若不存在插入数据
+                    if(list1.size()==0){
                         try{
                             this.employeeMapper.insertEmp(employee);
                             this.employeeMapper.insertUser(user);
                         }catch (Exception ex){
                             ex.printStackTrace();
                         }
+                        //若存在该员工判断是否和存在的数据相同，若相同不执行操作,若不相同修改该员工
+                    }else{
+                        Employee employee1 = list1.get(0);
+                        if(judgmentEmployee(employee1,employee)){
+                            failNums++;
+                            continue;
+                        }else {
+                            this.employeeMapper.modifyEmployee(employee);
+                            failEmpNo+=employee.getEmpId()+" ";
+                            modifyNums++;
+                        }
                     }
                 }
-                successNums = importNums-failNums;
+                successNums = importNums-failNums-modifyNums;
                 importEmpInfo.setSuccessNums(successNums);
-                importEmpInfo.setFailNums(failNums);
+                importEmpInfo.setFailNums(modifyNums);
                 importEmpInfo.setFailEmpNo(failEmpNo);
                 if(successNums==importNums){
                     importEmpInfo.setAllImport(true);
                 }else{
                     importEmpInfo.setAllImport(false);
                 }
-
-            successNums = importNums-failNums;
-            importEmpInfo.setSuccessNums(successNums);
-            importEmpInfo.setFailNums(failNums);
-            importEmpInfo.setFailEmpNo(failEmpNo);
-            if(successNums==importNums){
-                importEmpInfo.setAllImport(true);
-            }else{
-                importEmpInfo.setAllImport(false);
-            }
         }
         logger.info("员工导入完成！"+importEmpInfo.toString());
         return importEmpInfo;
+    }
+
+    private static boolean judgmentEmployee(Employee employee1,Employee employee){
+        boolean isEqual = false;
+
+        String empName = employee1.getEmpName()==null?"":employee1.getEmpName();
+        String empName1 = employee.getEmpName()==null?"":employee.getEmpName();
+        String empId = employee1.getEmpId()==null?"":employee1.getEmpId();
+        String empId1 = employee.getEmpId()==null?"":employee.getEmpId();
+        Integer departId = employee1.getDepartId()==null?0:employee1.getDepartId();
+        Integer departId1 = employee.getDepartId()==null?0:employee.getDepartId();
+        Integer baseSalary = employee1.getBaseSalary()==null?0:employee1.getBaseSalary();
+        Integer baseSalary1 = employee.getBaseSalary()==null?0:employee.getBaseSalary();
+        String empPhone = employee1.getEmpPhone()==null?"":employee1.getEmpPhone();
+        String empPhone1 = employee.getEmpPhone()==null?"":employee.getEmpPhone();
+        String empCardNum = employee1.getEmpCardNum()==null?"":employee1.getEmpCardNum();
+        String empCardNum1 = employee.getEmpCardNum()==null?"":employee.getEmpCardNum();
+        String empType = employee1.getEmpType()==null?"":employee1.getEmpType();
+        String empType1 = employee.getEmpType()==null?"":employee.getEmpType();
+
+        if(empCardNum.equals(empCardNum1)
+                &&empId.equals(empId1)
+                &&empName.equals(empName1)
+                &&empPhone.equals(empPhone1)
+                &&empType.equals(empType1)
+                &&departId.equals(departId1)
+                &&baseSalary.equals(baseSalary1)){
+
+            isEqual = true;
+        }/*
+        if(empCardNum.equals(empCardNum1)){
+            System.out.println("empCardNum");
+        }if(empId.equals(empId1)){
+            System.out.println("empId");
+        }if(employee.equals(employee1)){
+            System.out.println("empCardNum");
+        }if(empName.equals(empName1)){
+            System.out.println("empCardNum");
+        }if(empPhone.equals(empPhone1)){
+            System.out.println("empCardNum");
+        }if(departId.equals(departId1)){
+            System.out.println("empCardNum");
+        }if(baseSalary.equals(baseSalary1)){
+            System.out.println("empCardNum");
+        }*/
+        return isEqual;
+
     }
 
 

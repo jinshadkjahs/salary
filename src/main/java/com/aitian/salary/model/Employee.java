@@ -1,9 +1,6 @@
 package com.aitian.salary.model;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import java.sql.Date;
 import java.sql.Timestamp;
 
@@ -12,6 +9,7 @@ public class Employee {
 
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "Mysql")
     @Column(name = "empid")
     private String empId;
     @Column(name = "emp_name")

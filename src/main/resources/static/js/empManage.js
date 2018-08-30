@@ -235,8 +235,12 @@ var importEmp = function () {
                     if(importData.allImport){
                         alertShow("导入完成，共导入"+importData.successNums+"条!");
                     }else if(!importData.allImport){
-                        alertShow("导入完成，导入成功"+importData.successNums+"条！"+"修改成功"+importData.failNums+"条！");
+                        var modifyNums = importData.failNums;
+                        if(modifyNums>=0){
+                            alertShow("导入完成，导入成功"+importData.successNums+"条！"+"已修改"+importData.failNums+"条:"+importData.failEmpNo+"");
+                        }
                     }
+
                     location.href = "/employee/billList.html";
 
                 }else if(data.code == "1008"){

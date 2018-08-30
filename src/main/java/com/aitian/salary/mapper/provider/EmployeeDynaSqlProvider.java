@@ -5,6 +5,7 @@ import com.aitian.salary.model.User;
 import com.sun.org.apache.bcel.internal.generic.IFNULL;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.jdbc.SQL;
 
@@ -16,17 +17,32 @@ public class EmployeeDynaSqlProvider {
     //动态拼sql
 
     public String queryEmpAndUser(final Employee employee){
-
-        return new SQL(){
+        String s_employee_s = new SQL() {
             {
                 SELECT("*");
                 FROM("s_employee s");
                 JOIN("s_user e on s.empid = e.empid");
-                if(StringUtils.isNotBlank(employee.getEmpId())){
+                if (StringUtils.isNotBlank(employee.getEmpId())) {
                     WHERE("s.empid = #{empId}");
                 }
             }
         }.toString();
+        return s_employee_s;
+    }
+
+    public String queryEmployees(final Employee employee){
+        String s_employee_s = new SQL() {
+            {
+                SELECT("*");
+                FROM("s_employee s");
+                JOIN("s_user e on s.empid = e.empid");
+                if (StringUtils.isNotBlank(employee.getEmpId())) {
+                    WHERE("s.empid = #{empId}");
+                }
+            }
+        }.toString();
+        System.out.println(s_employee_s);
+        return s_employee_s;
     }
 
     public String insertEmp(final Employee employee){
