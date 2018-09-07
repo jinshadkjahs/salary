@@ -194,12 +194,16 @@
         $("#empCardNum").text(result.salaryInfo.employee.empCardNum == null?'':result.salaryInfo.employee.empCardNum);
 
         var subsidy = 0;
+        var jixiao = 0;
         for (var k = 0, length = result.salaryInfo.salaryTypeEmpList.length; k < length; k++) {
             var salaryType = result.salaryInfo.salaryTypeEmpList[k].salaryTypeObj.salaryType;
             var money = result.salaryInfo.salaryTypeEmpList[k].money / 10000;
             $("#salary_"+salaryType).text(money);
             if(salaryType == 19 || salaryType == 20 || salaryType == 25){
                 subsidy += money;
+            }
+            if(salaryType == 17){
+                jixiao = money;
             }
             if (k + 1 < length) {
                 salaryType = result.salaryInfo.salaryTypeEmpList[k+1].salaryTypeObj.salaryType;
@@ -208,11 +212,15 @@
                 if(salaryType == 19 || salaryType == 20 || salaryType == 25){
                     subsidy += money;
                 }
+                if(salaryType == 17){
+                    jixiao = money;
+                }
             }
             k++;
         }
         $("#subsidy").text(subsidy);
         if (result.emp_type == 0) {
+            $("#salary_3").text(jixiao)
             $("#salary_6").hide();
             $("#grossPay").text(result.salaryInfo.grossPay / 10000 );
             $("#netPayroll").text(result.salaryInfo.netPayroll / 10000);

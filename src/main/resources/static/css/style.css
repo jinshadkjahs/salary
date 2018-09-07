@@ -387,11 +387,11 @@ input[type='reset']:active, input[type='reset']:focus, .providerView a:hover, .p
 }
 
 #usertable tr th{
-    border: 0.5px solid  #e5f2ff;
+    border: 0.5px solid  #bfbebe;
     line-height: 30px;
 }
 #printtable tr th{
-    border: 0.5px solid  #e5f2ff;
+    border: 0.5px solid  #bfbebe;
     line-height: 30px;
 }
 
