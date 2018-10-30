@@ -21,6 +21,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 @Service(value = "salaryService")
@@ -125,7 +126,10 @@ public class SalaryServiceImpl implements SalaryService {
         salaryMain.setSalaryDate(salaryDate);
         List<SalaryMain> salaryList = salaryMapper.select(salaryMain);
 
-        salaryList.forEach(salary -> {
+        //需要移除用Iterator
+        Iterator<SalaryMain> iterator = salaryList.iterator();
+        while (iterator.hasNext()){
+            SalaryMain salary = iterator.next();
             Employee emp = employeeEmpMapper.selectByPrimaryKey(salary.getEmpId());
             if(emp != null){
                 if(ConverterSystem.ALL_EMPLOYEE_TYPE.containsKey(Integer.parseInt(emp.getEmpType()))){
@@ -143,9 +147,9 @@ public class SalaryServiceImpl implements SalaryService {
                     salaryTypeEmp.setSalaryTypeObj(ConverterSystem.ALL_SALARY_TYPE.get(salaryTypeEmp.getSalaryType()));
                 });
             }else {
-                salaryList.remove(salary);
+                iterator.remove();
             }
-        });
+        }
         return  salaryList.size()>0?salaryList.get(0):null;
     }
 
