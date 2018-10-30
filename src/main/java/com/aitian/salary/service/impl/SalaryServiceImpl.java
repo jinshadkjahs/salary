@@ -69,7 +69,7 @@ public class SalaryServiceImpl implements SalaryService {
                     salaryList.forEach(salary->{
                         SalaryMain salaryMain = (SalaryMain) salary;
                         salaryMain.setSalaryDate(salaryDate);
-                        SalaryMain salaryMainOld = this.findSalary(salaryMain.getEmpId(), salaryMain.getSalaryDate());
+                        SalaryMain salaryMainOld = this.findOnlySalary(salaryMain.getEmpId(), salaryMain.getSalaryDate());
                         if(salaryMainOld != null) deleteSalary(salaryMainOld.getSalaryId());
                         salaryMain.setCreateTime(new Date());
                         salaryMain.setUpdateTime(new Date());
@@ -117,6 +117,15 @@ public class SalaryServiceImpl implements SalaryService {
         });
         PageInfo<SalaryMain> pageInfo = new PageInfo<>(salaryList);
         return  pageInfo;
+    }
+
+    public SalaryMain findOnlySalary(String empId, String salaryDate) {
+        SalaryMain salaryMain = new SalaryMain();
+        salaryMain.setEmpId(empId);
+        salaryMain.setSalaryDate(salaryDate);
+        List<SalaryMain> salaryList = salaryMapper.select(salaryMain);
+
+        return  salaryList.size()>0?salaryList.get(0):null;
     }
 
     @Override
